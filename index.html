@@ -11,7 +11,8 @@ body{margin:0;background:#fff8fc;color:#594254;font-family:-apple-system,BlinkMa
 header{background:linear-gradient(120deg,#efaccd,#df6ca9);color:white;text-align:center;padding:21px 8px}
 header h1{font-size:20px;margin:0}
 main{max-width:930px;margin:auto;padding:14px 12px 110px}
-.page{display:none}.page.active{display:block}
+.page{display:none}
+.page.active{display:block}
 .box{background:white;border:1px solid #ecd3e0;border-radius:16px;padding:15px;margin:12px 0}
 h2{color:#965278;font-size:20px}
 h3{font-size:16px;color:#965278}
@@ -36,7 +37,7 @@ textarea{min-height:68px}
 .nav button{background:none;color:#957d8c;font-size:10px}
 .nav button.active{color:#cb508d;font-weight:800}
 .nav span{display:block;font-size:21px}
-.pill{display:inline-block;background:#e45186;color:white;border-radius:20px;font-size:10px;padding:2px 6px}
+.pill{display:inline-block;background:#e45186;color:white;border-radius:20px;font-size:10px;padding:2px 6px;vertical-align:middle}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:#fff0f7;border-radius:11px;text-align:center;padding:12px}
 .stat b{display:block;font-size:22px;color:#b95183}
@@ -73,10 +74,16 @@ textarea{min-height:68px}
 .chosen-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .chosen-list button{min-width:0;background:#fff4fa;border-radius:9px;padding:4px;font-size:10px}
 .note{background:#fff0f7;color:#9c567f;padding:10px;border-radius:10px;font-size:12px;line-height:1.6}
-.notification{display:block;border-bottom:1px solid #eee0e8;padding:11px 4px;width:100%;text-align:left}
+.notification{display:block;width:100%;text-align:left;border-bottom:1px solid #eee0e8;padding:11px 4px;background:white}
 .notification.unread{background:#fff0f7}
 .tag{font-size:11px;background:#fff0f7;color:#a44c80;border-radius:20px;padding:4px 8px}
 .authbox{max-width:420px;margin:auto}
+.request-choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;max-height:240px;overflow:auto;border:1px solid #f1dae5;border-radius:10px;padding:8px}
+.request-choice button{min-width:0;background:#fff6fa;border:2px solid transparent;border-radius:9px;padding:5px;font-size:10px;overflow-wrap:anywhere}
+.request-choice button.chosen{border-color:#d64e8e;background:#ffdeed}
+.request-choice button .art{width:100%}
+.request-count{font-size:12px;color:#9c567f;margin:5px 0 9px}
+.request-modal-inner{max-width:590px}
 @media(min-width:680px){
 .cards{grid-template-columns:repeat(5,minmax(0,1fr))}
 .cards.small{grid-template-columns:repeat(7,minmax(0,1fr))}
@@ -86,14 +93,20 @@ textarea{min-height:68px}
 </style>
 </head>
 <body>
+
 <header>
 <h1>♡ アイカツ！アンコール カード帳 ♡</h1>
 <div style="font-size:12px;margin-top:5px">カード管理・交換マッチング・掲示板</div>
 </header>
 
 <div class="auth">
-<div id="loggedOut"><button class="btn light" id="login">Googleでログイン</button></div>
-<div id="loggedIn" class="hidden"><span id="cloud">接続中…</span> <button class="btn light small" id="logout">ログアウト</button></div>
+<div id="loggedOut">
+<button class="btn light" id="login">Googleでログイン</button>
+</div>
+<div id="loggedIn" class="hidden">
+<span id="cloud">接続中…</span>
+<button class="btn light small" id="logout">ログアウト</button>
+</div>
 <div id="authError" class="error"></div>
 </div>
 
@@ -111,39 +124,65 @@ textarea{min-height:68px}
 </div>
 
 <main class="hidden" id="main">
+
 <section class="page active" id="home">
 <h2>ホーム ♡</h2>
 <div class="box">
 <div class="row">
-<div><strong id="homeName"></strong><p class="muted" id="homePrivacy"></p></div>
+<div>
+<strong id="homeName"></strong>
+<p class="muted" id="homePrivacy"></p>
+</div>
 <button class="btn light" id="editProfile">編集</button>
 </div>
 <div class="stats">
-<div class="stat"><b id="ownedStat">0</b><span class="muted">所持種類</span></div>
-<div class="stat"><b id="rateStat">0%</b><span class="muted">コンプリート率</span></div>
+<div class="stat">
+<b id="ownedStat">0</b>
+<span class="muted">所持種類</span>
+</div>
+<div class="stat">
+<b id="rateStat">0%</b>
+<span class="muted">コンプリート率</span>
+</div>
 </div>
 <div class="progress"><div id="progress"></div></div>
 </div>
+
 <div class="box hidden" id="profileEditor">
 <h3>プロフィール編集</h3>
-<label>ニックネーム</label><input id="nickname" maxlength="30">
+<label>ニックネーム</label>
+<input id="nickname" maxlength="30">
 <label>性別</label>
-<select id="gender"><option>非公開</option><option>女性</option><option>男性</option><option>その他</option></select>
-<label>都道府県</label><select id="prefecture"></select>
+<select id="gender">
+<option>非公開</option><option>女性</option>
+<option>男性</option><option>その他</option>
+</select>
+<label>都道府県</label>
+<select id="prefecture"></select>
 <label>都道府県を公開</label>
-<select id="prefVisible"><option value="no">非公開</option><option value="yes">公開</option></select>
-<label>Xアカウント（@以降）</label><input id="xAccount">
+<select id="prefVisible">
+<option value="no">非公開</option>
+<option value="yes">公開</option>
+</select>
+<label>Xアカウント（@以降）</label>
+<input id="xAccount">
 <label>公開設定</label>
-<select id="privacy"><option value="public">公開（交換に参加）</option><option value="private">鍵（交換に参加しない）</option></select>
-<label>交換方法</label><div class="filters" id="methods"></div>
-<label>自己紹介</label><textarea id="bio" maxlength="300"></textarea>
+<select id="privacy">
+<option value="public">公開（交換に参加）</option>
+<option value="private">鍵（交換に参加しない）</option>
+</select>
+<label>交換方法</label>
+<div class="filters" id="methods"></div>
+<label>自己紹介</label>
+<textarea id="bio" maxlength="300"></textarea>
 <p><button class="btn" id="saveProfile">プロフィールを保存</button></p>
 </div>
+
 <div class="box">
 <h3>公開プロフィール</h3>
 <div class="muted" id="profileView"></div>
 <p class="muted" id="syncStatus"></p>
-<p class="note">公開ユーザーにはニックネーム・公開地域・交換方法・譲れる／欲しいカード番号を共有します。本名・メールアドレス・正確な所持枚数は公開しません。</p>
+<p class="note">公開ユーザーにはニックネーム・公開地域・交換方法・譲れる／欲しいカード番号を共有します。Googleの本名・メールアドレス・正確な所持枚数は公開しません。</p>
 </div>
 </section>
 
@@ -152,7 +191,11 @@ textarea{min-height:68px}
 <div class="box">
 <div class="row">
 <strong id="albumStat">0 / 0種類</strong>
-<select id="cardSize" style="width:auto"><option value="normal">標準</option><option value="small">小さめ</option><option value="tiny">もっと小さく</option></select>
+<select id="cardSize" style="width:auto">
+<option value="normal">標準</option>
+<option value="small">小さめ</option>
+<option value="tiny">もっと小さく</option>
+</select>
 </div>
 <div class="filters" id="albumGroups">
 <button data-g="series1" class="on">1弾</button>
@@ -166,8 +209,10 @@ textarea{min-height:68px}
 <div class="row">
 <input id="albumSearch" placeholder="名前・番号で検索">
 <select id="albumFilter" style="width:auto">
-<option value="all">すべて</option><option value="owned">所持</option>
-<option value="missing">未所持</option><option value="extra">2枚以上</option>
+<option value="all">すべて</option>
+<option value="owned">所持</option>
+<option value="missing">未所持</option>
+<option value="extra">2枚以上</option>
 </select>
 </div>
 <p id="albumDetails" class="muted"></p>
@@ -195,6 +240,7 @@ textarea{min-height:68px}
 <button class="btn light hidden" id="cancelPostEdit">編集をやめる</button>
 </div>
 </div>
+
 <div class="box">
 <h3>みんなの募集</h3>
 <div class="row">
@@ -214,10 +260,11 @@ textarea{min-height:68px}
 <section class="page" id="matching">
 <h2>交換マッチング ♡</h2>
 <div class="box">
-<p class="note">PR・ER同士、R・N同士の交換候補数と交換方法を評価。最初はコメントではなく、カードを指定して交換申請します。</p>
+<p class="note">PR・ER同士、R・N同士の交換を優先して評価します。交換申請では、譲るカード・欲しいカードをそれぞれ最大10種類まで選べます。</p>
 <p id="matchingStatus" class="muted"></p>
 <div id="matchList"></div>
 </div>
+
 <div class="box">
 <h3>過去の公開コメント</h3>
 <p class="muted">以前のプロフィール相談を確認できます。新しい交渉は交換申請から行ってね。</p>
@@ -235,6 +282,7 @@ textarea{min-height:68px}
 
 <section class="page" id="trades">
 <h2>🔔 通知・交換申請 <span class="pill hidden" id="unreadPill"></span></h2>
+
 <div class="box">
 <div class="row">
 <h3>未読通知</h3>
@@ -242,6 +290,7 @@ textarea{min-height:68px}
 </div>
 <div id="notificationList"></div>
 </div>
+
 <div class="box">
 <h3>交換申請一覧</h3>
 <div class="filters">
@@ -256,8 +305,10 @@ textarea{min-height:68px}
 
 <div class="modal hidden" id="pickerModal">
 <div class="modal-inner">
-<div class="row"><h3 id="pickerTitle">カードを選ぶ</h3>
-<button id="pickerClose" class="btn light">完了</button></div>
+<div class="row">
+<h3 id="pickerTitle">カードを選ぶ</h3>
+<button id="pickerClose" class="btn light">完了</button>
+</div>
 <input id="pickerSearch" placeholder="番号・名前で検索">
 <div class="filters">
 <button data-pickfilter="all" class="on">すべて</button>
@@ -270,20 +321,38 @@ textarea{min-height:68px}
 </div>
 </div>
 
+<!-- 複数枚交換に対応した申請画面 -->
 <div class="modal hidden" id="requestModal">
-<div class="modal-inner authbox">
+<div class="modal-inner request-modal-inner">
 <div class="row">
-<h3 id="requestTitle">交換を申請</h3>
+<h3 id="requestTitle">交換を申請する</h3>
 <button class="btn light" id="requestClose">閉じる</button>
 </div>
+
 <p class="muted" id="requestExplain"></p>
-<label>あなたが譲る</label><select id="requestOffer"></select>
-<label>相手から受け取る</label><select id="requestWant"></select>
-<label>交換方法</label><select id="requestMethod"></select>
+
+<label>あなたが譲るカード</label>
+<p class="muted">タップして選択・解除（最大10種類）</p>
+<div class="request-choice" id="requestOfferGrid"></div>
+<div class="request-count" id="requestOfferCount">0種類選択中</div>
+
+<label>相手から受け取るカード</label>
+<p class="muted">タップして選択・解除（最大10種類）</p>
+<div class="request-choice" id="requestWantGrid"></div>
+<div class="request-count" id="requestWantCount">0種類選択中</div>
+
+<label>交換方法</label>
+<select id="requestMethod"></select>
+
 <label>メッセージ（任意）</label>
 <textarea id="requestNote" maxlength="300"></textarea>
-<div id="requestError" class="error"></div>
-<p><button class="btn" id="requestSend">交換を申請する</button></p>
+
+<div class="note" id="requestSummary">カードを選択してください</div>
+<div class="error" id="requestError"></div>
+
+<p>
+<button class="btn" id="requestSend">この内容で申請する</button>
+</p>
 </div>
 </div>
 
@@ -292,13 +361,20 @@ textarea{min-height:68px}
 <button data-page="album"><span>▦</span>アルバム</button>
 <button data-page="board"><span>▤</span>掲示板</button>
 <button data-page="matching"><span>♡</span>マッチング</button>
-<button data-page="trades"><span>🔔</span>通知<span id="navCount" class="pill hidden"></span></button>
+<button data-page="trades"><span>🔔</span>通知 <span id="navCount" class="pill hidden"></span></button>
 </nav>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,deleteDoc,addDoc,updateDoc,onSnapshot,collection,query,where,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {
+ getAuth,GoogleAuthProvider,signInWithPopup,
+ signOut,onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {
+ getFirestore,doc,getDoc,setDoc,deleteDoc,
+ addDoc,updateDoc,onSnapshot,collection,
+ query,where,limit,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const app=initializeApp({
  apiKey:"AIzaSyCSxm_4w-r8kFPD6yIQ4rgVpzVGl0piJlM",
@@ -308,450 +384,884 @@ const app=initializeApp({
  messagingSenderId:"1000205466468",
  appId:"1:1000205466468:web:dc49371b91f5514ee3d871"
 });
-const auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
+
+const auth=getAuth(app);
+const db=getFirestore(app);
+const provider=new GoogleAuthProvider();
 const $=id=>document.getElementById(id);
+
 const defaults=()=>({
- nickname:"",nicknameConfirmed:false,gender:"非公開",
- prefecture:"非公開",prefVisible:"no",privacy:"public",
- xAccount:"",bio:"",methods:["郵送"]
+ nickname:"",
+ nicknameConfirmed:false,
+ gender:"非公開",
+ prefecture:"非公開",
+ prefVisible:"no",
+ privacy:"public",
+ xAccount:"",
+ bio:"",
+ methods:["郵送"]
 });
 
 let uid=null,userRef=null,ready=false,needsName=false;
 let profile=defaults(),owned={},cards=[],peers=[],posts=[],trades=[];
-let stops=[],postCommentStops=new Map(),tradeMessageStops=new Map();
-let oldCommentsStop=null,editOpen=false,publishTimer=null;
-let publishRunning=false,publishPending=false,publishFingerprint="";
-let authVersion=0;
+let stops=[];
+let postCommentStops=new Map();
+let tradeMessageStops=new Map();
+let oldCommentsStop=null,viewingPostStop=null;
+let editOpen=false,publishTimer=null;
+let authVersion=0,publishFingerprint="";
 let albumGroup="series1",albumKind="all",albumView="all";
 let albumSize="normal",albumText="";
 let postEditId=null,offerChoice=new Set(),wantChoice=new Set();
 let pickerKind="offers",pickerFilter="all";
 let requestTarget=null,requestTrade=null;
+let requestGive=new Set(),requestReceive=new Set();
+let requestGiveOptions=[],requestReceiveOptions=[];
 let postThreadId=null,tradeThreadId=null,tradeFilter="active";
 let oldMessages=[],messagesByTrade=new Map();
-let postMessagesById=new Map(),readKeys=new Set(),notifications=[];
+let postMessagesById=new Map(),readKeys=new Set();
+let notifications=[];
 let postBusy=false,requestBusy=false;
-let viewingPostStop=null,viewingPostId=null;
-const cardMap=new Map(),cardBusy=new Set();
+let publishRunning=false,publishPending=false;
+let viewingPostId=null;
 
-const prefList=("非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県").split(",");
-$("prefecture").replaceChildren(...prefList.map(p=>new Option(p,p)));
+const cardMap=new Map();
+const cardBusy=new Set();
+
+const prefs=("非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県").split(",");
+
+$("prefecture").replaceChildren(...prefs.map(p=>new Option(p,p)));
 
 const methods=["郵送","手渡し","メルカリ","Yahoo!フリマ"];
+
 for(const m of methods){
- const l=document.createElement("label"),c=document.createElement("input");
- c.type="checkbox";c.value=m;c.className="methodInput";
- l.append(c," "+m);$("methods").append(l);
+ const label=document.createElement("label");
+ const cb=document.createElement("input");
+ cb.type="checkbox";
+ cb.value=m;
+ cb.className="methodInput";
+ label.append(cb," "+m);
+ $("methods").append(label);
 }
 
-const validName=s=>typeof s==="string"&&s.trim().length>=2&&s.trim().length<=30&&!/[<>]/.test(s);
-const qty=id=>Math.max(0,Math.min(999,Number(owned[id])||0));
-const ownedCount=list=>list.filter(c=>qty(c.id)>0).length;
-const rarity=c=>{
- let r=String(c?.rarity||"").toUpperCase();
- if(!r)r=(String(c?.number||c?.id||"").match(/_(PR|ER|R|N)(?:_|$)/i)||[])[1]?.toUpperCase()||"";
- return ["PR","ER"].includes(r)?"premium":["R","N"].includes(r)?"regular":"unknown";
-};
-const groupName=g=>g==="premium"?"プレミアム":g==="regular"?"レア・ノーマル":"分類不明";
-const dateText=ts=>ts?.toDate?.()?ts.toDate().toLocaleString("ja-JP"):"送信中";
-const make=(tag,cls,text)=>{
+function make(tag,cls,text){
  const e=document.createElement(tag);
  if(cls)e.className=cls;
  if(text!==undefined)e.textContent=text;
  return e;
-};
-function isPublic(){return ready&&!needsName&&profile.privacy==="public"}
+}
+
+const validName=s=>
+ typeof s==="string"&&s.trim().length>=2&&
+ s.trim().length<=30&&!/[<>]/.test(s);
+
+const qty=id=>Math.max(
+ 0,Math.min(999,Number(owned[id])||0)
+);
+
+const ownedCount=list=>list.filter(c=>qty(c.id)>0).length;
+
+function rarity(c){
+ let r=String(c?.rarity||"").toUpperCase();
+ if(!r){
+  r=(String(c?.number||c?.id||"")
+   .match(/_(PR|ER|R|N)(?:_|$)/i)||[])[1]?.toUpperCase()||"";
+ }
+ if(["PR","ER"].includes(r))return"premium";
+ if(["R","N"].includes(r))return"regular";
+ return"unknown";
+}
+
+const groupName=g=>
+ g==="premium"?"プレミアム":
+ g==="regular"?"レア・ノーマル":"分類不明";
+
+const dateText=ts=>
+ ts?.toDate?.()?ts.toDate().toLocaleString("ja-JP"):"送信中";
+
+function isPublic(){
+ return ready&&!needsName&&profile.privacy==="public";
+}
+
 function showPage(page){
- document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
- document.querySelectorAll(".page").forEach(e=>e.classList.toggle("active",e.id===page));
+ document.querySelectorAll("[data-page]").forEach(b=>
+  b.classList.toggle("active",b.dataset.page===page)
+ );
+ document.querySelectorAll(".page").forEach(e=>
+  e.classList.toggle("active",e.id===page)
+ );
  window.scrollTo(0,0);
 }
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+document.querySelectorAll("[data-page]").forEach(b=>{
+ b.onclick=()=>showPage(b.dataset.page);
+});
 
 function art(c){
- const d=make("div","art");
+ const div=make("div","art");
  if(!c?.image){
-  d.append(make("span","muted",c?.number||"画像なし"));
-  return d;
+  div.append(make("span","muted",c?.number||"画像なし"));
+  return div;
  }
- const i=document.createElement("img");
- i.alt=c.name||c.number;i.loading="lazy";
- i.onload=()=>i.classList.toggle("landscape",i.naturalWidth>i.naturalHeight);
- i.onerror=()=>d.replaceChildren(make("span","muted",c.number));
- d.append(i);i.src=c.image;
- return d;
+ const img=document.createElement("img");
+ img.alt=c.name||c.number;
+ img.loading="lazy";
+ img.onload=()=>{
+  img.classList.toggle(
+   "landscape",
+   img.naturalWidth>img.naturalHeight
+  );
+ };
+ img.onerror=()=>{
+  div.replaceChildren(make("span","muted",c.number));
+ };
+ div.append(img);
+ img.src=c.image;
+ return div;
 }
+
 function miniature(ids){
- const g=make("div","mini");
+ const grid=make("div","mini");
  for(const id of ids.slice(0,12)){
-  const c=cardMap.get(id),b=make("div","card");
-  b.append(art(c),make("span","name",c?.name||c?.number||id));
-  g.append(b);
+  const c=cardMap.get(id);
+  const box=make("div","card");
+  box.append(
+   art(c),
+   make("span","name",c?.name||c?.number||id)
+  );
+  grid.append(box);
  }
- if(ids.length>12)g.append(make("span","muted","ほか"+(ids.length-12)+"種類"));
- return g;
+ if(ids.length>12){
+  grid.append(make("span","muted",
+   "ほか"+(ids.length-12)+"種類"));
+ }
+ return grid;
 }
 
 async function loadCards(){
  try{
-  const r=await fetch("./cards.json?v="+Date.now(),{cache:"no-store"});
-  if(!r.ok)throw Error("HTTP "+r.status);
-  const raw=await r.json();
+  const res=await fetch(
+   "./cards.json?v="+Date.now(),
+   {cache:"no-store"}
+  );
+  if(!res.ok)throw Error("HTTP "+res.status);
+  const raw=await res.json();
   if(!Array.isArray(raw))throw Error("カード形式エラー");
-  const known=new Set();
+
+  const seen=new Set();
   cards=raw.filter(c=>{
-   if(!c?.id||known.has(String(c.id)))return false;
-   known.add(String(c.id));return true;
+   if(!c?.id||seen.has(String(c.id)))return false;
+   seen.add(String(c.id));
+   return true;
   }).map(c=>{
    const number=String(c.number||c.id);
    const group=String(c.group||"normal").toLowerCase();
    let image=String(c.image||"");
+
    if(group==="normal"&&image.includes("dcd.aikatsu.com")){
-    image="https://dcd.aikatsu.com/encore/images/cardlist/card/"+number+".webp";
+    image="https://dcd.aikatsu.com/encore/images/cardlist/card/"+
+     number+".webp";
    }
+
    return{
-    id:String(c.id),number,group,
+    id:String(c.id),
+    number,
+    group,
     name:String(c.name||""),
     rarity:String(c.rarity||""),
     image:/^https:\/\//.test(image)?image:""
    };
   });
+
   cardMap.clear();
   cards.forEach(c=>cardMap.set(c.id,c));
-  renderAll();schedulePublish();
+  renderAll();
+  schedulePublish();
  }catch(e){
-  alert("カードの読み込みに失敗: "+e.message);
+  alert("カード読み込み失敗："+e.message);
  }
 }
 
-function setGate(b){
- needsName=b;
- $("nameModal").classList.toggle("hidden",!b);
- $("main").classList.toggle("hidden",b||!ready);
- $("nav").classList.toggle("hidden",b||!ready);
+/* ログイン・プロフィール */
+
+function setGate(value){
+ needsName=value;
+ $("nameModal").classList.toggle("hidden",!value);
+ $("main").classList.toggle("hidden",value||!ready);
+ $("nav").classList.toggle("hidden",value||!ready);
 }
+
 function fillProfile(){
- for(const id of ["nickname","gender","prefecture","prefVisible","privacy","xAccount","bio"]){
+ for(const id of [
+  "nickname","gender","prefecture",
+  "prefVisible","privacy","xAccount","bio"
+ ]){
   $(id).value=profile[id]||"";
  }
  document.querySelectorAll(".methodInput").forEach(c=>{
   c.checked=(profile.methods||[]).includes(c.value);
  });
 }
+
 function renderHome(){
  const n=ownedCount(cards);
  const rate=cards.length?Math.round(n/cards.length*100):0;
+
  $("homeName").textContent=profile.nickname||"未設定";
- $("homePrivacy").textContent=profile.privacy==="public"?"🌐 公開プロフィール":"🔒 鍵プロフィール";
+ $("homePrivacy").textContent=profile.privacy==="public"?
+  "🌐 公開プロフィール":"🔒 鍵プロフィール";
  $("ownedStat").textContent=n;
  $("rateStat").textContent=rate+"%";
  $("progress").style.width=rate+"%";
+
  $("profileView").textContent=
-  "地域："+(profile.prefVisible==="yes"?profile.prefecture:"非公開")+
+  "地域："+(profile.prefVisible==="yes"?
+   profile.prefecture:"非公開")+
   " ／ 交換方法："+(profile.methods||[]).join("・")+
-  " ／ X："+(profile.xAccount?"@"+profile.xAccount:"未設定")+
+  " ／ X："+(profile.xAccount?
+   "@"+profile.xAccount:"未設定")+
   " ／ "+(profile.bio||"自己紹介なし");
 }
+
 $("editProfile").onclick=()=>{
  editOpen=!editOpen;
  $("profileEditor").classList.toggle("hidden",!editOpen);
  if(editOpen)fillProfile();
 };
+
 $("saveProfile").onclick=async()=>{
  const nickname=$("nickname").value.trim();
- if(!validName(nickname))return alert("ニックネームを2〜30文字で入力してください");
+
+ if(!validName(nickname)){
+  alert("ニックネームを2〜30文字で入力してください");
+  return;
+ }
+
  const next={
-  nickname,nicknameConfirmed:true,
+  nickname,
+  nicknameConfirmed:true,
   gender:$("gender").value,
   prefecture:$("prefecture").value,
   prefVisible:$("prefVisible").value,
   privacy:$("privacy").value,
   xAccount:$("xAccount").value.trim().replace(/^@/,""),
   bio:$("bio").value.trim(),
-  methods:[...document.querySelectorAll(".methodInput:checked")].map(e=>e.value)
+  methods:[...document.querySelectorAll(".methodInput:checked")]
+   .map(e=>e.value)
  };
+
  try{
-  await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});
-  profile=next;editOpen=false;
+  await setDoc(userRef,{
+   profile:next,
+   updatedAt:serverTimestamp()
+  },{merge:true});
+  profile=next;
+  editOpen=false;
   $("profileEditor").classList.add("hidden");
-  renderAll();schedulePublish(true);
+  renderAll();
+  schedulePublish(true);
   alert("保存しました");
- }catch(e){alert("保存エラー: "+e.message)}
+ }catch(e){
+  alert("保存エラー："+e.message);
+ }
 };
 
 /* アルバム */
+
 function albumCards(){
- return cards.filter(c=>albumGroup==="promo"?c.group==="promo":["normal","parallel"].includes(c.group));
+ return cards.filter(c=>albumGroup==="promo"?
+  c.group==="promo":
+  ["normal","parallel"].includes(c.group));
 }
+
 function renderAlbum(){
  const selected=albumCards();
- $("albumStat").textContent=ownedCount(cards)+" / "+cards.length+"種類";
- $("albumDetails").textContent=ownedCount(selected)+" / "+selected.length+"種類";
- $("albumKinds").classList.toggle("hidden",albumGroup==="promo");
- $("cardGrid").className="cards"+(albumSize==="normal"?"":" "+albumSize);
- const g=$("cardGrid");g.replaceChildren();
+ $("albumStat").textContent=
+  ownedCount(cards)+" / "+cards.length+"種類";
+ $("albumDetails").textContent=
+  ownedCount(selected)+" / "+selected.length+"種類";
+ $("albumKinds").classList.toggle(
+  "hidden",albumGroup==="promo"
+ );
+ $("cardGrid").className=
+  "cards"+(albumSize==="normal"?"":" "+albumSize);
+
+ const grid=$("cardGrid");
+ grid.replaceChildren();
+
  const list=selected.filter(c=>{
-  if(albumGroup==="series1"&&albumKind!=="all"&&albumKind!==c.group)return false;
-  const q=qty(c.id);
-  if(albumView==="owned"&&!q||albumView==="missing"&&q||albumView==="extra"&&q<2)return false;
-  return(c.name+" "+c.number).toLowerCase().includes(albumText);
+  if(albumGroup==="series1"&&albumKind!=="all"&&
+   albumKind!==c.group)return false;
+
+  const n=qty(c.id);
+
+  if(albumView==="owned"&&!n)return false;
+  if(albumView==="missing"&&n)return false;
+  if(albumView==="extra"&&n<2)return false;
+
+  return(c.name+" "+c.number)
+   .toLowerCase().includes(albumText);
  });
+
  for(const c of list){
-  const q=qty(c.id);
-  const b=make("div","card"+(q?"":" unowned"));
-  const img=make("button","");
-  img.style.cssText="width:100%;background:none;padding:0";
-  img.append(art(c));
-  img.onclick=()=>changeQuantity(c.id,q?0:1);
-  b.append(img,make("span","name",c.name||c.number));
-  if(c.name)b.append(make("span","muted",c.number));
-  const ctr=make("div","count");
-  for(const [label,v] of [["−",q-1],[q+"枚",null],["＋",q+1]]){
-   const t=make("button","",label);
-   t.disabled=cardBusy.has(c.id)||v!==null&&(v<0||v>999);
-   t.onclick=()=>v===null?editQuantity(c.id):changeQuantity(c.id,v);
-   ctr.append(t);
+  const n=qty(c.id);
+  const box=make("div","card"+(n?"":" unowned"));
+  const imageButton=make("button");
+  imageButton.style.cssText=
+   "width:100%;background:none;padding:0";
+  imageButton.append(art(c));
+  imageButton.onclick=()=>changeQuantity(c.id,n?0:1);
+
+  box.append(
+   imageButton,
+   make("span","name",c.name||c.number)
+  );
+
+  if(c.name)box.append(make("span","muted",c.number));
+
+  const controls=make("div","count");
+
+  for(const [label,value] of [
+   ["−",n-1],[n+"枚",null],["＋",n+1]
+  ]){
+   const btn=make("button","",label);
+   btn.disabled=cardBusy.has(c.id)||
+    (value!==null&&(value<0||value>999));
+   btn.onclick=()=>value===null?
+    editQuantity(c.id):changeQuantity(c.id,value);
+   controls.append(btn);
   }
-  b.append(ctr);g.append(b);
+
+  box.append(controls);
+  grid.append(box);
  }
- if(!list.length)g.append(make("p","muted","該当カードはありません"));
+
+ if(!list.length){
+  grid.append(make("p","muted","該当カードはありません"));
+ }
 }
+
 async function changeQuantity(id,n){
  if(!uid||cardBusy.has(id))return;
  n=Math.max(0,Math.min(999,n));
- const before=qty(id),account=uid;
+
+ const before=qty(id);
+ const account=uid;
  if(n===before)return;
- cardBusy.add(id);owned[id]=n;
- renderHome();renderAlbum();renderMatching();
+
+ cardBusy.add(id);
+ owned[id]=n;
+ renderHome();
+ renderAlbum();
+ renderMatching();
+
  try{
-  await setDoc(userRef,{owned:{[id]:n},updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(userRef,{
+   owned:{[id]:n},
+   updatedAt:serverTimestamp()
+  },{merge:true});
   if(account===uid)schedulePublish();
  }catch(e){
-  if(account===uid){owned[id]=before;alert("保存失敗: "+e.message)}
+  if(account===uid){
+   owned[id]=before;
+   alert("保存失敗："+e.message);
+  }
  }finally{
   cardBusy.delete(id);
   if(account===uid)renderAll();
  }
 }
+
 function editQuantity(id){
- const n=prompt("所持枚数（0〜999）",String(qty(id)));
- if(n===null)return;
- if(!/^\d{1,3}$/.test(n))return alert("0〜999の整数で入力してね");
- changeQuantity(id,Number(n));
+ const value=prompt(
+  "所持枚数（0〜999）",
+  String(qty(id))
+ );
+ if(value===null)return;
+ if(!/^\d{1,3}$/.test(value)){
+  alert("0〜999の整数で入力してね");
+  return;
+ }
+ changeQuantity(id,Number(value));
 }
-document.querySelectorAll("#albumGroups button").forEach(b=>b.onclick=()=>{
- albumGroup=b.dataset.g;
- document.querySelectorAll("#albumGroups button").forEach(x=>x.classList.toggle("on",x===b));
- renderAlbum();
+
+document.querySelectorAll("#albumGroups button").forEach(b=>{
+ b.onclick=()=>{
+  albumGroup=b.dataset.g;
+  document.querySelectorAll("#albumGroups button").forEach(x=>
+   x.classList.toggle("on",x===b)
+  );
+  renderAlbum();
+ };
 });
-document.querySelectorAll("#albumKinds button").forEach(b=>b.onclick=()=>{
- albumKind=b.dataset.k;
- document.querySelectorAll("#albumKinds button").forEach(x=>x.classList.toggle("on",x===b));
- renderAlbum();
+
+document.querySelectorAll("#albumKinds button").forEach(b=>{
+ b.onclick=()=>{
+  albumKind=b.dataset.k;
+  document.querySelectorAll("#albumKinds button").forEach(x=>
+   x.classList.toggle("on",x===b)
+  );
+  renderAlbum();
+ };
 });
-$("albumSearch").oninput=e=>{albumText=e.target.value.toLowerCase();renderAlbum()};
-$("albumFilter").onchange=e=>{albumView=e.target.value;renderAlbum()};
-$("cardSize").onchange=e=>{albumSize=e.target.value;renderAlbum()};
+
+$("albumSearch").oninput=e=>{
+ albumText=e.target.value.toLowerCase();
+ renderAlbum();
+};
+$("albumFilter").onchange=e=>{
+ albumView=e.target.value;
+ renderAlbum();
+};
+$("cardSize").onchange=e=>{
+ albumSize=e.target.value;
+ renderAlbum();
+};
 
 /* 公開プロフィール */
+
 function publicData(){
  return{
   visibility:"public",
   nickname:profile.nickname,
-  prefecture:profile.prefVisible==="yes"?profile.prefecture:"非公開",
+  prefecture:profile.prefVisible==="yes"?
+   profile.prefecture:"非公開",
   methods:[...(profile.methods||[])],
   offers:cards.filter(c=>qty(c.id)>=2).map(c=>c.id),
   wants:cards.filter(c=>qty(c.id)===0).map(c=>c.id)
  };
 }
+
 function schedulePublish(now=false){
  clearTimeout(publishTimer);
  if(!ready||!cards.length||needsName)return;
  publishTimer=setTimeout(syncProfile,now?0:500);
 }
+
 async function syncProfile(){
- if(publishRunning){publishPending=true;return}
+ if(publishRunning){
+  publishPending=true;
+  return;
+ }
  if(!uid||!ready||needsName)return;
- const account=uid,privateMode=profile.privacy==="private";
+
+ const account=uid;
+ const privateMode=profile.privacy==="private";
  const data=privateMode?null:publicData();
  const signature=privateMode?"private":JSON.stringify(data);
+
  if(signature===publishFingerprint)return;
  publishRunning=true;
  $("syncStatus").textContent="マッチング情報を同期中…";
+
  try{
   const ref=doc(db,"matchingProfiles",account);
-  if(privateMode)await deleteDoc(ref);
-  else await setDoc(ref,{...data,updatedAt:serverTimestamp()});
+
+  if(privateMode){
+   await deleteDoc(ref);
+  }else{
+   await setDoc(ref,{
+    ...data,
+    updatedAt:serverTimestamp()
+   });
+  }
+
   if(account===uid){
    publishFingerprint=signature;
    $("syncStatus").textContent=privateMode?
-    "鍵アカウント：マッチング非公開":"マッチング公開情報を同期しました";
+    "鍵アカウント：マッチング非公開":
+    "マッチング公開情報を同期しました";
   }
  }catch(e){
-  if(account===uid)$("syncStatus").textContent="同期失敗: "+e.message;
+  if(account===uid){
+   $("syncStatus").textContent=
+    "同期失敗："+e.message;
+  }
  }finally{
   publishRunning=false;
-  if(publishPending){publishPending=false;schedulePublish(true)}
+  if(publishPending){
+   publishPending=false;
+   schedulePublish(true);
+  }
  }
 }
 
-/* 相性スコア */
+/* マッチング相性 */
+
 function pairResults(give,receive){
  const a={premium:[],regular:[],unknown:[]};
  const b={premium:[],regular:[],unknown:[]};
- give.forEach(id=>a[rarity(cardMap.get(id))].push(id));
- receive.forEach(id=>b[rarity(cardMap.get(id))].push(id));
+
+ give.forEach(id=>{
+  a[rarity(cardMap.get(id))].push(id);
+ });
+ receive.forEach(id=>{
+  b[rarity(cardMap.get(id))].push(id);
+ });
+
  const pairs=[];
- for(const k of ["premium","regular"]){
-  while(a[k].length&&b[k].length){
-   pairs.push({give:a[k].shift(),receive:b[k].shift(),same:true,kind:k});
+
+ for(const kind of ["premium","regular"]){
+  while(a[kind].length&&b[kind].length){
+   pairs.push({
+    give:a[kind].shift(),
+    receive:b[kind].shift(),
+    same:true,
+    kind
+   });
   }
  }
- const x=[...a.premium,...a.regular,...a.unknown];
- const y=[...b.premium,...b.regular,...b.unknown];
- while(x.length&&y.length){
-  pairs.push({give:x.shift(),receive:y.shift(),same:false});
+
+ const left=[...a.premium,...a.regular,...a.unknown];
+ const right=[...b.premium,...b.regular,...b.unknown];
+
+ while(left.length&&right.length){
+  pairs.push({
+   give:left.shift(),
+   receive:right.shift(),
+   same:false
+  });
  }
+
  return pairs;
 }
+
 function compatibility(give,receive,methods){
  const pairs=pairResults(give,receive);
  const same=pairs.filter(p=>p.same).length;
- return{
-  pairs,same,
-  score:Math.min(100,(same?50:20)+Math.min(25,9*same)+
-   Math.min(10,3*(pairs.length-1))+(methods.length?15:0))
- };
+ const score=Math.min(
+  100,
+  (same?50:20)+
+  Math.min(25,9*same)+
+  Math.min(10,3*Math.max(0,pairs.length-1))+
+  (methods.length?15:0)
+ );
+ return{pairs,same,score};
 }
+
 function renderMatching(){
- const root=$("matchList");root.replaceChildren();
+ const root=$("matchList");
+ root.replaceChildren();
  if(!ready)return;
+
  if(profile.privacy==="private"){
-  $("matchingStatus").textContent="鍵アカウントはマッチングに参加しません";
+  $("matchingStatus").textContent=
+   "鍵アカウントはマッチングに参加しません";
   return;
  }
- const have=new Set(cards.filter(c=>qty(c.id)>=2).map(c=>c.id));
- const want=new Set(cards.filter(c=>qty(c.id)===0).map(c=>c.id));
+
+ const have=new Set(
+  cards.filter(c=>qty(c.id)>=2).map(c=>c.id)
+ );
+ const want=new Set(
+  cards.filter(c=>qty(c.id)===0).map(c=>c.id)
+ );
+
  const results=[];
+
  for(const p of peers){
   if(p.uid===uid||p.visibility!=="public")continue;
-  const give=[...new Set(p.wants||[])].filter(id=>have.has(id));
-  const receive=[...new Set(p.offers||[])].filter(id=>want.has(id));
+
+  const give=[...new Set(p.wants||[])]
+   .filter(id=>have.has(id));
+  const receive=[...new Set(p.offers||[])]
+   .filter(id=>want.has(id));
+
   if(!give.length||!receive.length)continue;
-  const common=(profile.methods||[]).filter(m=>(p.methods||[]).includes(m));
-  results.push({...p,give,receive,common,...compatibility(give,receive,common)});
+
+  const common=(profile.methods||[])
+   .filter(m=>(p.methods||[]).includes(m));
+
+  results.push({
+   ...p,give,receive,common,
+   ...compatibility(give,receive,common)
+  });
  }
+
  results.sort((a,b)=>b.score-a.score||b.same-a.same);
- $("matchingStatus").textContent="交換候補："+results.length+"人";
- if(!results.length)root.append(make("p","muted","今は交換候補がいません"));
+
+ $("matchingStatus").textContent=
+  "交換候補："+results.length+"人";
+
+ if(!results.length){
+  root.append(make("p","muted",
+   "今は交換候補がいません"));
+ }
+
  for(const p of results){
-  const e=make("div","trade"),head=make("div","row");
-  head.append(make("strong","",p.nickname||"ユーザー"),make("strong","score",p.score+"点"));
-  e.append(head,make("p","muted","同グループ交換 "+p.same+
-   "組／交換方法："+(p.common.join("・")||"一致なし")));
+  const item=make("div","trade");
+  const head=make("div","row");
+
+  head.append(
+   make("strong","",p.nickname||"ユーザー"),
+   make("strong","score",p.score+"点")
+  );
+
+  item.append(
+   head,
+   make("p","muted",
+    "同グループ交換 "+p.same+
+    "組／交換方法："+(p.common.join("・")||"一致なし"))
+  );
+
   const sides=make("div","two");
-  for(const [t,ids] of [["あなたが譲れる",p.give],["相手が譲れる",p.receive]]){
-   const s=make("div","side");
-   s.append(make("h3","",t),miniature(ids));
-   sides.append(s);
+
+  for(const [title,ids] of [
+   ["あなたが譲れる",p.give],
+   ["相手が譲れる",p.receive]
+  ]){
+   const side=make("div","side");
+   side.append(make("h3","",title),miniature(ids));
+   sides.append(side);
   }
-  e.append(sides);
-  const btn=make("button","btn","♡ 交換を申請する");
+
+  item.append(sides);
+
+  const btn=make(
+   "button","btn","♡ 交換を申請する"
+  );
   btn.style.marginTop="12px";
   btn.onclick=()=>openRequest(p);
-  e.append(btn);root.append(e);
+
+  item.append(btn);
+  root.append(item);
  }
 }
 
-/* 交換申請 */
-function openRequest(p,trade=null){
- if(!isPublic())return alert("交換申請には公開プロフィールが必要です");
- requestTarget=p;requestTrade=trade;
+/* 複数枚交換申請 */
+
+function requestGrid(ids,set,rootId,countId){
+ const root=$(rootId);
+ root.replaceChildren();
+
+ for(const id of ids){
+  const c=cardMap.get(id);
+  const selected=set.has(id);
+  const btn=make(
+   "button",
+   selected?"chosen":""
+  );
+
+  btn.append(
+   art(c),
+   make("div","muted",c?.name||c?.number||id)
+  );
+
+  btn.onclick=()=>{
+   if(set.has(id)){
+    set.delete(id);
+   }else{
+    if(set.size>=10){
+     alert("片側は最大10種類まで選べます");
+     return;
+    }
+    set.add(id);
+   }
+   renderRequestChoices();
+  };
+
+  root.append(btn);
+ }
+
+ $(countId).textContent=set.size+"種類選択中";
+}
+
+function renderRequestChoices(){
+ requestGrid(
+  requestGiveOptions,
+  requestGive,
+  "requestOfferGrid",
+  "requestOfferCount"
+ );
+ requestGrid(
+  requestReceiveOptions,
+  requestReceive,
+  "requestWantGrid",
+  "requestWantCount"
+ );
+
+ $("requestSummary").textContent=
+  "あなたが譲る："+requestGive.size+
+  "種類 ／ 相手から受け取る："+requestReceive.size+
+  "種類";
+
+ $("requestSend").disabled=
+  requestBusy||
+  requestGive.size===0||
+  requestReceive.size===0;
+}
+
+function openRequest(peer,trade=null){
+ if(!isPublic()){
+  alert("交換申請には公開プロフィールが必要です");
+  return;
+ }
+
+ requestTarget=peer;
+ requestTrade=trade;
+ requestGive=new Set();
+ requestReceive=new Set();
+
  $("requestModal").classList.remove("hidden");
  $("requestError").textContent="";
  $("requestNote").value=trade?.note||"";
- $("requestTitle").textContent=trade?"交換条件を再提案":"交換を申請する";
- $("requestSend").textContent=trade?"変更した条件を再提案":"この内容で申請する";
+
+ $("requestTitle").textContent=trade?
+  "交換条件を再提案":"交換を申請する";
+
+ $("requestSend").textContent=trade?
+  "変更した条件を再提案":
+  "この内容で申請する";
+
  $("requestExplain").textContent=trade?
-  "再提案すると相手の承諾待ちに戻ります":
-  "相手が承諾するまで成立しません。条件が合わなければ交渉できます。";
- let give,receive;
+  "カードを複数選択できます。再提案すると相手の承諾待ちに戻ります。":
+  "双方の交換候補から最大10種類ずつ選べます。相手が承諾するまで成立しません。";
+
  if(trade){
-  give=trade.fromUid===uid?trade.offerIds:trade.wantIds;
-  receive=trade.fromUid===uid?trade.wantIds:trade.offerIds;
+  const fromMe=trade.fromUid===uid;
+
+  const myOffer=fromMe?
+   trade.offerIds:trade.wantIds;
+  const myWant=fromMe?
+   trade.wantIds:trade.offerIds;
+
+  /*
+   再提案時は現在の提案内容と、
+   現在の相互交換候補を合わせて選択可能にする。
+  */
+  const have=new Set(
+   cards.filter(c=>qty(c.id)>=2).map(c=>c.id)
+  );
+  const want=new Set(
+   cards.filter(c=>qty(c.id)===0).map(c=>c.id)
+  );
+
+  requestGiveOptions=[
+   ...new Set([
+    ...myOffer,
+    ...(peer.wants||[]).filter(id=>have.has(id))
+   ])
+  ];
+
+  requestReceiveOptions=[
+   ...new Set([
+    ...myWant,
+    ...(peer.offers||[]).filter(id=>want.has(id))
+   ])
+  ];
+
+  requestGive=new Set(myOffer);
+  requestReceive=new Set(myWant);
+
  }else{
-  give=p.give;receive=p.receive;
+  requestGiveOptions=[...peer.give];
+  requestReceiveOptions=[...peer.receive];
  }
- $("requestOffer").replaceChildren(...give.map(id=>
-  new Option(cardMap.get(id)?.name||cardMap.get(id)?.number||id,id)
- ));
- $("requestWant").replaceChildren(...receive.map(id=>
-  new Option(cardMap.get(id)?.name||cardMap.get(id)?.number||id,id)
- ));
+
  const possible=[...new Set([
-  ...(profile.methods||[]),...(p.methods||[]),trade?.method
+  ...(profile.methods||[]),
+  ...(peer.methods||[]),
+  trade?.method
  ].filter(Boolean))];
- $("requestMethod").replaceChildren(...possible.map(m=>new Option(m,m)));
- if(trade){
-  const myOffer=trade.fromUid===uid?trade.offerIds[0]:trade.wantIds[0];
-  const myWant=trade.fromUid===uid?trade.wantIds[0]:trade.offerIds[0];
-  $("requestOffer").value=myOffer;
-  $("requestWant").value=myWant;
-  $("requestMethod").value=trade.method;
- }
- if(!$("requestOffer").value||!$("requestWant").value){
-  $("requestError").textContent="選択可能なカードがありません";
-  $("requestSend").disabled=true;
- }else $("requestSend").disabled=false;
+
+ $("requestMethod").replaceChildren(
+  ...possible.map(m=>new Option(m,m))
+ );
+
+ if(trade)$("requestMethod").value=trade.method;
+
+ renderRequestChoices();
 }
-$("requestClose").onclick=()=>$("requestModal").classList.add("hidden");
+
+$("requestClose").onclick=()=>{
+ $("requestModal").classList.add("hidden");
+};
 
 $("requestSend").onclick=async()=>{
  if(requestBusy||!isPublic())return;
- const give=$("requestOffer").value;
- const receive=$("requestWant").value;
+
+ const give=[...requestGive];
+ const receive=[...requestReceive];
  const method=$("requestMethod").value;
  const note=$("requestNote").value.trim();
- const target=requestTarget,trade=requestTrade;
- if(!give||!receive||!method)return;
+
+ if(!give.length||!receive.length){
+  $("requestError").textContent=
+   "譲るカード・受け取るカードをそれぞれ選んでね";
+  return;
+ }
+
+ if(give.length>10||receive.length>10||!method)return;
+
+ const trade=requestTrade;
+ const peer=requestTarget;
+
  requestBusy=true;
  $("requestSend").disabled=true;
  $("requestError").textContent="";
+
  try{
   if(trade){
    const fromMe=trade.fromUid===uid;
-   await updateDoc(doc(db,"tradeRequests",trade.id),{
-    offerIds:fromMe?[give]:[receive],
-    wantIds:fromMe?[receive]:[give],
-    method,note,status:"pending",
-    revision:trade.revision+1,
-    proposedBy:uid,lastActor:uid,
-    updatedAt:serverTimestamp()
-   });
+
+   await updateDoc(
+    doc(db,"tradeRequests",trade.id),
+    {
+     offerIds:fromMe?give:receive,
+     wantIds:fromMe?receive:give,
+     method,
+     note,
+     status:"pending",
+     revision:trade.revision+1,
+     proposedBy:uid,
+     lastActor:uid,
+     updatedAt:serverTimestamp()
+    }
+   );
   }else{
-   await addDoc(collection(db,"tradeRequests"),{
-    fromUid:uid,toUid:target.uid,
-    participants:[uid,target.uid],
-    offerIds:[give],wantIds:[receive],
-    method,note,status:"pending",
-    revision:1,proposedBy:uid,lastActor:uid,
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
-   });
+   await addDoc(
+    collection(db,"tradeRequests"),
+    {
+     fromUid:uid,
+     toUid:peer.uid,
+     participants:[uid,peer.uid],
+     offerIds:give,
+     wantIds:receive,
+     method,
+     note,
+     status:"pending",
+     revision:1,
+     proposedBy:uid,
+     lastActor:uid,
+     createdAt:serverTimestamp(),
+     updatedAt:serverTimestamp()
+    }
+   );
   }
+
   $("requestModal").classList.add("hidden");
   showPage("trades");
-  alert(trade?"再提案しました":"交換申請を送りました");
+
+  alert(trade?
+   "交換条件を再提案しました":
+   "交換申請を送りました");
+
  }catch(e){
-  $("requestError").textContent="申請失敗: "+e.message;
+  $("requestError").textContent=
+   "申請失敗："+e.message;
  }finally{
-  requestBusy=false;$("requestSend").disabled=false;
+  requestBusy=false;
+  renderRequestChoices();
  }
 };
 
-function myTradeName(id){
- return id===uid?"あなた":peers.find(p=>p.uid===id)?.nickname||"ユーザー";
+/* 交換申請一覧 */
+
+function peerName(id){
+ if(id===uid)return profile.nickname;
+ return peers.find(p=>p.uid===id)?.nickname||"ユーザー";
 }
+
 function tradeStatus(t){
  return({
   pending:"承諾待ち",
@@ -760,192 +1270,302 @@ function tradeStatus(t){
   declined:"お断り"
  })[t.status]||t.status;
 }
+
 async function changeTrade(t,status){
- const msg=status==="accepted"?
+ const message=status==="accepted"?
   "この条件でマッチングを成立させますか？":
   status==="declined"?
-  "この申請をお断りしますか？":"交渉を開始しますか？";
- if(!confirm(msg))return;
+  "この申請をお断りしますか？":
+  "交渉を開始しますか？";
+
+ if(!confirm(message))return;
+
  try{
-  await updateDoc(doc(db,"tradeRequests",t.id),{
-   status,lastActor:uid,updatedAt:serverTimestamp()
-  });
+  await updateDoc(
+   doc(db,"tradeRequests",t.id),
+   {
+    status,
+    lastActor:uid,
+    updatedAt:serverTimestamp()
+   }
+  );
   if(status==="negotiating")tradeThreadId=t.id;
- }catch(e){alert("操作失敗: "+e.message)}
+ }catch(e){
+  alert("操作失敗："+e.message);
+ }
 }
+
 function renderTradeList(){
- const root=$("tradeList");root.replaceChildren();
- const list=trades.filter(t=>tradeFilter==="all"||
-  ["pending","negotiating"].includes(t.status));
- $("tradesStatus").textContent="表示："+list.length+"件";
+ const root=$("tradeList");
+ root.replaceChildren();
+
+ const list=trades.filter(t=>
+  tradeFilter==="all"||
+  ["pending","negotiating"].includes(t.status)
+ );
+
+ $("tradesStatus").textContent=
+  "表示："+list.length+"件";
+
  if(!list.length){
-  root.append(make("p","muted","該当する申請はありません"));
+  root.append(make("p","muted",
+   "該当する申請はありません"));
   return;
  }
+
  for(const t of list){
-  const e=make("div","trade");
+  const item=make("div","trade");
   const incoming=t.toUid===uid;
   const other=incoming?t.fromUid:t.toUid;
+
   const head=make("div","row");
   head.append(
-   make("strong","",incoming?
-    myTradeName(other)+"さんからの申請":
-    myTradeName(other)+"さんへの申請"),
+   make("strong","",
+    incoming?
+     peerName(other)+"さんからの申請":
+     peerName(other)+"さんへの申請"),
    make("span","tag",tradeStatus(t))
   );
-  e.append(head);
+  item.append(head);
+
   const sides=make("div","two");
+
   for(const [label,ids] of [
    ["申請者が譲る",t.offerIds||[]],
    ["申請者が受け取る",t.wantIds||[]]
   ]){
-   const s=make("div","side");
-   s.append(make("strong","",label),miniature(ids));
-   sides.append(s);
+   const side=make("div","side");
+   side.append(
+    make("strong","",
+     label+"（"+ids.length+"種類）"),
+    miniature(ids)
+   );
+   sides.append(side);
   }
-  e.append(sides,make("p","muted",
-   "交換方法："+t.method+" ／ 第"+t.revision+"案"));
-  if(t.note)e.append(make("p","note",t.note));
+
+  item.append(
+   sides,
+   make("p","muted",
+    "交換方法："+t.method+
+    " ／ 第"+t.revision+"案")
+  );
+
+  if(t.note)item.append(make("p","note",t.note));
+
   const actions=make("div","actions");
-  const canRespond=t.status==="pending"&&t.proposedBy!==uid;
+  const canRespond=
+   t.status==="pending"&&t.proposedBy!==uid;
+
   if(canRespond){
    for(const [label,status,cls] of [
     ["承諾する","accepted","btn"],
     ["交渉する","negotiating","btn light"],
     ["お断りする","declined","btn outline"]
    ]){
-    const b=make("button",cls,label);
-    b.onclick=()=>changeTrade(t,status);
-    actions.append(b);
+    const btn=make("button",cls,label);
+    btn.onclick=()=>changeTrade(t,status);
+    actions.append(btn);
    }
   }
+
   if(t.status==="negotiating"){
-   const b=make("button","btn light",
-    tradeThreadId===t.id?"交渉コメントを閉じる":"交渉コメントを開く");
-   b.onclick=()=>{
-    tradeThreadId=tradeThreadId===t.id?null:t.id;
+   const comment=make(
+    "button","btn light",
+    tradeThreadId===t.id?
+     "交渉コメントを閉じる":
+     "交渉コメントを開く"
+   );
+
+   comment.onclick=()=>{
+    tradeThreadId=
+     tradeThreadId===t.id?null:t.id;
     renderTradeList();
    };
-   actions.append(b);
-   const p=make("button","btn","条件を変更・再提案");
-   p.onclick=()=>{
-    const peer=peers.find(x=>x.uid===other)||
+
+   const repropose=make(
+    "button","btn","条件を変更・再提案"
+   );
+
+   repropose.onclick=()=>{
+    const peer=peers.find(p=>p.uid===other)||
      {uid:other,methods:[t.method]};
     openRequest(peer,t);
    };
-   actions.append(p);
-   const deny=make("button","btn outline","交渉を終了してお断り");
-   deny.onclick=()=>changeTrade(t,"declined");
-   actions.append(deny);
+
+   const decline=make(
+    "button","btn outline",
+    "交渉を終了してお断り"
+   );
+   decline.onclick=()=>changeTrade(t,"declined");
+
+   actions.append(comment,repropose,decline);
   }
-  e.append(actions);
+
+  item.append(actions);
+
   if(tradeThreadId===t.id&&t.status==="negotiating"){
    const thread=make("div","box");
-   thread.append(make("h3","","非公開の交渉コメント"));
-   const msgs=messagesByTrade.get(t.id)||[];
-   for(const m of msgs){
-    const item=make("div","comment");
-    item.append(
-     make("strong","",myTradeName(m.authorUid)),
+
+   thread.append(make("h3","",
+    "非公開の交渉コメント"));
+
+   const messages=messagesByTrade.get(t.id)||[];
+
+   for(const m of messages){
+    const box=make("div","comment");
+    box.append(
+     make("strong","",peerName(m.authorUid)),
      make("p","",m.body),
      make("span","muted",dateText(m.createdAt))
     );
-    thread.append(item);
+    thread.append(box);
    }
+
    const form=document.createElement("form");
    const input=document.createElement("textarea");
    const send=make("button","btn","送信");
    const error=make("p","error");
-   input.maxLength=300;input.required=true;
-   input.placeholder="希望する条件を相談できます";
+
+   input.maxLength=300;
+   input.required=true;
+   input.placeholder=
+    "交換したいカードや条件を相談できます";
+
    form.append(input,send,error);
-   form.onsubmit=async ev=>{
-    ev.preventDefault();
+
+   form.onsubmit=async e=>{
+    e.preventDefault();
     const body=input.value.trim();
     if(!body)return;
+
     send.disabled=true;
+
     try{
-     await addDoc(collection(db,"tradeRequests",t.id,"messages"),{
-      authorUid:uid,body,createdAt:serverTimestamp()
-     });
+     await addDoc(
+      collection(db,
+       "tradeRequests",t.id,"messages"),
+      {
+       authorUid:uid,
+       body,
+       createdAt:serverTimestamp()
+      }
+     );
      input.value="";
-    }catch(err){error.textContent=err.message}
-    finally{send.disabled=false}
+    }catch(err){
+     error.textContent=err.message;
+    }finally{
+     send.disabled=false;
+    }
    };
-   thread.append(form);e.append(thread);
+
+   thread.append(form);
+   item.append(thread);
   }
-  root.append(e);
+
+  root.append(item);
  }
 }
-document.querySelectorAll("[data-trade-filter]").forEach(b=>b.onclick=()=>{
- tradeFilter=b.dataset.tradeFilter;
- document.querySelectorAll("[data-trade-filter]").forEach(x=>
-  x.classList.toggle("on",x===b)
- );
- renderTradeList();
+
+document.querySelectorAll("[data-trade-filter]").forEach(b=>{
+ b.onclick=()=>{
+  tradeFilter=b.dataset.tradeFilter;
+  document.querySelectorAll("[data-trade-filter]")
+   .forEach(x=>x.classList.toggle("on",x===b));
+  renderTradeList();
+ };
 });
 
 /* アプリ内通知 */
-function seenKey(k){return readKeys.has(k)}
+
 function saveRead(){
- if(uid)localStorage.setItem("aikatsu-read-"+uid,
-  JSON.stringify([...readKeys]));
+ if(uid){
+  localStorage.setItem(
+   "aikatsu-read-"+uid,
+   JSON.stringify([...readKeys])
+  );
+ }
 }
+
 function collectNotifications(){
  const out=[];
+
  for(const t of trades){
-  if(t.lastActor!==uid){
-   const label=t.status==="pending"?"交換申請・再提案が届きました":
-    t.status==="accepted"?"交換申請が承諾されました":
-    t.status==="declined"?"交換申請が断られました":
-    "交渉が開始されました";
+  const other=t.fromUid===uid?t.toUid:t.fromUid;
+
+  if(t.lastActor!==uid&&t.updatedAt?.toMillis?.()){
+   let label="交換申請が更新されました";
+
+   if(t.status==="pending"){
+    label="交換申請・再提案が届きました";
+   }else if(t.status==="accepted"){
+    label="マッチングが成立しました！";
+   }else if(t.status==="declined"){
+    label="交換申請が断られました";
+   }else if(t.status==="negotiating"){
+    label="交渉が開始されました";
+   }
+
    out.push({
-    key:"trade:"+t.id+":"+t.revision+":"+t.status+":"+
-     Math.floor((t.updatedAt?.toMillis?.()||0)/1000),
-    at:t.updatedAt?.toMillis?.()||0,
+    key:"trade:"+t.id+":"+t.revision+":"+
+     t.status+":"+t.updatedAt.toMillis(),
+    at:t.updatedAt.toMillis(),
     text:label,
-    detail:"交換相手："+myTradeName(
-     t.fromUid===uid?t.toUid:t.fromUid
-    ),
+    detail:"交換相手："+peerName(other),
     go:()=>{
-     tradeThreadId=t.id;showPage("trades");renderTradeList();
+     tradeThreadId=t.id;
+     showPage("trades");
+     renderTradeList();
     }
    });
   }
+
   for(const m of messagesByTrade.get(t.id)||[]){
-   if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+   if(m.authorUid===uid||
+    !m.createdAt?.toMillis?.())continue;
+
    out.push({
     key:"message:"+t.id+":"+m.id,
     at:m.createdAt.toMillis(),
     text:"交渉コメントが届きました",
-    detail:myTradeName(m.authorUid),
+    detail:peerName(m.authorUid),
     go:()=>{
-     tradeThreadId=t.id;showPage("trades");renderTradeList();
+     tradeThreadId=t.id;
+     showPage("trades");
+     renderTradeList();
     }
    });
   }
  }
- for(const p of posts.filter(x=>x.authorUid===uid)){
+
+ for(const p of posts.filter(p=>p.authorUid===uid)){
   for(const m of postMessagesById.get(p.id)||[]){
-   if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+   if(m.authorUid===uid||
+    !m.createdAt?.toMillis?.())continue;
+
    out.push({
     key:"postcomment:"+p.id+":"+m.id,
     at:m.createdAt.toMillis(),
-    text:"交換掲示板にコメントが届きました",
-    detail:myTradeName(m.authorUid),
+    text:"掲示板にコメントが届きました",
+    detail:peerName(m.authorUid),
     go:()=>{
-     postThreadId=p.id;showPage("board");renderPosts();
+     postThreadId=p.id;
+     watchViewingPost(p.id);
+     showPage("board");
+     renderPosts();
     }
    });
   }
  }
+
  for(const m of oldMessages){
-  if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+  if(m.authorUid===uid||
+   !m.createdAt?.toMillis?.())continue;
+
   out.push({
    key:"profilecomment:"+m.id,
    at:m.createdAt.toMillis(),
    text:"プロフィールに交換相談が届きました",
-   detail:myTradeName(m.authorUid),
+   detail:peerName(m.authorUid),
    go:()=>{
     showPage("matching");
     $("oldThread").classList.remove("hidden");
@@ -953,237 +1573,388 @@ function collectNotifications(){
    }
   });
  }
+
  out.sort((a,b)=>b.at-a.at);
  notifications=out.slice(0,150);
  renderNotifications();
 }
+
 function renderNotifications(){
- const root=$("notificationList");root.replaceChildren();
- const unread=notifications.filter(n=>!seenKey(n.key)).length;
- for(const x of [$("unreadPill"),$("navCount")]){
-  x.classList.toggle("hidden",!unread);
-  x.textContent=String(unread);
+ const root=$("notificationList");
+ root.replaceChildren();
+
+ const unread=notifications.filter(
+  n=>!readKeys.has(n.key)
+ ).length;
+
+ for(const id of ["unreadPill","navCount"]){
+  $(id).classList.toggle("hidden",!unread);
+  $(id).textContent=String(unread);
  }
+
  if(!notifications.length){
-  root.append(make("p","muted","まだ通知はありません"));
+  root.append(make("p","muted",
+   "まだ通知はありません"));
   return;
  }
+
  for(const n of notifications.slice(0,40)){
-  const b=make("button",
-   "notification"+(seenKey(n.key)?"":" unread"));
-  b.append(
+  const btn=make(
+   "button",
+   "notification"+(readKeys.has(n.key)?"":" unread")
+  );
+
+  btn.append(
    make("strong","",n.text),
    make("div","muted",n.detail)
   );
-  b.onclick=()=>{
-   readKeys.add(n.key);saveRead();
-   renderNotifications();n.go();
+
+  btn.onclick=()=>{
+   readKeys.add(n.key);
+   saveRead();
+   renderNotifications();
+   n.go();
   };
-  root.append(b);
+
+  root.append(btn);
  }
 }
+
 $("markRead").onclick=()=>{
  notifications.forEach(n=>readKeys.add(n.key));
- saveRead();renderNotifications();
+ saveRead();
+ renderNotifications();
 };
+
 function watchTrades(){
- const q=query(collection(db,"tradeRequests"),
-  where("participants","array-contains",uid),limit(100));
+ const q=query(
+  collection(db,"tradeRequests"),
+  where("participants","array-contains",uid),
+  limit(100)
+ );
+
  stops.push(onSnapshot(q,s=>{
-  trades=s.docs.map(d=>({id:d.id,...d.data()}))
-   .sort((a,b)=>
-    (b.updatedAt?.toMillis?.()||0)-
-    (a.updatedAt?.toMillis?.()||0)
-   );
+  trades=s.docs.map(d=>({
+   id:d.id,...d.data()
+  })).sort((a,b)=>
+   (b.updatedAt?.toMillis?.()||0)-
+   (a.updatedAt?.toMillis?.()||0)
+  );
+
   const current=new Set(trades.map(t=>t.id));
+
   for(const [id,stop] of tradeMessageStops){
    if(!current.has(id)){
-    stop();tradeMessageStops.delete(id);
+    stop();
+    tradeMessageStops.delete(id);
     messagesByTrade.delete(id);
    }
   }
+
   for(const t of trades){
    if(tradeMessageStops.has(t.id))continue;
+
    const stop=onSnapshot(
-    query(collection(db,"tradeRequests",t.id,"messages"),limit(100)),
-    s=>{
-     messagesByTrade.set(t.id,s.docs.map(d=>({
-      id:d.id,...d.data()
-     })).sort((a,b)=>
-      (a.createdAt?.toMillis?.()||0)-
-      (b.createdAt?.toMillis?.()||0)
-     ));
+    query(
+     collection(db,
+      "tradeRequests",t.id,"messages"),
+     limit(100)
+    ),
+    snapshot=>{
+     messagesByTrade.set(
+      t.id,
+      snapshot.docs.map(d=>({
+       id:d.id,...d.data()
+      })).sort((a,b)=>
+       (a.createdAt?.toMillis?.()||0)-
+       (b.createdAt?.toMillis?.()||0)
+      )
+     );
      collectNotifications();
      if(tradeThreadId===t.id)renderTradeList();
     },
     ()=>{}
    );
+
    tradeMessageStops.set(t.id,stop);
   }
-  renderTradeList();collectNotifications();
+
+  renderTradeList();
+  collectNotifications();
+
  },e=>{
-  $("tradesStatus").textContent="申請読み込み失敗："+e.message;
+  $("tradesStatus").textContent=
+   "申請読み込み失敗："+e.message;
  }));
 }
 
-/* 掲示板：カード選択 */
+/* 掲示板：画像からカード選択 */
+
 function chosenSet(){
- return pickerKind==="offers"?offerChoice:wantChoice;
+ return pickerKind==="offers"?
+  offerChoice:wantChoice;
 }
+
 function renderSelected(){
  for(const [set,id] of [
-  [offerChoice,"selectedOffers"],[wantChoice,"selectedWants"]
+  [offerChoice,"selectedOffers"],
+  [wantChoice,"selectedWants"]
  ]){
-  const root=$(id);root.replaceChildren();
+  const root=$(id);
+  root.replaceChildren();
+
   for(const cid of set){
-   const b=make("button","card"),c=cardMap.get(cid);
-   b.append(art(c),make("span","name",
-    (c?.name||c?.number||cid)+" ×"));
-   b.onclick=()=>{
-    set.delete(cid);renderSelected();renderPicker();
+   const c=cardMap.get(cid);
+   const btn=make("button","card");
+
+   btn.append(
+    art(c),
+    make("span","name",
+     (c?.name||c?.number||cid)+" ×")
+   );
+
+   btn.onclick=()=>{
+    set.delete(cid);
+    renderSelected();
+    renderPicker();
    };
-   root.append(b);
+
+   root.append(btn);
   }
  }
 }
+
 function openPicker(kind){
- pickerKind=kind;pickerFilter="all";
+ pickerKind=kind;
+ pickerFilter="all";
  $("pickerSearch").value="";
  $("pickerTitle").textContent=kind==="offers"?
   "譲れるカードを選ぶ":"欲しいカードを選ぶ";
  $("pickerModal").classList.remove("hidden");
  renderPicker();
 }
+
 $("pickOffers").onclick=()=>openPicker("offers");
 $("pickWants").onclick=()=>openPicker("wants");
-$("pickerClose").onclick=()=>
+
+$("pickerClose").onclick=()=>{
  $("pickerModal").classList.add("hidden");
-document.querySelectorAll("[data-pickfilter]").forEach(b=>b.onclick=()=>{
- pickerFilter=b.dataset.pickfilter;renderPicker();
+};
+
+document.querySelectorAll("[data-pickfilter]").forEach(b=>{
+ b.onclick=()=>{
+  pickerFilter=b.dataset.pickfilter;
+  renderPicker();
+ };
 });
+
 $("pickerSearch").oninput=renderPicker;
+
 function renderPicker(){
- const root=$("pickerGrid"),set=chosenSet();
- const q=$("pickerSearch").value.toLowerCase();
+ const root=$("pickerGrid");
+ const set=chosenSet();
+ const text=$("pickerSearch").value.toLowerCase();
  root.replaceChildren();
+
  document.querySelectorAll("[data-pickfilter]").forEach(b=>
-  b.classList.toggle("on",b.dataset.pickfilter===pickerFilter)
+  b.classList.toggle("on",
+   b.dataset.pickfilter===pickerFilter)
  );
- $("pickerCount").textContent=set.size+" / 50種類選択中";
+
+ $("pickerCount").textContent=
+  set.size+" / 50種類選択中";
+
  for(const c of cards){
   const n=qty(c.id);
-  if(pickerFilter==="owned"&&!n||
-     pickerFilter==="extra"&&n<2||
-     pickerFilter==="missing"&&n)continue;
-  if(!(c.name+" "+c.number).toLowerCase().includes(q))continue;
-  const b=make("button",set.has(c.id)?"chosen":"");
-  b.append(art(c),make("div","muted",c.name||c.number));
-  b.onclick=()=>{
-   if(set.has(c.id))set.delete(c.id);
-   else{
-    if(set.size>=50)return alert("50種類まで選択できます");
+
+  if(pickerFilter==="owned"&&!n)continue;
+  if(pickerFilter==="extra"&&n<2)continue;
+  if(pickerFilter==="missing"&&n)continue;
+  if(!(c.name+" "+c.number)
+   .toLowerCase().includes(text))continue;
+
+  const btn=make(
+   "button",set.has(c.id)?"chosen":""
+  );
+  btn.append(
+   art(c),
+   make("div","muted",c.name||c.number)
+  );
+
+  btn.onclick=()=>{
+   if(set.has(c.id)){
+    set.delete(c.id);
+   }else{
+    if(set.size>=50){
+     alert("50種類まで選択できます");
+     return;
+    }
     set.add(c.id);
    }
-   renderPicker();renderSelected();
+   renderPicker();
+   renderSelected();
   };
-  root.append(b);
+
+  root.append(btn);
  }
 }
+
 function resetPostEditor(){
- postEditId=null;offerChoice=new Set();wantChoice=new Set();
- $("postBody").value="";$("postError").textContent="";
+ postEditId=null;
+ offerChoice=new Set();
+ wantChoice=new Set();
+ $("postBody").value="";
+ $("postError").textContent="";
  $("postEditorTitle").textContent="新しい交換募集";
  $("savePost").textContent="♡ 募集を公開";
  $("cancelPostEdit").classList.add("hidden");
  renderSelected();
 }
+
 $("cancelPostEdit").onclick=resetPostEditor;
+
 $("savePost").onclick=async()=>{
  if(postBusy)return;
- if(!isPublic())return alert("投稿には公開プロフィールが必要です");
- const offerIds=[...offerChoice],wantIds=[...wantChoice];
+ if(!isPublic()){
+  alert("投稿には公開プロフィールが必要です");
+  return;
+ }
+
+ const offerIds=[...offerChoice];
+ const wantIds=[...wantChoice];
  const body=$("postBody").value.trim();
+
  if(!offerIds.length||!wantIds.length){
   $("postError").textContent=
    "譲れる・欲しいカードをそれぞれ選択してください";
   return;
  }
- postBusy=true;$("savePost").disabled=true;
+
+ postBusy=true;
+ $("savePost").disabled=true;
+
  try{
   if(postEditId){
-   await updateDoc(doc(db,"posts",postEditId),{
-    offerIds,wantIds,body,updatedAt:serverTimestamp()
-   });
+   await updateDoc(
+    doc(db,"posts",postEditId),
+    {
+     offerIds,
+     wantIds,
+     body,
+     updatedAt:serverTimestamp()
+    }
+   );
   }else{
    await addDoc(collection(db,"posts"),{
-    authorUid:uid,visibility:"public",
-    offerIds,wantIds,body,
+    authorUid:uid,
+    visibility:"public",
+    offerIds,
+    wantIds,
+    body,
     createdAt:serverTimestamp(),
     updatedAt:serverTimestamp()
    });
   }
-  resetPostEditor();alert("募集を保存しました");
+
+  resetPostEditor();
+  alert("募集を保存しました");
+
  }catch(e){
-  $("postError").textContent="保存失敗: "+e.message;
+  $("postError").textContent=
+   "保存失敗："+e.message;
  }finally{
-  postBusy=false;$("savePost").disabled=false;
+  postBusy=false;
+  $("savePost").disabled=false;
  }
 };
 
-/* 掲示板：公開募集・コメント */
-function peerName(id){
- return id===uid?profile.nickname:
-  peers.find(p=>p.uid===id)?.nickname||"ユーザー";
-}
+/* 掲示板：投稿とコメント */
+
 function renderPosts(){
- const root=$("postList");root.replaceChildren();
+ const root=$("postList");
+ root.replaceChildren();
+
  const text=$("postSearch").value.toLowerCase();
- const f=$("postFilter").value;
+ const filter=$("postFilter").value;
+
  const list=posts.filter(p=>{
-  if(f==="mine"&&p.authorUid!==uid)return false;
-  const ids=[...(p.offerIds||[]),...(p.wantIds||[])];
-  if(["premium","regular"].includes(f)&&
-   !ids.some(id=>rarity(cardMap.get(id))===f))return false;
-  return(
+  if(filter==="mine"&&p.authorUid!==uid)return false;
+
+  const ids=[
+   ...(p.offerIds||[]),
+   ...(p.wantIds||[])
+  ];
+
+  if(["premium","regular"].includes(filter)&&
+   !ids.some(id=>rarity(cardMap.get(id))===filter)){
+   return false;
+  }
+
+  const words=
    (p.body||"")+" "+peerName(p.authorUid)+" "+
    ids.map(id=>{
     const c=cardMap.get(id);
     return(c?.name||"")+" "+(c?.number||id);
-   }).join(" ")
-  ).toLowerCase().includes(text);
+   }).join(" ");
+
+  return words.toLowerCase().includes(text);
  });
+
  $("postsStatus").textContent=
-  "公開募集 "+posts.length+"件／表示 "+list.length+"件";
- if(!list.length)root.append(make("p","muted","募集はありません"));
+  "公開募集 "+posts.length+
+  "件／表示 "+list.length+"件";
+
+ if(!list.length){
+  root.append(make("p","muted","募集はありません"));
+ }
+
  for(const p of list){
-  const e=make("div","post");
-  e.append(
+  const item=make("div","post");
+
+  item.append(
    make("strong","",peerName(p.authorUid)),
    make("p","muted",dateText(p.createdAt))
   );
+
   const sides=make("div","two");
+
   for(const [label,ids] of [
    ["譲れる",p.offerIds||[]],
    ["欲しい",p.wantIds||[]]
   ]){
-   const s=make("div","side");
-   s.append(make("h3","",label),miniature(ids));
-   sides.append(s);
+   const side=make("div","side");
+   side.append(
+    make("h3","",label),
+    miniature(ids)
+   );
+   sides.append(side);
   }
-  e.append(sides);
-  if(p.body)e.append(make("p","",p.body));
+
+  item.append(sides);
+
+  if(p.body)item.append(make("p","",p.body));
+
   const actions=make("div","actions");
-  const comment=make("button","btn light",
-   postThreadId===p.id?"コメントを閉じる":"コメント・返信");
-  comment.onclick=()=>{
-   postThreadId=postThreadId===p.id?null:p.id;
+
+  const commentButton=make(
+   "button","btn light",
+   postThreadId===p.id?
+    "コメントを閉じる":"コメント・返信"
+  );
+
+  commentButton.onclick=()=>{
+   postThreadId=
+    postThreadId===p.id?null:p.id;
    watchViewingPost(postThreadId);
    renderPosts();
   };
-  actions.append(comment);
+
+  actions.append(commentButton);
+
   if(p.authorUid===uid){
    const edit=make("button","btn outline","編集");
    const del=make("button","btn outline","削除");
+
    edit.onclick=()=>{
     postEditId=p.id;
     offerChoice=new Set(p.offerIds||[]);
@@ -1192,270 +1963,469 @@ function renderPosts(){
     $("postEditorTitle").textContent="募集を編集";
     $("savePost").textContent="変更を保存";
     $("cancelPostEdit").classList.remove("hidden");
-    renderSelected();window.scrollTo(0,0);
+    renderSelected();
+    window.scrollTo(0,0);
    };
+
    del.onclick=async()=>{
     if(!confirm("募集を削除しますか？"))return;
-    try{await deleteDoc(doc(db,"posts",p.id))}
-    catch(e){alert(e.message)}
+    try{
+     await deleteDoc(doc(db,"posts",p.id));
+    }catch(e){
+     alert(e.message);
+    }
    };
+
    actions.append(edit,del);
   }
-  e.append(actions);
+
+  item.append(actions);
+
   if(postThreadId===p.id){
    const box=make("div","box");
+
    box.append(make("p","note",
     "公開コメントです。住所や電話番号などは書かないでください。"));
+
    for(const m of postMessagesById.get(p.id)||[]){
-    const item=make("div","comment");
-    item.append(
+    const c=make("div","comment");
+
+    c.append(
      make("strong","",peerName(m.authorUid)),
      make("p","",m.body),
      make("span","muted",dateText(m.createdAt))
     );
+
     if(m.authorUid===uid||p.authorUid===uid){
-     const del=make("button","btn light small","削除");
+     const del=make(
+      "button","btn light small","削除"
+     );
+
      del.onclick=async()=>{
-      if(confirm("コメントを削除しますか？")){
-       try{
-        await deleteDoc(doc(db,"posts",p.id,"comments",m.id));
-       }catch(err){alert(err.message)}
+      if(!confirm("コメントを削除しますか？"))return;
+      try{
+       await deleteDoc(
+        doc(db,"posts",p.id,"comments",m.id)
+       );
+      }catch(e){
+       alert(e.message);
       }
      };
-     item.append(del);
+
+     c.append(del);
     }
-    box.append(item);
+
+    box.append(c);
    }
+
    if(isPublic()){
     const form=document.createElement("form");
     const input=document.createElement("textarea");
     const send=make("button","btn","コメントを送信");
     const err=make("div","error");
-    input.maxLength=300;input.required=true;
+
+    input.maxLength=300;
+    input.required=true;
     form.append(input,send,err);
-    form.onsubmit=async ev=>{
-     ev.preventDefault();
+
+    form.onsubmit=async e=>{
+     e.preventDefault();
      const body=input.value.trim();
      if(!body)return;
      send.disabled=true;
+
      try{
-      await addDoc(collection(db,"posts",p.id,"comments"),{
-       authorUid:uid,body,createdAt:serverTimestamp()
-      });
+      await addDoc(
+       collection(db,"posts",p.id,"comments"),
+       {
+        authorUid:uid,
+        body,
+        createdAt:serverTimestamp()
+       }
+      );
       input.value="";
-     }catch(x){err.textContent=x.message}
-     finally{send.disabled=false}
+     }catch(x){
+      err.textContent=x.message;
+     }finally{
+      send.disabled=false;
+     }
     };
+
     box.append(form);
    }
-   e.append(box);
+
+   item.append(box);
   }
-  root.append(e);
+
+  root.append(item);
  }
 }
+
 $("postSearch").oninput=renderPosts;
 $("postFilter").onchange=renderPosts;
 
 function watchPosts(){
  stops.push(onSnapshot(
-  query(collection(db,"posts"),where("visibility","==","public"),limit(100)),
-  s=>{
-   posts=s.docs.map(d=>({id:d.id,...d.data()}))
-    .sort((a,b)=>
-     (b.createdAt?.toMillis?.()||0)-
-     (a.createdAt?.toMillis?.()||0)
-    );
-   const own=new Set(posts.filter(p=>p.authorUid===uid).map(p=>p.id));
+  query(
+   collection(db,"posts"),
+   where("visibility","==","public"),
+   limit(100)
+  ),
+  snapshot=>{
+   posts=snapshot.docs.map(d=>({
+    id:d.id,...d.data()
+   })).sort((a,b)=>
+    (b.createdAt?.toMillis?.()||0)-
+    (a.createdAt?.toMillis?.()||0)
+   );
+
+   const mine=new Set(
+    posts.filter(p=>p.authorUid===uid).map(p=>p.id)
+   );
+
    for(const [id,stop] of postCommentStops){
-    if(!own.has(id)){
-     stop();postCommentStops.delete(id);
+    if(!mine.has(id)){
+     stop();
+     postCommentStops.delete(id);
      postMessagesById.delete(id);
     }
    }
+
    for(const p of posts.filter(p=>p.authorUid===uid)){
     if(postCommentStops.has(p.id))continue;
+
     const stop=onSnapshot(
-     query(collection(db,"posts",p.id,"comments"),limit(100)),
+     query(
+      collection(db,"posts",p.id,"comments"),
+      limit(100)
+     ),
      s=>{
-      postMessagesById.set(p.id,s.docs.map(d=>({
-       id:d.id,...d.data()
-      })));
+      postMessagesById.set(
+       p.id,
+       s.docs.map(d=>({id:d.id,...d.data()}))
+      );
       collectNotifications();
       if(postThreadId===p.id)renderPosts();
-     },()=>{}
+     },
+     ()=>{}
     );
+
     postCommentStops.set(p.id,stop);
    }
-   renderPosts();collectNotifications();
+
+   renderPosts();
+   collectNotifications();
+
   },
-  e=>$("postsStatus").textContent="掲示板エラー: "+e.message
- ));
-}
-function watchViewingPost(id){
- if(viewingPostStop){viewingPostStop();viewingPostStop=null}
- viewingPostId=id;
- if(!id||postCommentStops.has(id))return;
- viewingPostStop=onSnapshot(
-  query(collection(db,"posts",id,"comments"),limit(100)),
-  s=>{
-   postMessagesById.set(id,s.docs.map(d=>({
-    id:d.id,...d.data()
-   })));
-   if(postThreadId===id)renderPosts();
-  },()=>{}
- );
-}
-
-/* 以前のプロフィールコメント */
-function renderOldComments(){
- $("oldCommentList").replaceChildren(...oldMessages.map(m=>{
-  const e=make("div","comment");
-  e.append(
-   make("strong","",peerName(m.authorUid)),
-   make("p","",m.body)
-  );
-  return e;
- }));
-}
-$("oldComments").onclick=()=>{
- $("oldThread").classList.toggle("hidden");
-};
-$("oldCommentForm").onsubmit=async e=>{
- e.preventDefault();
- if(!isPublic())return alert("公開プロフィールで利用してください");
- const body=$("oldCommentBody").value.trim();
- if(!body)return;
- try{
-  await addDoc(collection(db,"matchingProfiles",uid,"comments"),{
-   authorUid:uid,body,createdAt:serverTimestamp()
-  });
-  $("oldCommentBody").value="";
- }catch(err){$("oldCommentError").textContent=err.message}
-};
-function watchOldComments(){
- if(oldCommentsStop)oldCommentsStop();
- oldCommentsStop=onSnapshot(
-  query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),
-  s=>{
-   oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));
-   renderOldComments();collectNotifications();
-  },()=>{}
- );
-}
-
-/* Firestore監視とログイン */
-function renderAll(){
- renderHome();renderAlbum();renderMatching();
- renderPosts();renderTradeList();renderNotifications();
-}
-function watchPeers(){
- stops.push(onSnapshot(
-  query(collection(db,"matchingProfiles"),
-   where("visibility","==","public"),limit(100)),
-  s=>{
-   peers=s.docs.map(d=>({uid:d.id,...d.data()}));
-   renderMatching();renderPosts();
-   renderTradeList();collectNotifications();
-  },e=>{
-   $("matchingStatus").textContent="検索エラー: "+e.message;
+  e=>{
+   $("postsStatus").textContent=
+    "掲示板エラー："+e.message;
   }
  ));
 }
+
+function watchViewingPost(id){
+ if(viewingPostStop){
+  viewingPostStop();
+  viewingPostStop=null;
+ }
+ viewingPostId=id;
+
+ if(!id||postCommentStops.has(id))return;
+
+ viewingPostStop=onSnapshot(
+  query(
+   collection(db,"posts",id,"comments"),
+   limit(100)
+  ),
+  s=>{
+   postMessagesById.set(
+    id,s.docs.map(d=>({id:d.id,...d.data()}))
+   );
+   if(postThreadId===id)renderPosts();
+  },
+  ()=>{}
+ );
+}
+
+/* 以前の公開コメント */
+
+function renderOldComments(){
+ $("oldCommentList").replaceChildren(
+  ...oldMessages.map(m=>{
+   const item=make("div","comment");
+   item.append(
+    make("strong","",peerName(m.authorUid)),
+    make("p","",m.body)
+   );
+   return item;
+  })
+ );
+}
+
+$("oldComments").onclick=()=>{
+ $("oldThread").classList.toggle("hidden");
+};
+
+$("oldCommentForm").onsubmit=async e=>{
+ e.preventDefault();
+ if(!isPublic()){
+  alert("公開プロフィールで利用してください");
+  return;
+ }
+
+ const body=$("oldCommentBody").value.trim();
+ if(!body)return;
+
+ try{
+  await addDoc(
+   collection(db,
+    "matchingProfiles",uid,"comments"),
+   {
+    authorUid:uid,
+    body,
+    createdAt:serverTimestamp()
+   }
+  );
+  $("oldCommentBody").value="";
+ }catch(err){
+  $("oldCommentError").textContent=err.message;
+ }
+};
+
+function watchOldComments(){
+ if(oldCommentsStop)oldCommentsStop();
+
+ oldCommentsStop=onSnapshot(
+  query(
+   collection(db,
+    "matchingProfiles",uid,"comments"),
+   limit(100)
+  ),
+  s=>{
+   oldMessages=s.docs.map(d=>({
+    id:d.id,...d.data()
+   }));
+   renderOldComments();
+   collectNotifications();
+  },
+  ()=>{}
+ );
+}
+
+/* Firebase監視 */
+
+function renderAll(){
+ renderHome();
+ renderAlbum();
+ renderMatching();
+ renderPosts();
+ renderTradeList();
+ renderNotifications();
+}
+
+function watchPeers(){
+ stops.push(onSnapshot(
+  query(
+   collection(db,"matchingProfiles"),
+   where("visibility","==","public"),
+   limit(100)
+  ),
+  s=>{
+   peers=s.docs.map(d=>({
+    uid:d.id,...d.data()
+   }));
+   renderMatching();
+   renderPosts();
+   renderTradeList();
+   collectNotifications();
+  },
+  e=>{
+   $("matchingStatus").textContent=
+    "検索エラー："+e.message;
+  }
+ ));
+}
+
 function cleanup(){
- stops.forEach(f=>f());stops=[];
+ stops.forEach(stop=>stop());
+ stops=[];
+
  for(const stop of postCommentStops.values())stop();
  for(const stop of tradeMessageStops.values())stop();
- postCommentStops.clear();tradeMessageStops.clear();
- messagesByTrade.clear();postMessagesById.clear();
+
+ postCommentStops.clear();
+ tradeMessageStops.clear();
+ messagesByTrade.clear();
+ postMessagesById.clear();
+
  if(viewingPostStop)viewingPostStop();
- viewingPostStop=null;viewingPostId=null;
+ viewingPostStop=null;
+ viewingPostId=null;
+
  if(oldCommentsStop)oldCommentsStop();
  oldCommentsStop=null;
- uid=null;userRef=null;ready=false;needsName=false;
- profile=defaults();owned={};peers=[];posts=[];trades=[];
- oldMessages=[];readKeys=new Set();
- publishFingerprint="";clearTimeout(publishTimer);
+
+ uid=null;
+ userRef=null;
+ ready=false;
+ needsName=false;
+ profile=defaults();
+ owned={};
+ peers=[];
+ posts=[];
+ trades=[];
+ oldMessages=[];
+ readKeys=new Set();
+ publishFingerprint="";
+ clearTimeout(publishTimer);
+
  $("main").classList.add("hidden");
  $("nav").classList.add("hidden");
  $("nameModal").classList.add("hidden");
  $("requestModal").classList.add("hidden");
  $("pickerModal").classList.add("hidden");
- postThreadId=null;tradeThreadId=null;editOpen=false;
+
+ postThreadId=null;
+ tradeThreadId=null;
+ editOpen=false;
  $("profileEditor").classList.add("hidden");
  resetPostEditor();
 }
+
 $("login").onclick=async()=>{
- try{await signInWithPopup(auth,provider)}
- catch(e){$("authError").textContent="ログイン失敗: "+e.message}
+ try{
+  await signInWithPopup(auth,provider);
+ }catch(e){
+  $("authError").textContent=
+   "ログイン失敗："+e.message;
+ }
 };
-$("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
+
+$("logout").onclick=
+$("nameLogout").onclick=
+ ()=>signOut(auth);
 
 $("firstNameForm").onsubmit=async e=>{
  e.preventDefault();
- const n=$("firstName").value.trim();
- if(!validName(n)){
-  $("firstError").textContent="2〜30文字で入力してね";
+
+ const name=$("firstName").value.trim();
+
+ if(!validName(name)){
+  $("firstError").textContent=
+   "2〜30文字で入力してね";
   return;
  }
+
  try{
-  const next={...profile,nickname:n,nicknameConfirmed:true};
+  const next={
+   ...profile,
+   nickname:name,
+   nicknameConfirmed:true
+  };
+
   await setDoc(userRef,{
-   profile:next,updatedAt:serverTimestamp()
+   profile:next,
+   updatedAt:serverTimestamp()
   },{merge:true});
-  profile=next;setGate(false);
-  renderAll();schedulePublish(true);
- }catch(e){$("firstError").textContent=e.message}
+
+  profile=next;
+  setGate(false);
+  renderAll();
+  schedulePublish(true);
+
+ }catch(err){
+  $("firstError").textContent=err.message;
+ }
 };
 
 onAuthStateChanged(auth,async user=>{
  const version=++authVersion;
  cleanup();
  $("authError").textContent="";
+
  $("loggedOut").classList.toggle("hidden",!!user);
  $("loggedIn").classList.toggle("hidden",!user);
+
  if(!user)return;
+
  $("cloud").textContent="データを読み込み中…";
+
  try{
   const ref=doc(db,"users",user.uid);
   const snapshot=await getDoc(ref);
+
   if(authVersion!==version)return;
+
   if(!snapshot.exists()){
    await setDoc(ref,{
-    profile:defaults(),owned:{},
+    profile:defaults(),
+    owned:{},
     createdAt:serverTimestamp(),
     updatedAt:serverTimestamp()
    });
   }
+
   if(authVersion!==version)return;
-  uid=user.uid;userRef=ref;
+
+  uid=user.uid;
+  userRef=ref;
+
   try{
    readKeys=new Set(JSON.parse(
     localStorage.getItem("aikatsu-read-"+uid)||"[]"
    ));
-  }catch{readKeys=new Set()}
+  }catch{
+   readKeys=new Set();
+  }
 
   stops.push(onSnapshot(ref,s=>{
-   if(!s.exists()||auth.currentUser?.uid!==uid)return;
-   profile={...defaults(),...(s.data().profile||{})};
+   if(!s.exists()||
+    auth.currentUser?.uid!==uid)return;
+
+   profile={
+    ...defaults(),
+    ...(s.data().profile||{})
+   };
+
    const incoming={...(s.data().owned||{})};
-   for(const id of cardBusy)incoming[id]=owned[id];
-   owned=incoming;ready=true;
-   const needs=!validName(profile.nickname)||
-    (profile.nicknameConfirmed!==true&&
-     profile.nickname===user.displayName);
-   setGate(needs);
+
+   for(const id of cardBusy){
+    incoming[id]=owned[id];
+   }
+
+   owned=incoming;
+   ready=true;
+
+   const mustName=
+    !validName(profile.nickname)||
+    (
+     profile.nicknameConfirmed!==true&&
+     profile.nickname===user.displayName
+    );
+
+   setGate(mustName);
    if(!editOpen)fillProfile();
-   renderAll();schedulePublish();
+
+   renderAll();
+   schedulePublish();
+
    $("cloud").textContent=s.metadata.fromCache?
-    "保存データを表示中":"♡ クラウド同期中";
-  },e=>$("authError").textContent=e.message));
+    "保存データを表示中":
+    "♡ クラウド同期中";
+
+  },e=>{
+   $("authError").textContent=e.message;
+  }));
 
   watchPeers();
   watchPosts();
   watchTrades();
   watchOldComments();
+
  }catch(e){
-  $("authError").textContent="読み込み失敗: "+e.message;
+  $("authError").textContent=
+   "読み込み失敗："+e.message;
  }
 });
 
