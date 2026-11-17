@@ -4,363 +4,295 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#e782af">
 <title>アイカツ！アンコール カード帳</title>
 <style>
 *{box-sizing:border-box}
-:root{--pink:#de78a8;--dark:#844668;--line:#efd0e0}
-body{margin:0;background:#fff9fc;color:#503d49;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.45;cursor:default}
-.hidden{display:none!important}
-header{text-align:center;padding:20px 12px;color:white;background:linear-gradient(115deg,#f6a6c7,#eb79ad)}
+body{margin:0;background:#fff8fc;color:#594254;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}
+header{background:linear-gradient(120deg,#efaccd,#df6ca9);color:white;text-align:center;padding:21px 8px}
 header h1{font-size:20px;margin:0}
-header p{font-size:11px;margin:7px 0 0}
-main{max-width:850px;margin:auto;padding:15px 13px 110px}
-h2{color:var(--dark);font-size:20px}
-h3{color:var(--dark);font-size:15px}
-.page{display:none}
-.page.active{display:block}
-.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:14px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.wrap{display:flex;flex-wrap:wrap;gap:8px}
-.btn{border:0;background:var(--pink);color:white;border-radius:11px;padding:10px 14px;font-weight:bold}
-.btn.alt{background:#fff0f7;color:#a34e80}
-.btn.line{background:white;color:#a34e80;border:1px solid #e2aac7}
-.muted,.note{font-size:12px;color:#92788a;line-height:1.6}
-.error{font-size:12px;color:#b32957;line-height:1.5}
-label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
-input,select,textarea{width:100%;padding:10px;border:1px solid #e8c3d6;border-radius:10px;background:white;color:#503d49}
-input[type=checkbox]{width:auto;accent-color:var(--pink)}
-textarea{min-height:76px}
-.auth{text-align:center;padding:12px;background:#fff0f7}
-.auth p{font-size:12px}
-.auth button{border:0;background:white;border-radius:11px;color:#a34e80;padding:10px 14px}
-.avatar{width:54px;height:54px;border-radius:50%;background:#f9dce9;color:#c05b92;display:grid;place-items:center;font-size:25px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
-.stat{background:#fff0f7;border-radius:11px;padding:12px 4px;text-align:center}
-.stat b{display:block;font-size:20px;color:#b54d85}
-.stat small{font-size:11px;color:#987f90}
-.progress{height:9px;background:#f5e2ec;border-radius:20px;overflow:hidden;margin:13px 0}
-.progress div{height:100%;background:#e37aaf;width:0}
-.tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;display:grid;grid-template-columns:repeat(4,1fr);background:white;box-shadow:0 -2px 12px #b87e9b30;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
-.tabs button{border:0;background:none;color:#a88b9c;font-size:11px}
-.tabs button.active{color:#c7528e;font-weight:bold}
-.tabs span{display:block;font-size:23px}
-.category-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}
-.category-tabs button{border:1px solid var(--line);background:#fff7fb;border-radius:11px;padding:11px;color:#b05387;font-weight:bold}
-.category-tabs button.active{background:var(--pink);color:white}
-.subfilters{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
-.subfilters button{border:1px solid var(--line);background:white;color:#a25581;border-radius:20px;font-size:12px;padding:6px 12px}
-.subfilters button.active{background:#f5d5e5;border-color:#e39cbd;font-weight:bold}
-.filters{display:grid;grid-template-columns:1fr auto;gap:8px;margin:10px 0}
-.filters select{width:auto;max-width:145px}
-.card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.card-grid.small{grid-template-columns:repeat(4,minmax(0,1fr))}
-.card-grid.tiny{grid-template-columns:repeat(5,minmax(0,1fr))}
-.card-item{min-width:0;text-align:center}
-.card-image-button{display:block;width:100%;border:0;background:transparent;padding:0;position:relative}
-.card-art{position:relative;aspect-ratio:2/3;width:100%;overflow:hidden;display:grid;place-items:center;background:#e1dde0;border:1px solid #e3b6cf;border-radius:9px}
-.card-art img{display:block;position:absolute;width:100%;height:100%;left:0;top:0;object-fit:contain}
-.card-item:not(.owned) .card-art img{filter:grayscale(1);opacity:.55}
-.card-art img.landscape{width:150%;height:66.6667%;left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg);object-fit:contain}
-.quantity-badge{position:absolute;top:4px;right:4px;z-index:2;background:#e54b87;color:white;border-radius:20px;padding:3px 6px;font-size:11px;font-weight:bold}
-.card-name{display:block;font-size:10px;margin-top:5px;overflow-wrap:anywhere;line-height:1.4}
-.card-number{display:block;font-size:9px;color:#94768b;overflow-wrap:anywhere}
-.fallback{font-size:10px;color:#a55885;padding:6px;overflow-wrap:anywhere}
-.quantity-controls{display:flex;width:100%;justify-content:center;gap:3px;margin-top:6px}
-.quantity-controls button{border:1px solid #e6b9d0;background:#fff0f7;color:#a44b80;border-radius:7px;min-height:29px;padding:3px 0;font-size:12px;font-weight:bold}
-.quantity-controls .minus,.quantity-controls .plus{flex:0 0 27%}
-.quantity-controls .count-button{flex:1;background:white;color:#70465e;font-size:11px}
-.card-grid.tiny .card-name,.card-grid.tiny .card-number{font-size:8px}
-.card-grid.tiny .quantity-controls button{min-height:24px;font-size:10px}
-.match{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
-.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.match-side{min-width:0;background:#fff4f9;border-radius:10px;padding:8px}
-.mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
-.mini-card{min-width:0;text-align:center;font-size:9px;overflow-wrap:anywhere}
-.mini-card .card-art{margin-bottom:4px}
-.score{font-size:19px;color:#ba4f84;font-weight:bold}
-.reason{background:#fff0f7;color:#994d78;border-radius:9px;padding:9px;font-size:12px;line-height:1.6;margin:10px 0}
-.pair{border:1px solid #f0d8e5;border-radius:12px;padding:10px;margin:12px 0}
-.pair-card{max-width:130px;margin:auto}
-.post{border:1px solid var(--line);border-radius:15px;padding:14px;margin:12px 0;background:#fff}
-.post p{font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
-.post-images{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.post-side{background:#fff5f9;border-radius:11px;padding:9px;min-width:0}
-.post-side h4{font-size:12px;color:#a45282;margin:0 0 8px}
-.post-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-.post-card{min-width:0;text-align:center;font-size:9px;overflow-wrap:anywhere}
-.post-card .card-art{margin-bottom:4px}
-.comment{border:1px solid #efd7e4;border-radius:11px;padding:11px;background:white;margin:9px 0}
-.comment.mine{background:#fff0f7;border-color:#e3a8c8}
-.comment strong{color:#a64d7f;font-size:12px}
-.comment p{font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
-.comment small{font-size:10px;color:#998192}
-.comment button{border:0;background:none;color:#af5785;font-size:11px}
-.warning{background:#fff0f7;color:#934f74;padding:11px;border-radius:11px;font-size:12px;line-height:1.7}
-.modal{position:fixed;inset:0;z-index:30;background:#3b2032aa;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal-card{background:white;border-radius:20px;padding:18px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto}
-.modal-card p{font-size:13px;line-height:1.7}
-.selector-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
-.selector-card{border:2px solid transparent;border-radius:11px;padding:5px;background:#fff8fc;min-width:0;position:relative}
-.selector-card.selected{border-color:#d94b94;background:#ffe8f3}
-.selector-card .card-art{width:100%}
-.selector-card .card-name{font-size:9px}
-.selector-mark{position:absolute;top:8px;right:8px;background:#d94b94;color:white;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-weight:bold;z-index:2}
-.chosen-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:10px 0}
-.chosen-card{position:relative;min-width:0;text-align:center;font-size:9px}
-.chosen-card button{position:absolute;right:0;top:0;background:#d94b94;border:0;border-radius:50%;color:white;width:23px;height:23px;z-index:2}
-.board-thread{border-top:1px solid var(--line);margin-top:13px;padding-top:10px}
-.board-comment-form{margin-top:10px}
-footer{text-align:center;font-size:11px;color:#98808d;padding:15px}
-@media(min-width:700px){
-.card-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
-.card-grid.small{grid-template-columns:repeat(7,minmax(0,1fr))}
-.card-grid.tiny{grid-template-columns:repeat(9,minmax(0,1fr))}
-.selector-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+main{max-width:930px;margin:auto;padding:14px 12px 110px}
+.page{display:none}.page.active{display:block}
+.box{background:white;border:1px solid #ecd3e0;border-radius:16px;padding:15px;margin:12px 0}
+h2{color:#965278;font-size:20px}
+h3{font-size:16px;color:#965278}
+.row{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.wrap,.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions{margin-top:10px}
+button{font:inherit;cursor:pointer;border:0}
+button:disabled{opacity:.5;cursor:default}
+.btn{background:#d875aa;color:white;border-radius:10px;padding:9px 12px;font-weight:600}
+.light{background:#fff0f7;color:#a45683}
+.outline{background:white;color:#a45683;border:1px solid #dcafc8}
+.small{padding:6px 9px;font-size:12px}
+.muted{font-size:12px;color:#94798b;line-height:1.6}
+.error{color:#ba265b;font-size:12px}
+.hidden{display:none!important}
+label{font-size:13px;display:block;margin:10px 0 5px;font-weight:600}
+input,textarea,select{font:inherit;width:100%;padding:9px;border:1px solid #e9bfd5;border-radius:9px;background:white;color:#594254}
+input[type=checkbox]{width:auto}
+textarea{min-height:68px}
+.auth{text-align:center;padding:10px;background:#fff0f8;font-size:12px}
+.nav{position:fixed;bottom:0;width:100%;display:grid;grid-template-columns:repeat(5,1fr);background:white;box-shadow:0 -2px 10px #d9acc344;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:20}
+.nav button{background:none;color:#957d8c;font-size:10px}
+.nav button.active{color:#cb508d;font-weight:800}
+.nav span{display:block;font-size:21px}
+.pill{display:inline-block;background:#e45186;color:white;border-radius:20px;font-size:10px;padding:2px 6px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:#fff0f7;border-radius:11px;text-align:center;padding:12px}
+.stat b{display:block;font-size:22px;color:#b95183}
+.progress{background:#f4e2eb;height:9px;border-radius:10px;overflow:hidden}
+.progress div{background:#df78ac;height:100%}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.cards.small{grid-template-columns:repeat(4,minmax(0,1fr))}
+.cards.tiny{grid-template-columns:repeat(5,minmax(0,1fr))}
+.card{min-width:0;text-align:center;font-size:10px;overflow-wrap:anywhere}
+.art{aspect-ratio:2/3;width:100%;position:relative;border-radius:8px;border:1px solid #e4c0d1;background:#ede7ea;overflow:hidden;display:grid;place-items:center}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.art img.landscape{width:150%;height:66.667%;left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg)}
+.card.unowned .art img{filter:grayscale(1);opacity:.5}
+.card .name{display:block;margin-top:4px;line-height:1.5}
+.count{display:flex;margin-top:5px;gap:3px}
+.count button{flex:1;background:#ffedf6;color:#9e477b;border:1px solid #e6bdd0;border-radius:6px;padding:5px 0;font-size:11px}
+.count button:nth-child(2){background:white}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.filters button{padding:7px 10px;border-radius:15px;background:#fff0f7;color:#9f517f}
+.filters button.on{background:#d875aa;color:white}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.side{background:#fff5fa;padding:9px;border-radius:11px;min-width:0}
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mini .card{font-size:9px}
+.trade,.post{border:1px solid #e9cade;border-radius:14px;background:white;padding:13px;margin:11px 0}
+.score{font-size:19px;font-weight:bold;color:#bf508a}
+.comment{background:#fff4f9;padding:10px;border-radius:11px;margin:8px 0}
+.comment p{white-space:pre-wrap;font-size:13px;overflow-wrap:anywhere}
+.modal{position:fixed;inset:0;background:#3a18328c;display:grid;place-items:center;z-index:30;padding:14px}
+.modal-inner{background:white;padding:17px;border-radius:17px;max-width:700px;width:100%;max-height:91vh;overflow:auto}
+.picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.picker button{background:#fff6fa;border:2px solid transparent;border-radius:9px;padding:4px;min-width:0}
+.picker button.chosen{border-color:#d64e8e;background:#ffdeed}
+.chosen-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.chosen-list button{min-width:0;background:#fff4fa;border-radius:9px;padding:4px;font-size:10px}
+.note{background:#fff0f7;color:#9c567f;padding:10px;border-radius:10px;font-size:12px;line-height:1.6}
+.notification{display:block;border-bottom:1px solid #eee0e8;padding:11px 4px;width:100%;text-align:left}
+.notification.unread{background:#fff0f7}
+.tag{font-size:11px;background:#fff0f7;color:#a44c80;border-radius:20px;padding:4px 8px}
+.authbox{max-width:420px;margin:auto}
+@media(min-width:680px){
+.cards{grid-template-columns:repeat(5,minmax(0,1fr))}
+.cards.small{grid-template-columns:repeat(7,minmax(0,1fr))}
+.cards.tiny{grid-template-columns:repeat(9,minmax(0,1fr))}
+.picker{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
 </style>
 </head>
 <body>
-
 <header>
 <h1>♡ アイカツ！アンコール カード帳 ♡</h1>
-<p>コレクションから、素敵な交換の出会いへ</p>
+<div style="font-size:12px;margin-top:5px">カード管理・交換マッチング・掲示板</div>
 </header>
 
-<section class="auth">
-<div id="signedOut">
-<p>Googleアカウントで登録・ログイン</p>
-<button id="loginButton">G　Googleでログイン</button>
+<div class="auth">
+<div id="loggedOut"><button class="btn light" id="login">Googleでログイン</button></div>
+<div id="loggedIn" class="hidden"><span id="cloud">接続中…</span> <button class="btn light small" id="logout">ログアウト</button></div>
+<div id="authError" class="error"></div>
 </div>
-<div id="signedIn" class="hidden">
-<p>ログイン中</p>
-<p id="cloudStatus">クラウド接続中…</p>
-<button id="logoutButton">ログアウト</button>
-</div>
-<p id="authError" class="error"></p>
-</section>
 
-<div id="nicknameModal" class="modal hidden" role="dialog" aria-modal="true">
-<div class="modal-card" style="max-width:430px">
-<h2>♡ ニックネームを設定 ♡</h2>
-<p>Googleアカウントの本名は自動登録されません。</p>
+<div class="modal hidden" id="nameModal">
+<div class="modal-inner authbox">
+<h2>ニックネームを決めてね ♡</h2>
+<p class="muted">Googleの本名は自動公開しません。</p>
 <form id="firstNameForm">
-<label>ニックネーム（2〜30文字）</label>
-<input id="firstNickname" minlength="2" maxlength="30" required>
-<p><button class="btn" id="firstNameSubmit" type="submit">この名前で始める</button></p>
+<input id="firstName" minlength="2" maxlength="30" required placeholder="2〜30文字">
+<p><button class="btn">保存して開始</button></p>
 </form>
-<p id="firstNameError" class="error"></p>
-<button id="firstNameLogout" class="btn alt">ログアウト</button>
+<div class="error" id="firstError"></div>
+<button class="btn light" id="nameLogout">ログアウト</button>
 </div>
 </div>
 
-<main id="appMain" class="hidden">
-
-<section id="home" class="page active">
+<main class="hidden" id="main">
+<section class="page active" id="home">
 <h2>ホーム ♡</h2>
-<div class="panel">
+<div class="box">
 <div class="row">
-<div class="row">
-<div class="avatar">♡</div>
-<div>
-<strong id="homeName"></strong>
-<div class="muted" id="homePref"></div>
-<div class="muted" id="homePrivacy"></div>
-</div>
-</div>
-<button id="editToggle" class="btn alt">編集</button>
+<div><strong id="homeName"></strong><p class="muted" id="homePrivacy"></p></div>
+<button class="btn light" id="editProfile">編集</button>
 </div>
 <div class="stats">
-<div class="stat"><b id="homeOwned">0</b><small>所持種類</small></div>
-<div class="stat"><b id="homeRate">0%</b><small>所持率</small></div>
-<div class="stat"><b>0</b><small>よかった</small></div>
+<div class="stat"><b id="ownedStat">0</b><span class="muted">所持種類</span></div>
+<div class="stat"><b id="rateStat">0%</b><span class="muted">コンプリート率</span></div>
 </div>
-<div class="progress"><div id="progressBar"></div></div>
+<div class="progress"><div id="progress"></div></div>
 </div>
-
-<div id="editPanel" class="panel hidden">
+<div class="box hidden" id="profileEditor">
 <h3>プロフィール編集</h3>
 <label>ニックネーム</label><input id="nickname" maxlength="30">
 <label>性別</label>
 <select id="gender"><option>非公開</option><option>女性</option><option>男性</option><option>その他</option></select>
 <label>都道府県</label><select id="prefecture"></select>
 <label>都道府県を公開</label>
-<select id="prefVisible"><option value="yes">公開</option><option value="no">非公開</option></select>
+<select id="prefVisible"><option value="no">非公開</option><option value="yes">公開</option></select>
 <label>Xアカウント（@以降）</label><input id="xAccount">
 <label>公開設定</label>
-<select id="privacy">
-<option value="public">公開（マッチング・掲示板に参加）</option>
-<option value="private">鍵（参加しない）</option>
-</select>
-<label>希望する交換方法</label><div id="methodChoices" class="wrap"></div>
+<select id="privacy"><option value="public">公開（交換に参加）</option><option value="private">鍵（交換に参加しない）</option></select>
+<label>交換方法</label><div class="filters" id="methods"></div>
 <label>自己紹介</label><textarea id="bio" maxlength="300"></textarea>
-<p><button id="saveProfileButton" class="btn">保存する</button></p>
+<p><button class="btn" id="saveProfile">プロフィールを保存</button></p>
 </div>
-
-<div class="panel">
-<h3>交換プロフィール</h3>
-<p id="profileDescription" class="note"></p>
-<p class="note">公開アカウントでは、ニックネーム、公開設定の地域、交換方法、譲れる・欲しいカード番号を他のログインユーザーに共有します。本名、メールアドレス、正確な所持枚数は公開しません。</p>
-<p id="publishStatus" class="note"></p>
+<div class="box">
+<h3>公開プロフィール</h3>
+<div class="muted" id="profileView"></div>
+<p class="muted" id="syncStatus"></p>
+<p class="note">公開ユーザーにはニックネーム・公開地域・交換方法・譲れる／欲しいカード番号を共有します。本名・メールアドレス・正確な所持枚数は公開しません。</p>
 </div>
 </section>
 
-<section id="album" class="page">
+<section class="page" id="album">
 <h2>マイアルバム ♡</h2>
-<div class="panel">
+<div class="box">
 <div class="row">
-<div>
-<strong id="albumStats">読み込み中…</strong>
-<p class="muted">画像をタップして所持登録</p>
+<strong id="albumStat">0 / 0種類</strong>
+<select id="cardSize" style="width:auto"><option value="normal">標準</option><option value="small">小さめ</option><option value="tiny">もっと小さく</option></select>
 </div>
-<select id="displaySize" style="width:auto">
-<option value="normal">標準</option>
-<option value="small">小さめ</option>
-<option value="tiny">もっと小さく</option>
+<div class="filters" id="albumGroups">
+<button data-g="series1" class="on">1弾</button>
+<button data-g="promo">プロモ</button>
+</div>
+<div class="filters" id="albumKinds">
+<button data-k="all" class="on">全部</button>
+<button data-k="normal">通常</button>
+<button data-k="parallel">パラレル</button>
+</div>
+<div class="row">
+<input id="albumSearch" placeholder="名前・番号で検索">
+<select id="albumFilter" style="width:auto">
+<option value="all">すべて</option><option value="owned">所持</option>
+<option value="missing">未所持</option><option value="extra">2枚以上</option>
 </select>
 </div>
-<div class="progress"><div id="albumProgress"></div></div>
-<div class="category-tabs">
-<button class="active" data-group="series1">1弾</button>
-<button data-group="promo">プロモ</button>
-</div>
-<div id="seriesFilter" class="subfilters">
-<button class="active" data-kind="all">すべて</button>
-<button data-kind="normal">通常</button>
-<button data-kind="parallel">パラレル</button>
-</div>
-<div class="filters">
-<input id="cardSearch" placeholder="カード名・番号で検索">
-<select id="albumFilter">
-<option value="all">すべて表示</option>
-<option value="owned">所持のみ</option>
-<option value="missing">未所持のみ</option>
-<option value="extra">2枚以上</option>
-</select>
-</div>
-<p id="categoryStats" class="note"></p>
-<p id="cardLoadError" class="error"></p>
-<div id="cardGrid" class="card-grid"></div>
-<p class="note">画像タップで0枚・1枚を切り替え。「＋」「−」で枚数変更。枚数表示から直接入力できます。</p>
+<p id="albumDetails" class="muted"></p>
+<div id="cardGrid" class="cards"></div>
+<p class="muted">画像タップで0⇔1枚。＋／−で枚数変更、数字タップで直接入力できます。</p>
 </div>
 </section>
 
-<section id="board" class="page">
+<section class="page" id="board">
 <h2>交換掲示板 ♡</h2>
-
-<div class="panel">
-<h3 id="postEditorTitle">♡ 新しい交換募集を作る</h3>
-<p class="note">譲れるカード・欲しいカードをそれぞれ画像から選んで投稿できます。写真のアップロードは不要です。</p>
-
+<div class="box">
+<h3 id="postEditorTitle">新しい交換募集</h3>
+<p class="muted">カード画像を選んで公開できます。写真のアップロード・課金は不要。</p>
 <label>譲れるカード</label>
-<div id="chosenOffers" class="chosen-grid"></div>
-<button id="chooseOffers" class="btn alt">＋ 譲れるカードを選ぶ</button>
-<p id="offerCount" class="note">0枚選択中</p>
-
+<div id="selectedOffers" class="chosen-list"></div>
+<button class="btn light" id="pickOffers">＋画像から選ぶ</button>
 <label>欲しいカード</label>
-<div id="chosenWants" class="chosen-grid"></div>
-<button id="chooseWants" class="btn alt">＋ 欲しいカードを選ぶ</button>
-<p id="wantCount" class="note">0枚選択中</p>
-
-<label>ひとこと・交換条件（500文字以内）</label>
-<textarea id="postBody" maxlength="500" placeholder="例：郵送交換希望です。PR同士の交換優先。お気軽にコメントください！"></textarea>
-
-<p id="postEditorError" class="error"></p>
-<div class="wrap">
-<button id="savePostButton" class="btn">♡ 募集を公開する</button>
-<button id="cancelEditPost" class="btn alt hidden">編集をやめる</button>
+<div id="selectedWants" class="chosen-list"></div>
+<button class="btn light" id="pickWants">＋画像から選ぶ</button>
+<label>交換条件・ひとこと</label>
+<textarea id="postBody" maxlength="500"></textarea>
+<div id="postError" class="error"></div>
+<div class="actions">
+<button class="btn" id="savePost">♡ 募集を公開</button>
+<button class="btn light hidden" id="cancelPostEdit">編集をやめる</button>
 </div>
 </div>
-
-<div class="panel">
+<div class="box">
+<h3>みんなの募集</h3>
 <div class="row">
-<h3>みんなの交換募集</h3>
-<button id="refreshPostsButton" class="btn alt">更新</button>
-</div>
-<div class="filters">
-<input id="postSearch" placeholder="カード名・番号・本文で検索">
-<select id="postFilter">
+<input id="postSearch" placeholder="カード名・投稿内容で検索">
+<select id="postFilter" style="width:auto">
 <option value="all">すべて</option>
 <option value="mine">自分の募集</option>
-<option value="premium">PR・ERを含む</option>
-<option value="regular">R・Nを含む</option>
+<option value="premium">PR・ER</option>
+<option value="regular">R・N</option>
 </select>
 </div>
-<p id="postsStatus" class="note">読み込み中…</p>
+<p id="postsStatus" class="muted"></p>
 <div id="postList"></div>
 </div>
 </section>
 
-<section id="matching" class="page">
+<section class="page" id="matching">
 <h2>交換マッチング ♡</h2>
-<div class="panel">
-<h3>交換できる相手</h3>
-<p class="note">PR・ER同士、またはR・N同士の交換を優先し、交換候補数と交換方法も考慮しています。</p>
-<p id="matchingStatus" class="note">検索中…</p>
+<div class="box">
+<p class="note">PR・ER同士、R・N同士の交換候補数と交換方法を評価。最初はコメントではなく、カードを指定して交換申請します。</p>
+<p id="matchingStatus" class="muted"></p>
 <div id="matchList"></div>
-<p class="note">相性点は交換条件の一致度の目安で、交換成立率や相手の信頼性ではありません。</p>
 </div>
-
-<div class="panel">
-<h3>♡ 自分への交換相談</h3>
-<p class="note">公開プロフィールに届いたコメントを確認・返信できます。</p>
-<button id="myCommentsButton" class="btn alt">自分宛てのコメントを見る</button>
-</div>
-
-<div id="threadPanel" class="panel hidden">
-<div class="row">
-<h3 id="threadTitle">交換相談</h3>
-<button id="closeThreadButton" class="btn alt">閉じる</button>
-</div>
-<p class="warning">公開コメント欄です。住所、電話番号、本名、メールアドレスなどを書かないでください。</p>
-<p id="threadStatus" class="note"></p>
-<div id="commentsList"></div>
-<form id="commentForm">
-<label>コメント（300文字以内）</label>
-<textarea id="commentBody" maxlength="300" required></textarea>
-<p><button id="commentSubmit" class="btn" type="submit">コメントを投稿</button></p>
+<div class="box">
+<h3>過去の公開コメント</h3>
+<p class="muted">以前のプロフィール相談を確認できます。新しい交渉は交換申請から行ってね。</p>
+<button class="btn light" id="oldComments">自分宛てコメントを表示</button>
+<div id="oldThread" class="hidden">
+<div id="oldCommentList"></div>
+<form id="oldCommentForm">
+<textarea id="oldCommentBody" maxlength="300" required></textarea>
+<button class="btn">返信する</button>
 </form>
-<p id="commentError" class="error"></p>
+<div id="oldCommentError" class="error"></div>
+</div>
 </div>
 </section>
 
-<footer>非公式ファン制作サービス・開発中</footer>
+<section class="page" id="trades">
+<h2>🔔 通知・交換申請 <span class="pill hidden" id="unreadPill"></span></h2>
+<div class="box">
+<div class="row">
+<h3>未読通知</h3>
+<button class="btn light small" id="markRead">すべて既読にする</button>
+</div>
+<div id="notificationList"></div>
+</div>
+<div class="box">
+<h3>交換申請一覧</h3>
+<div class="filters">
+<button class="on" data-trade-filter="active">進行中</button>
+<button data-trade-filter="all">すべて</button>
+</div>
+<p id="tradesStatus" class="muted"></p>
+<div id="tradeList"></div>
+</div>
+</section>
 </main>
 
-<!-- カード選択画面 -->
-<div id="selectorModal" class="modal hidden" role="dialog" aria-modal="true">
-<div class="modal-card">
-<div class="row">
-<h3 id="selectorTitle">カードを選ぶ</h3>
-<button id="closeSelector" class="btn alt">完了</button>
-</div>
-<p id="selectorStatus" class="note"></p>
+<div class="modal hidden" id="pickerModal">
+<div class="modal-inner">
+<div class="row"><h3 id="pickerTitle">カードを選ぶ</h3>
+<button id="pickerClose" class="btn light">完了</button></div>
+<input id="pickerSearch" placeholder="番号・名前で検索">
 <div class="filters">
-<input id="selectorSearch" placeholder="カード名・番号で検索">
-<select id="selectorGroup">
-<option value="all">全カード</option>
-<option value="series1">1弾</option>
-<option value="promo">プロモ</option>
-</select>
+<button data-pickfilter="all" class="on">すべて</button>
+<button data-pickfilter="owned">所持</button>
+<button data-pickfilter="extra">2枚以上</button>
+<button data-pickfilter="missing">未所持</button>
 </div>
-<div class="subfilters">
-<button id="selectorAll" class="active">すべて</button>
-<button id="selectorOwned">所持カード</button>
-<button id="selectorExtra">2枚以上</button>
-<button id="selectorMissing">未所持</button>
-</div>
-<div id="selectorGrid" class="selector-grid"></div>
+<div id="pickerCount" class="muted"></div>
+<div id="pickerGrid" class="picker"></div>
 </div>
 </div>
 
-<nav id="bottomTabs" class="tabs hidden">
-<button class="active" data-page="home"><span>⌂</span>ホーム</button>
+<div class="modal hidden" id="requestModal">
+<div class="modal-inner authbox">
+<div class="row">
+<h3 id="requestTitle">交換を申請</h3>
+<button class="btn light" id="requestClose">閉じる</button>
+</div>
+<p class="muted" id="requestExplain"></p>
+<label>あなたが譲る</label><select id="requestOffer"></select>
+<label>相手から受け取る</label><select id="requestWant"></select>
+<label>交換方法</label><select id="requestMethod"></select>
+<label>メッセージ（任意）</label>
+<textarea id="requestNote" maxlength="300"></textarea>
+<div id="requestError" class="error"></div>
+<p><button class="btn" id="requestSend">交換を申請する</button></p>
+</div>
+</div>
+
+<nav id="nav" class="nav hidden">
+<button data-page="home" class="active"><span>⌂</span>ホーム</button>
 <button data-page="album"><span>▦</span>アルバム</button>
 <button data-page="board"><span>▤</span>掲示板</button>
 <button data-page="matching"><span>♡</span>マッチング</button>
+<button data-page="trades"><span>🔔</span>通知<span id="navCount" class="pill hidden"></span></button>
 </nav>
 
 <script type="module">
@@ -368,198 +300,166 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import {getFirestore,doc,getDoc,setDoc,deleteDoc,addDoc,updateDoc,onSnapshot,collection,query,where,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-const firebaseConfig={
+const app=initializeApp({
  apiKey:"AIzaSyCSxm_4w-r8kFPD6yIQ4rgVpzVGl0piJlM",
  authDomain:"aikatsu-card-album.firebaseapp.com",
  projectId:"aikatsu-card-album",
  storageBucket:"aikatsu-card-album.firebasestorage.app",
  messagingSenderId:"1000205466468",
  appId:"1:1000205466468:web:dc49371b91f5514ee3d871"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app),db=getFirestore(app);
-const provider=new GoogleAuthProvider();
+});
+const auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
 const $=id=>document.getElementById(id);
-
 const defaults=()=>({
  nickname:"",nicknameConfirmed:false,gender:"非公開",
  prefecture:"非公開",prefVisible:"no",privacy:"public",
  xAccount:"",bio:"",methods:["郵送"]
 });
 
-let profile=defaults(),cards=[],owned={},peers=[],publicPosts=[];
-let uid=null,userRef=null,ready=false,nameRequired=false;
-let group="series1",kind="all",filter="all",cardSize="normal",search="";
-let editing=false,matchError="",authGeneration=0;
-let stopUser=null,stopPeers=null,stopComments=null,stopPosts=null;
-let publishTimer=null,publishBusy=false,publishAgain=false,lastPublished="";
-let activeThread=null,threadComments=[];
-let editPostId=null,selectedOffers=new Set(),selectedWants=new Set();
-let selectorTarget="offer",selectorFilter="all",posting=false;
-let boardThreadId=null,stopBoardComments=null,boardComments=[];
-const savingCards=new Set();
-const cardById=new Map();
+let uid=null,userRef=null,ready=false,needsName=false;
+let profile=defaults(),owned={},cards=[],peers=[],posts=[],trades=[];
+let stops=[],postCommentStops=new Map(),tradeMessageStops=new Map();
+let oldCommentsStop=null,editOpen=false,publishTimer=null;
+let publishRunning=false,publishPending=false,publishFingerprint="";
+let authVersion=0;
+let albumGroup="series1",albumKind="all",albumView="all";
+let albumSize="normal",albumText="";
+let postEditId=null,offerChoice=new Set(),wantChoice=new Set();
+let pickerKind="offers",pickerFilter="all";
+let requestTarget=null,requestTrade=null;
+let postThreadId=null,tradeThreadId=null,tradeFilter="active";
+let oldMessages=[],messagesByTrade=new Map();
+let postMessagesById=new Map(),readKeys=new Set(),notifications=[];
+let postBusy=false,requestBusy=false;
+let viewingPostStop=null,viewingPostId=null;
+const cardMap=new Map(),cardBusy=new Set();
 
-const prefs=("非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県").split(",");
-$("prefecture").replaceChildren(...prefs.map(p=>new Option(p,p)));
+const prefList=("非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県").split(",");
+$("prefecture").replaceChildren(...prefList.map(p=>new Option(p,p)));
 
-for(const m of ["郵送","手渡し","メルカリ","Yahoo!フリマ"]){
- const label=document.createElement("label");
- const cb=document.createElement("input");
- cb.type="checkbox";cb.className="methodCheck";cb.value=m;
- label.append(cb,document.createTextNode(" "+m));
- $("methodChoices").append(label);
+const methods=["郵送","手渡し","メルカリ","Yahoo!フリマ"];
+for(const m of methods){
+ const l=document.createElement("label"),c=document.createElement("input");
+ c.type="checkbox";c.value=m;c.className="methodInput";
+ l.append(c," "+m);$("methods").append(l);
 }
 
-function validName(s){
- return typeof s==="string"&&s.trim().length>=2&&s.trim().length<=30&&
- !["未設定","ゲスト","ユーザー"].includes(s.trim())&&!/[<>]/.test(s);
-}
-function gate(required){
- nameRequired=required;
- $("nicknameModal").classList.toggle("hidden",!required);
- $("appMain").classList.toggle("hidden",required||!ready);
- $("bottomTabs").classList.toggle("hidden",required||!ready);
-}
-function canEdit(){
- if(!ready||!uid||nameRequired){
-  alert("ログインとニックネーム設定を完了してね");
-  return false;
- }
- return true;
-}
-function canPost(){
- if(!canEdit())return false;
- if(profile.privacy!=="public"){
-  alert("掲示板への投稿にはプロフィールの公開設定が必要です。");
-  return false;
- }
- return true;
-}
-function showPage(name){
- document.querySelectorAll("[data-page]").forEach(b=>
-  b.classList.toggle("active",b.dataset.page===name)
- );
- document.querySelectorAll(".page").forEach(p=>
-  p.classList.toggle("active",p.id===name)
- );
+const validName=s=>typeof s==="string"&&s.trim().length>=2&&s.trim().length<=30&&!/[<>]/.test(s);
+const qty=id=>Math.max(0,Math.min(999,Number(owned[id])||0));
+const ownedCount=list=>list.filter(c=>qty(c.id)>0).length;
+const rarity=c=>{
+ let r=String(c?.rarity||"").toUpperCase();
+ if(!r)r=(String(c?.number||c?.id||"").match(/_(PR|ER|R|N)(?:_|$)/i)||[])[1]?.toUpperCase()||"";
+ return ["PR","ER"].includes(r)?"premium":["R","N"].includes(r)?"regular":"unknown";
+};
+const groupName=g=>g==="premium"?"プレミアム":g==="regular"?"レア・ノーマル":"分類不明";
+const dateText=ts=>ts?.toDate?.()?ts.toDate().toLocaleString("ja-JP"):"送信中";
+const make=(tag,cls,text)=>{
+ const e=document.createElement(tag);
+ if(cls)e.className=cls;
+ if(text!==undefined)e.textContent=text;
+ return e;
+};
+function isPublic(){return ready&&!needsName&&profile.privacy==="public"}
+function showPage(page){
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ document.querySelectorAll(".page").forEach(e=>e.classList.toggle("active",e.id===page));
  window.scrollTo(0,0);
 }
-document.querySelectorAll("[data-page]").forEach(b=>{
- b.onclick=()=>showPage(b.dataset.page);
-});
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 
-/* カードの読み込み */
+function art(c){
+ const d=make("div","art");
+ if(!c?.image){
+  d.append(make("span","muted",c?.number||"画像なし"));
+  return d;
+ }
+ const i=document.createElement("img");
+ i.alt=c.name||c.number;i.loading="lazy";
+ i.onload=()=>i.classList.toggle("landscape",i.naturalWidth>i.naturalHeight);
+ i.onerror=()=>d.replaceChildren(make("span","muted",c.number));
+ d.append(i);i.src=c.image;
+ return d;
+}
+function miniature(ids){
+ const g=make("div","mini");
+ for(const id of ids.slice(0,12)){
+  const c=cardMap.get(id),b=make("div","card");
+  b.append(art(c),make("span","name",c?.name||c?.number||id));
+  g.append(b);
+ }
+ if(ids.length>12)g.append(make("span","muted","ほか"+(ids.length-12)+"種類"));
+ return g;
+}
 
-function normalizeCard(c){
- const id=String(c.id),number=String(c.number||c.id);
- const cardGroup=String(c.group||"normal").toLowerCase();
- let image=String(c.image||"");
- if(cardGroup==="normal"&&image.includes("dcd.aikatsu.com")){
-  image="https://dcd.aikatsu.com/encore/images/cardlist/card/"+number+".webp";
- }
- if(!/^https:\/\//i.test(image))image="";
- return{
-  id,number,group:cardGroup,
-  name:String(c.name||""),
-  rarity:String(c.rarity||"").toUpperCase(),
-  image
- };
-}
-function rarityGroup(c){
- if(!c)return"unknown";
- let r=String(c.rarity||"").toUpperCase();
- if(!r){
-  const m=String(c.number||c.id||"").match(/_(PR|ER|R|N)(?:_|$)/i);
-  r=m?m[1].toUpperCase():"";
- }
- return r==="PR"||r==="ER"?"premium":
-  r==="R"||r==="N"?"regular":"unknown";
-}
-function groupLabel(g){
- return g==="premium"?"プレミアム":
-  g==="regular"?"レア・ノーマル":"分類不明";
-}
 async function loadCards(){
  try{
-  const res=await fetch("./cards.json?v="+Date.now(),{cache:"no-store"});
-  if(!res.ok)throw Error("HTTP "+res.status);
-  const json=await res.json();
-  if(!Array.isArray(json))throw Error("データ形式エラー");
-  const seen=new Set();
-  cards=json.filter(c=>{
-   if(!c||!c.id||seen.has(String(c.id)))return false;
-   seen.add(String(c.id));return true;
-  }).map(normalizeCard);
-  cardById.clear();
-  cards.forEach(c=>cardById.set(c.id,c));
-  $("cardLoadError").textContent="";
-  renderAll();
-  renderChosen();
-  schedulePublish();
+  const r=await fetch("./cards.json?v="+Date.now(),{cache:"no-store"});
+  if(!r.ok)throw Error("HTTP "+r.status);
+  const raw=await r.json();
+  if(!Array.isArray(raw))throw Error("カード形式エラー");
+  const known=new Set();
+  cards=raw.filter(c=>{
+   if(!c?.id||known.has(String(c.id)))return false;
+   known.add(String(c.id));return true;
+  }).map(c=>{
+   const number=String(c.number||c.id);
+   const group=String(c.group||"normal").toLowerCase();
+   let image=String(c.image||"");
+   if(group==="normal"&&image.includes("dcd.aikatsu.com")){
+    image="https://dcd.aikatsu.com/encore/images/cardlist/card/"+number+".webp";
+   }
+   return{
+    id:String(c.id),number,group,
+    name:String(c.name||""),
+    rarity:String(c.rarity||""),
+    image:/^https:\/\//.test(image)?image:""
+   };
+  });
+  cardMap.clear();
+  cards.forEach(c=>cardMap.set(c.id,c));
+  renderAll();schedulePublish();
  }catch(e){
-  $("cardLoadError").textContent="カード読み込み失敗："+e.message;
+  alert("カードの読み込みに失敗: "+e.message);
  }
 }
-const qty=id=>Math.max(0,Math.min(999,Number(owned[id]||0)));
-const count=list=>list.filter(c=>qty(c.id)>0).length;
-const rate=list=>list.length?Math.round(count(list)/list.length*100):0;
 
-function imageArt(c){
- const art=document.createElement("div");
- art.className="card-art";
- if(!c||!c.image){
-  const fallback=document.createElement("span");
-  fallback.className="fallback";
-  fallback.textContent=c?(c.name||c.number):"画像なし";
-  art.append(fallback);return art;
- }
- const img=document.createElement("img");
- img.alt=c.name||c.number;img.loading="lazy";img.decoding="async";
- img.onload=()=>img.classList.toggle("landscape",img.naturalWidth>img.naturalHeight);
- img.onerror=()=>{
-  const span=document.createElement("span");
-  span.className="fallback";
-  span.textContent=(c.name||c.number)+" 画像なし";
-  art.replaceChildren(span);
- };
- art.append(img);img.src=c.image;
- return art;
+function setGate(b){
+ needsName=b;
+ $("nameModal").classList.toggle("hidden",!b);
+ $("main").classList.toggle("hidden",b||!ready);
+ $("nav").classList.toggle("hidden",b||!ready);
 }
-
-/* ホーム */
-
 function fillProfile(){
  for(const id of ["nickname","gender","prefecture","prefVisible","privacy","xAccount","bio"]){
-  $(id).value=profile[id]??"";
+  $(id).value=profile[id]||"";
  }
- document.querySelectorAll(".methodCheck").forEach(cb=>{
-  cb.checked=(profile.methods||[]).includes(cb.value);
+ document.querySelectorAll(".methodInput").forEach(c=>{
+  c.checked=(profile.methods||[]).includes(c.value);
  });
 }
 function renderHome(){
+ const n=ownedCount(cards);
+ const rate=cards.length?Math.round(n/cards.length*100):0;
  $("homeName").textContent=profile.nickname||"未設定";
- $("homePref").textContent=profile.prefVisible==="yes"?profile.prefecture:"都道府県：非公開";
- $("homePrivacy").textContent=profile.privacy==="private"?"🔒 鍵アカウント":"🌐 公開アカウント";
- $("homeOwned").textContent=count(cards);
- $("homeRate").textContent=rate(cards)+"%";
- $("progressBar").style.width=rate(cards)+"%";
- $("profileDescription").textContent=
-  "交換方法："+((profile.methods||[]).join("・")||"未設定")+
+ $("homePrivacy").textContent=profile.privacy==="public"?"🌐 公開プロフィール":"🔒 鍵プロフィール";
+ $("ownedStat").textContent=n;
+ $("rateStat").textContent=rate+"%";
+ $("progress").style.width=rate+"%";
+ $("profileView").textContent=
+  "地域："+(profile.prefVisible==="yes"?profile.prefecture:"非公開")+
+  " ／ 交換方法："+(profile.methods||[]).join("・")+
   " ／ X："+(profile.xAccount?"@"+profile.xAccount:"未設定")+
-  " ／ "+(profile.bio||"自己紹介は未設定");
+  " ／ "+(profile.bio||"自己紹介なし");
 }
-$("editToggle").onclick=()=>{
- if(!canEdit())return;
- editing=!editing;
- $("editPanel").classList.toggle("hidden",!editing);
- if(editing)fillProfile();
+$("editProfile").onclick=()=>{
+ editOpen=!editOpen;
+ $("profileEditor").classList.toggle("hidden",!editOpen);
+ if(editOpen)fillProfile();
 };
-$("saveProfileButton").onclick=async()=>{
- if(!canEdit())return;
+$("saveProfile").onclick=async()=>{
  const nickname=$("nickname").value.trim();
- if(!validName(nickname)){alert("ニックネームは2〜30文字で入力してね");return}
+ if(!validName(nickname))return alert("ニックネームを2〜30文字で入力してください");
  const next={
   nickname,nicknameConfirmed:true,
   gender:$("gender").value,
@@ -568,138 +468,93 @@ $("saveProfileButton").onclick=async()=>{
   privacy:$("privacy").value,
   xAccount:$("xAccount").value.trim().replace(/^@/,""),
   bio:$("bio").value.trim(),
-  methods:[...document.querySelectorAll(".methodCheck:checked")].map(x=>x.value)
+  methods:[...document.querySelectorAll(".methodInput:checked")].map(e=>e.value)
  };
  try{
   await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});
-  profile=next;editing=false;
-  $("editPanel").classList.add("hidden");
+  profile=next;editOpen=false;
+  $("profileEditor").classList.add("hidden");
   renderAll();schedulePublish(true);
   alert("保存しました");
- }catch(e){alert("保存失敗："+e.message)}
+ }catch(e){alert("保存エラー: "+e.message)}
 };
 
 /* アルバム */
-
-function selectedCards(){
- return cards.filter(c=>group==="promo"?
-  c.group==="promo":c.group==="normal"||c.group==="parallel");
-}
-function filteredCards(){
- return selectedCards().filter(c=>{
-  if(group==="series1"&&kind!=="all"&&c.group!==kind)return false;
-  const n=qty(c.id);
-  if(filter==="owned"&&n===0)return false;
-  if(filter==="missing"&&n>0)return false;
-  if(filter==="extra"&&n<2)return false;
-  if(search&&!(c.name+" "+c.number+" "+c.rarity).toLowerCase().includes(search))return false;
-  return true;
- });
-}
-function createCard(c){
- const n=qty(c.id);
- const item=document.createElement("div");
- item.className="card-item"+(n>0?" owned":"");
- const imgButton=document.createElement("button");
- imgButton.className="card-image-button";
- imgButton.append(imageArt(c));
- if(n>0){
-  const badge=document.createElement("span");
-  badge.className="quantity-badge";badge.textContent=n;
-  imgButton.append(badge);
- }
- imgButton.disabled=savingCards.has(c.id);
- imgButton.onclick=()=>changeCard(c.id,n>0?0:1);
- item.append(imgButton);
- const name=document.createElement("span");
- name.className="card-name";name.textContent=c.name||c.number;
- item.append(name);
- if(c.name){
-  const num=document.createElement("span");
-  num.className="card-number";num.textContent=c.number;item.append(num);
- }
- const ctr=document.createElement("div");
- ctr.className="quantity-controls";
- const minus=document.createElement("button");
- minus.className="minus";minus.textContent="−";
- minus.disabled=n===0||savingCards.has(c.id);
- minus.onclick=()=>changeCard(c.id,qty(c.id)-1);
- const amount=document.createElement("button");
- amount.className="count-button";amount.textContent=n+"枚";
- amount.disabled=savingCards.has(c.id);
- amount.onclick=()=>editCount(c.id);
- const plus=document.createElement("button");
- plus.className="plus";plus.textContent="＋";
- plus.disabled=n>=999||savingCards.has(c.id);
- plus.onclick=()=>changeCard(c.id,qty(c.id)+1);
- ctr.append(minus,amount,plus);item.append(ctr);
- return item;
+function albumCards(){
+ return cards.filter(c=>albumGroup==="promo"?c.group==="promo":["normal","parallel"].includes(c.group));
 }
 function renderAlbum(){
- const list=selectedCards();
- $("albumStats").textContent=count(cards)+" / "+cards.length+"種類";
- $("albumProgress").style.width=rate(cards)+"%";
- $("categoryStats").textContent=
-  (group==="series1"?"1弾":"プロモ")+"："+count(list)+
-  " / "+list.length+"種類（"+rate(list)+"%）";
- $("seriesFilter").classList.toggle("hidden",group!=="series1");
- $("cardGrid").className="card-grid"+(cardSize==="normal"?"":" "+cardSize);
- const frag=document.createDocumentFragment();
- const visible=filteredCards();
- visible.forEach(c=>frag.append(createCard(c)));
- if(!visible.length){
-  const p=document.createElement("p");p.className="note";
-  p.textContent="表示するカードがありません。";frag.append(p);
+ const selected=albumCards();
+ $("albumStat").textContent=ownedCount(cards)+" / "+cards.length+"種類";
+ $("albumDetails").textContent=ownedCount(selected)+" / "+selected.length+"種類";
+ $("albumKinds").classList.toggle("hidden",albumGroup==="promo");
+ $("cardGrid").className="cards"+(albumSize==="normal"?"":" "+albumSize);
+ const g=$("cardGrid");g.replaceChildren();
+ const list=selected.filter(c=>{
+  if(albumGroup==="series1"&&albumKind!=="all"&&albumKind!==c.group)return false;
+  const q=qty(c.id);
+  if(albumView==="owned"&&!q||albumView==="missing"&&q||albumView==="extra"&&q<2)return false;
+  return(c.name+" "+c.number).toLowerCase().includes(albumText);
+ });
+ for(const c of list){
+  const q=qty(c.id);
+  const b=make("div","card"+(q?"":" unowned"));
+  const img=make("button","");
+  img.style.cssText="width:100%;background:none;padding:0";
+  img.append(art(c));
+  img.onclick=()=>changeQuantity(c.id,q?0:1);
+  b.append(img,make("span","name",c.name||c.number));
+  if(c.name)b.append(make("span","muted",c.number));
+  const ctr=make("div","count");
+  for(const [label,v] of [["−",q-1],[q+"枚",null],["＋",q+1]]){
+   const t=make("button","",label);
+   t.disabled=cardBusy.has(c.id)||v!==null&&(v<0||v>999);
+   t.onclick=()=>v===null?editQuantity(c.id):changeQuantity(c.id,v);
+   ctr.append(t);
+  }
+  b.append(ctr);g.append(b);
  }
- $("cardGrid").replaceChildren(frag);
+ if(!list.length)g.append(make("p","muted","該当カードはありません"));
 }
-async function changeCard(id,value){
- if(!canEdit()||savingCards.has(id))return;
- const next=Math.max(0,Math.min(999,Math.trunc(value)));
- if(!Number.isFinite(next))return;
- const before=qty(id);
- if(next===before)return;
- const account=uid;
- savingCards.add(id);owned[id]=next;
+async function changeQuantity(id,n){
+ if(!uid||cardBusy.has(id))return;
+ n=Math.max(0,Math.min(999,n));
+ const before=qty(id),account=uid;
+ if(n===before)return;
+ cardBusy.add(id);owned[id]=n;
  renderHome();renderAlbum();renderMatching();
  try{
-  await setDoc(userRef,{owned:{[id]:next},updatedAt:serverTimestamp()},{merge:true});
-  if(uid===account)schedulePublish();
+  await setDoc(userRef,{owned:{[id]:n},updatedAt:serverTimestamp()},{merge:true});
+  if(account===uid)schedulePublish();
  }catch(e){
-  if(uid===account){owned[id]=before;alert("保存失敗："+e.message)}
+  if(account===uid){owned[id]=before;alert("保存失敗: "+e.message)}
  }finally{
-  savingCards.delete(id);
-  if(uid===account){renderHome();renderAlbum();renderMatching()}
+  cardBusy.delete(id);
+  if(account===uid)renderAll();
  }
 }
-function editCount(id){
- if(!canEdit()||savingCards.has(id))return;
- const text=prompt("所持枚数（0〜999）",String(qty(id)));
- if(text===null)return;
- if(!/^\d{1,3}$/.test(text)){alert("0〜999の整数で入力してね");return}
- changeCard(id,Number(text));
+function editQuantity(id){
+ const n=prompt("所持枚数（0〜999）",String(qty(id)));
+ if(n===null)return;
+ if(!/^\d{1,3}$/.test(n))return alert("0〜999の整数で入力してね");
+ changeQuantity(id,Number(n));
 }
-document.querySelectorAll("[data-group]").forEach(b=>{
- b.onclick=()=>{
-  group=b.dataset.group;
-  document.querySelectorAll("[data-group]").forEach(x=>x.classList.toggle("active",x===b));
-  renderAlbum();
- };
+document.querySelectorAll("#albumGroups button").forEach(b=>b.onclick=()=>{
+ albumGroup=b.dataset.g;
+ document.querySelectorAll("#albumGroups button").forEach(x=>x.classList.toggle("on",x===b));
+ renderAlbum();
 });
-document.querySelectorAll("[data-kind]").forEach(b=>{
- b.onclick=()=>{
-  kind=b.dataset.kind;
-  document.querySelectorAll("[data-kind]").forEach(x=>x.classList.toggle("active",x===b));
-  renderAlbum();
- };
+document.querySelectorAll("#albumKinds button").forEach(b=>b.onclick=()=>{
+ albumKind=b.dataset.k;
+ document.querySelectorAll("#albumKinds button").forEach(x=>x.classList.toggle("on",x===b));
+ renderAlbum();
 });
-$("albumFilter").onchange=e=>{filter=e.target.value;renderAlbum()};
-$("displaySize").onchange=e=>{cardSize=e.target.value;renderAlbum()};
-$("cardSearch").oninput=e=>{search=e.target.value.trim().toLowerCase();renderAlbum()};
+$("albumSearch").oninput=e=>{albumText=e.target.value.toLowerCase();renderAlbum()};
+$("albumFilter").onchange=e=>{albumView=e.target.value;renderAlbum()};
+$("cardSize").onchange=e=>{albumSize=e.target.value;renderAlbum()};
 
-/* 公開マッチング情報 */
-
-function publicPayload(){
+/* 公開プロフィール */
+function publicData(){
  return{
   visibility:"public",
   nickname:profile.nickname,
@@ -709,834 +564,898 @@ function publicPayload(){
   wants:cards.filter(c=>qty(c.id)===0).map(c=>c.id)
  };
 }
-function schedulePublish(immediate=false){
+function schedulePublish(now=false){
  clearTimeout(publishTimer);
- if(!uid||!ready||!cards.length||nameRequired)return;
- publishTimer=setTimeout(publishOwn,immediate?0:650);
+ if(!ready||!cards.length||needsName)return;
+ publishTimer=setTimeout(syncProfile,now?0:500);
 }
-async function publishOwn(){
- if(publishBusy){publishAgain=true;return}
- if(!uid||!ready||!cards.length||nameRequired)return;
- const account=uid;
- const privateAccount=profile.privacy==="private";
- const data=privateAccount?null:publicPayload();
- const fingerprint=privateAccount?"private":JSON.stringify(data);
- if(fingerprint===lastPublished)return;
- publishBusy=true;
- $("publishStatus").textContent="マッチング情報を同期中…";
+async function syncProfile(){
+ if(publishRunning){publishPending=true;return}
+ if(!uid||!ready||needsName)return;
+ const account=uid,privateMode=profile.privacy==="private";
+ const data=privateMode?null:publicData();
+ const signature=privateMode?"private":JSON.stringify(data);
+ if(signature===publishFingerprint)return;
+ publishRunning=true;
+ $("syncStatus").textContent="マッチング情報を同期中…";
  try{
   const ref=doc(db,"matchingProfiles",account);
-  if(privateAccount)await deleteDoc(ref);
+  if(privateMode)await deleteDoc(ref);
   else await setDoc(ref,{...data,updatedAt:serverTimestamp()});
-  if(uid===account){
-   lastPublished=fingerprint;
-   $("publishStatus").textContent=privateAccount?
-    "鍵アカウント：マッチング情報は非公開です":
-    "公開マッチング情報を同期しました";
+  if(account===uid){
+   publishFingerprint=signature;
+   $("syncStatus").textContent=privateMode?
+    "鍵アカウント：マッチング非公開":"マッチング公開情報を同期しました";
   }
  }catch(e){
-  if(uid===account)$("publishStatus").textContent="同期失敗："+e.message;
+  if(account===uid)$("syncStatus").textContent="同期失敗: "+e.message;
  }finally{
-  publishBusy=false;
-  if(publishAgain){publishAgain=false;schedulePublish(true)}
+  publishRunning=false;
+  if(publishPending){publishPending=false;schedulePublish(true)}
  }
 }
 
-/* マッチング相性 */
-
-function evaluatePair(aId,bId){
- const a=cardById.get(aId),b=cardById.get(bId);
- const ga=rarityGroup(a),gb=rarityGroup(b);
- if(ga!=="unknown"&&ga===gb){
-  return{points:100,sameGroup:true,reason:groupLabel(ga)+"同士の交換"};
- }
- return{
-  points:ga==="unknown"||gb==="unknown"?35:30,
-  sameGroup:false,
-  reason:ga==="unknown"||gb==="unknown"?"レアリティ情報が不足":"異なるグループ同士の交換"
- };
-}
-function findPairs(giveIds,receiveIds){
- const gs={premium:[],regular:[],unknown:[]};
- const rs={premium:[],regular:[],unknown:[]};
- for(const id of giveIds)gs[rarityGroup(cardById.get(id))].push(id);
- for(const id of receiveIds)rs[rarityGroup(cardById.get(id))].push(id);
+/* 相性スコア */
+function pairResults(give,receive){
+ const a={premium:[],regular:[],unknown:[]};
+ const b={premium:[],regular:[],unknown:[]};
+ give.forEach(id=>a[rarity(cardMap.get(id))].push(id));
+ receive.forEach(id=>b[rarity(cardMap.get(id))].push(id));
  const pairs=[];
- for(const g of ["premium","regular"]){
-  while(gs[g].length&&rs[g].length){
-   const give=gs[g].shift(),receive=rs[g].shift();
-   pairs.push({give,receive,...evaluatePair(give,receive)});
+ for(const k of ["premium","regular"]){
+  while(a[k].length&&b[k].length){
+   pairs.push({give:a[k].shift(),receive:b[k].shift(),same:true,kind:k});
   }
  }
- const remainingGive=[...gs.premium,...gs.regular,...gs.unknown];
- const remainingReceive=[...rs.premium,...rs.regular,...rs.unknown];
- while(remainingGive.length&&remainingReceive.length){
-  const give=remainingGive.shift(),receive=remainingReceive.shift();
-  pairs.push({give,receive,...evaluatePair(give,receive)});
+ const x=[...a.premium,...a.regular,...a.unknown];
+ const y=[...b.premium,...b.regular,...b.unknown];
+ while(x.length&&y.length){
+  pairs.push({give:x.shift(),receive:y.shift(),same:false});
  }
- return pairs.sort((a,b)=>b.points-a.points);
+ return pairs;
 }
-function calculateCompatibility(give,receive,methods){
- const pairs=findPairs(give,receive);
- const sameCount=pairs.filter(p=>p.sameGroup).length;
- const total=pairs.length;
- if(!total)return{score:0,pairs:[],sameCount:0,countPairs:0};
- const score=Math.min(100,
-  (sameCount>0?50:20)+
-  Math.min(25,sameCount*9)+
-  Math.min(10,Math.max(0,total-1)*3)+
-  (methods.length?15:0)
- );
- return{score,pairs,sameCount,countPairs:total};
-}
-function miniCards(ids){
- const div=document.createElement("div");div.className="mini-grid";
- ids.slice(0,6).forEach(id=>{
-  const c=cardById.get(id);
-  const box=document.createElement("div");box.className="mini-card";
-  box.append(imageArt(c));
-  const s=document.createElement("span");s.textContent=c?(c.name||c.number):id;
-  box.append(s);div.append(box);
- });
- if(ids.length>6){
-  const s=document.createElement("small");
-  s.textContent="ほか"+(ids.length-6)+"種類";div.append(s);
- }
- return div;
-}
-function renderBestPair(pair){
- const container=document.createElement("div");container.className="pair";
- const heading=document.createElement("div");heading.className="row";
- const title=document.createElement("strong");title.textContent="おすすめ交換ペア";
- const reason=document.createElement("span");reason.className="note";reason.textContent=pair.reason;
- heading.append(title,reason);container.append(heading);
- const grid=document.createElement("div");grid.className="match-grid";
- for(const [label,id] of [["あなたが譲る",pair.give],["相手が譲る",pair.receive]]){
-  const box=document.createElement("div");
-  const cap=document.createElement("p");cap.className="note";cap.textContent=label;
-  const card=cardById.get(id);
-  const pic=document.createElement("div");pic.className="pair-card";pic.append(imageArt(card));
-  const name=document.createElement("p");name.className="note";
-  name.textContent=card?(card.name||card.number):id;
-  box.append(cap,pic,name);grid.append(box);
- }
- container.append(grid);return container;
+function compatibility(give,receive,methods){
+ const pairs=pairResults(give,receive);
+ const same=pairs.filter(p=>p.same).length;
+ return{
+  pairs,same,
+  score:Math.min(100,(same?50:20)+Math.min(25,9*same)+
+   Math.min(10,3*(pairs.length-1))+(methods.length?15:0))
+ };
 }
 function renderMatching(){
  const root=$("matchList");root.replaceChildren();
- if(!ready){$("matchingStatus").textContent="ログイン後に表示します。";return}
+ if(!ready)return;
  if(profile.privacy==="private"){
-  $("matchingStatus").textContent="鍵アカウントはマッチング不参加です。";return;
+  $("matchingStatus").textContent="鍵アカウントはマッチングに参加しません";
+  return;
  }
- if(matchError){$("matchingStatus").textContent=matchError;return}
  const have=new Set(cards.filter(c=>qty(c.id)>=2).map(c=>c.id));
  const want=new Set(cards.filter(c=>qty(c.id)===0).map(c=>c.id));
- const candidates=[];
+ const results=[];
  for(const p of peers){
   if(p.uid===uid||p.visibility!=="public")continue;
-  const give=[...new Set(Array.isArray(p.wants)?p.wants:[])].filter(id=>have.has(id));
-  const receive=[...new Set(Array.isArray(p.offers)?p.offers:[])].filter(id=>want.has(id));
+  const give=[...new Set(p.wants||[])].filter(id=>have.has(id));
+  const receive=[...new Set(p.offers||[])].filter(id=>want.has(id));
   if(!give.length||!receive.length)continue;
-  const commonMethods=(profile.methods||[]).filter(m=>(p.methods||[]).includes(m));
-  candidates.push({...p,give,receive,commonMethods,
-   ...calculateCompatibility(give,receive,commonMethods)});
+  const common=(profile.methods||[]).filter(m=>(p.methods||[]).includes(m));
+  results.push({...p,give,receive,common,...compatibility(give,receive,common)});
  }
- candidates.sort((a,b)=>b.score-a.score||b.sameCount-a.sameCount||b.countPairs-a.countPairs);
- $("matchingStatus").textContent="公開ユーザー："+peers.filter(p=>p.uid!==uid).length+
-  "人 ／ 交換候補："+candidates.length+"人";
- if(!candidates.length){root.textContent="今は相互に交換できる候補がいません。";return}
- for(const m of candidates){
-  const box=document.createElement("div");box.className="match";
-  const heading=document.createElement("div");heading.className="row";
-  const name=document.createElement("h3");name.textContent=m.nickname||"ユーザー";
-  const score=document.createElement("strong");score.className="score";score.textContent=m.score+"点";
-  heading.append(name,score);box.append(heading);
-  const details=document.createElement("p");details.className="note";
-  details.textContent="交換方法："+(m.commonMethods.join("・")||"一致なし")+
-   " ／ 地域："+(m.prefecture||"非公開");
-  box.append(details);
-  const desc=document.createElement("div");desc.className="reason";
-  desc.textContent="同じグループ同士の交換："+m.sameCount+
-   "組 ／ 組み合わせ候補："+m.countPairs+"組"+
-   (m.commonMethods.length?" ／ 交換方法が一致":" ／ 交換方法は不一致");
-  box.append(desc);
-  if(m.pairs.length)box.append(renderBestPair(m.pairs[0]));
-  const grid=document.createElement("div");grid.className="match-grid";
-  for(const [label,ids] of [["あなたが譲れる",m.give],["相手が譲れる",m.receive]]){
-   const side=document.createElement("div");side.className="match-side";
-   const title=document.createElement("strong");
-   title.textContent=label+"（"+ids.length+"種類）";
-   side.append(title,miniCards(ids));grid.append(side);
+ results.sort((a,b)=>b.score-a.score||b.same-a.same);
+ $("matchingStatus").textContent="交換候補："+results.length+"人";
+ if(!results.length)root.append(make("p","muted","今は交換候補がいません"));
+ for(const p of results){
+  const e=make("div","trade"),head=make("div","row");
+  head.append(make("strong","",p.nickname||"ユーザー"),make("strong","score",p.score+"点"));
+  e.append(head,make("p","muted","同グループ交換 "+p.same+
+   "組／交換方法："+(p.common.join("・")||"一致なし")));
+  const sides=make("div","two");
+  for(const [t,ids] of [["あなたが譲れる",p.give],["相手が譲れる",p.receive]]){
+   const s=make("div","side");
+   s.append(make("h3","",t),miniature(ids));
+   sides.append(s);
   }
-  box.append(grid);
-  const button=document.createElement("button");
-  button.className="btn";button.style.marginTop="12px";
-  button.textContent="♡ 交換を相談する";
-  button.onclick=()=>openThread(m.uid,m.nickname);
-  box.append(button);root.append(box);
+  e.append(sides);
+  const btn=make("button","btn","♡ 交換を申請する");
+  btn.style.marginTop="12px";
+  btn.onclick=()=>openRequest(p);
+  e.append(btn);root.append(e);
  }
 }
 
-/* マッチングの公開コメント */
+/* 交換申請 */
+function openRequest(p,trade=null){
+ if(!isPublic())return alert("交換申請には公開プロフィールが必要です");
+ requestTarget=p;requestTrade=trade;
+ $("requestModal").classList.remove("hidden");
+ $("requestError").textContent="";
+ $("requestNote").value=trade?.note||"";
+ $("requestTitle").textContent=trade?"交換条件を再提案":"交換を申請する";
+ $("requestSend").textContent=trade?"変更した条件を再提案":"この内容で申請する";
+ $("requestExplain").textContent=trade?
+  "再提案すると相手の承諾待ちに戻ります":
+  "相手が承諾するまで成立しません。条件が合わなければ交渉できます。";
+ let give,receive;
+ if(trade){
+  give=trade.fromUid===uid?trade.offerIds:trade.wantIds;
+  receive=trade.fromUid===uid?trade.wantIds:trade.offerIds;
+ }else{
+  give=p.give;receive=p.receive;
+ }
+ $("requestOffer").replaceChildren(...give.map(id=>
+  new Option(cardMap.get(id)?.name||cardMap.get(id)?.number||id,id)
+ ));
+ $("requestWant").replaceChildren(...receive.map(id=>
+  new Option(cardMap.get(id)?.name||cardMap.get(id)?.number||id,id)
+ ));
+ const possible=[...new Set([
+  ...(profile.methods||[]),...(p.methods||[]),trade?.method
+ ].filter(Boolean))];
+ $("requestMethod").replaceChildren(...possible.map(m=>new Option(m,m)));
+ if(trade){
+  const myOffer=trade.fromUid===uid?trade.offerIds[0]:trade.wantIds[0];
+  const myWant=trade.fromUid===uid?trade.wantIds[0]:trade.offerIds[0];
+  $("requestOffer").value=myOffer;
+  $("requestWant").value=myWant;
+  $("requestMethod").value=trade.method;
+ }
+ if(!$("requestOffer").value||!$("requestWant").value){
+  $("requestError").textContent="選択可能なカードがありません";
+  $("requestSend").disabled=true;
+ }else $("requestSend").disabled=false;
+}
+$("requestClose").onclick=()=>$("requestModal").classList.add("hidden");
 
-function closeThread(){
- if(stopComments){stopComments();stopComments=null}
- activeThread=null;threadComments=[];
- $("threadPanel").classList.add("hidden");
- $("commentsList").replaceChildren();
- $("commentBody").value="";
- $("commentError").textContent="";
-}
-function openThread(ownerId,ownerName){
- if(!canEdit())return;
- closeThread();activeThread=ownerId;
- $("threadTitle").textContent=ownerId===uid?
-  "自分への交換相談":(ownerName||"ユーザー")+" さんへの交換相談";
- $("threadPanel").classList.remove("hidden");
- $("threadStatus").textContent="コメント読み込み中…";
- $("threadPanel").scrollIntoView({behavior:"smooth",block:"start"});
- const ref=collection(db,"matchingProfiles",ownerId,"comments");
- stopComments=onSnapshot(query(ref,limit(100)),snapshot=>{
-  if(activeThread!==ownerId)return;
-  threadComments=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-  threadComments.sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));
-  $("threadStatus").textContent="公開コメント："+threadComments.length+"件";
-  renderComments();
- },e=>{
-  if(activeThread===ownerId)$("threadStatus").textContent="読み込み失敗："+e.message;
- });
-}
-function authorName(authorUid){
- if(authorUid===uid)return profile.nickname;
- return peers.find(p=>p.uid===authorUid)?.nickname||"ユーザー";
-}
-function commentElement(c,deleteCallback){
- const el=document.createElement("div");
- el.className="comment"+(c.authorUid===uid?" mine":"");
- const author=document.createElement("strong");
- author.textContent=authorName(c.authorUid);
- const body=document.createElement("p");body.textContent=c.body||"";
- const bottom=document.createElement("div");bottom.className="row";
- const date=document.createElement("small");
- date.textContent=c.createdAt?.toDate?
-  c.createdAt.toDate().toLocaleString("ja-JP"):"送信中";
- bottom.append(date);
- if(deleteCallback){
-  const del=document.createElement("button");
-  del.textContent="削除";del.onclick=deleteCallback;
-  bottom.append(del);
- }
- el.append(author,body,bottom);return el;
-}
-function renderComments(){
- const root=$("commentsList");root.replaceChildren();
- if(!threadComments.length){root.textContent="まだコメントはありません。";return}
- for(const c of threadComments){
-  const target=activeThread;
-  const canDelete=c.authorUid===uid||target===uid;
-  root.append(commentElement(c,canDelete?async()=>{
-   if(!confirm("このコメントを削除しますか？"))return;
-   try{
-    await deleteDoc(doc(db,"matchingProfiles",target,"comments",c.id));
-   }catch(e){alert("削除失敗："+e.message)}
-  }:null));
- }
-}
-$("myCommentsButton").onclick=()=>{
- if(profile.privacy==="private"){
-  alert("鍵アカウントでは公開コメントを利用できません。");return;
- }
- openThread(uid,profile.nickname);
-};
-$("closeThreadButton").onclick=closeThread;
-$("commentForm").onsubmit=async e=>{
- e.preventDefault();
- if(!canEdit()||!activeThread)return;
- const body=$("commentBody").value.trim();
- if(body.length<1||body.length>300){$("commentError").textContent="1〜300文字で入力してね";return}
- const target=activeThread;
- $("commentSubmit").disabled=true;$("commentError").textContent="";
+$("requestSend").onclick=async()=>{
+ if(requestBusy||!isPublic())return;
+ const give=$("requestOffer").value;
+ const receive=$("requestWant").value;
+ const method=$("requestMethod").value;
+ const note=$("requestNote").value.trim();
+ const target=requestTarget,trade=requestTrade;
+ if(!give||!receive||!method)return;
+ requestBusy=true;
+ $("requestSend").disabled=true;
+ $("requestError").textContent="";
  try{
-  await addDoc(collection(db,"matchingProfiles",target,"comments"),{
-   authorUid:uid,body,createdAt:serverTimestamp()
-  });
-  $("commentBody").value="";
- }catch(err){
-  $("commentError").textContent="投稿失敗："+err.message;
- }finally{$("commentSubmit").disabled=false}
-};
-
-/* 交換掲示板：画像選択 */
-
-function selectedSet(){
- return selectorTarget==="offer"?selectedOffers:selectedWants;
-}
-function renderChosen(){
- for(const [set,rootId,labelId] of [
-  [selectedOffers,"chosenOffers","offerCount"],
-  [selectedWants,"chosenWants","wantCount"]
- ]){
-  const root=$(rootId);
-  root.replaceChildren();
-  $(labelId).textContent=set.size+"枚選択中（最大50種類）";
-  for(const id of set){
-   const c=cardById.get(id);
-   const item=document.createElement("div");
-   item.className="chosen-card";
-   item.append(imageArt(c));
-   const text=document.createElement("span");
-   text.textContent=c?(c.name||c.number):id;
-   item.append(text);
-   const del=document.createElement("button");
-   del.textContent="×";
-   del.title="選択解除";
-   del.onclick=()=>{
-    set.delete(id);
-    renderChosen();
-    renderSelector();
-   };
-   item.append(del);root.append(item);
-  }
- }
-}
-function openSelector(target){
- if(!canEdit())return;
- selectorTarget=target;
- selectorFilter="all";
- $("selectorSearch").value="";
- $("selectorGroup").value="all";
- $("selectorTitle").textContent=target==="offer"?"譲れるカードを選ぶ":"欲しいカードを選ぶ";
- $("selectorModal").classList.remove("hidden");
- renderSelector();
-}
-$("chooseOffers").onclick=()=>openSelector("offer");
-$("chooseWants").onclick=()=>openSelector("want");
-$("closeSelector").onclick=()=>$("selectorModal").classList.add("hidden");
-
-for(const [id,value] of [
- ["selectorAll","all"],
- ["selectorOwned","owned"],
- ["selectorExtra","extra"],
- ["selectorMissing","missing"]
-]){
- $(id).onclick=()=>{selectorFilter=value;renderSelector()};
-}
-$("selectorSearch").oninput=renderSelector;
-$("selectorGroup").onchange=renderSelector;
-
-function renderSelector(){
- const root=$("selectorGrid");
- root.replaceChildren();
- const set=selectedSet();
- const text=$("selectorSearch").value.trim().toLowerCase();
- const selectedGroup=$("selectorGroup").value;
-
- for(const [id,val] of [
-  ["selectorAll","all"],["selectorOwned","owned"],
-  ["selectorExtra","extra"],["selectorMissing","missing"]
- ]){
-  $(id).classList.toggle("active",selectorFilter===val);
- }
-
- const visible=cards.filter(c=>{
-  if(selectedGroup==="promo"&&c.group!=="promo")return false;
-  if(selectedGroup==="series1"&&c.group==="promo")return false;
-  if(selectorFilter==="owned"&&qty(c.id)<1)return false;
-  if(selectorFilter==="extra"&&qty(c.id)<2)return false;
-  if(selectorFilter==="missing"&&qty(c.id)>0)return false;
-  if(text&&!(c.name+" "+c.number+" "+c.rarity).toLowerCase().includes(text))return false;
-  return true;
- });
-
- $("selectorStatus").textContent=
-  set.size+"種類選択中（最大50種類）／ 表示："+visible.length+"種類";
-
- const frag=document.createDocumentFragment();
-
- for(const c of visible){
-  const button=document.createElement("button");
-  button.className="selector-card"+(set.has(c.id)?" selected":"");
-  button.append(imageArt(c));
-  const name=document.createElement("span");
-  name.className="card-name";name.textContent=c.name||c.number;
-  button.append(name);
-  if(set.has(c.id)){
-   const badge=document.createElement("span");
-   badge.className="selector-mark";badge.textContent="✓";
-   button.append(badge);
-  }
-  button.onclick=()=>{
-   if(set.has(c.id))set.delete(c.id);
-   else{
-    if(set.size>=50){alert("一度に選べるのは50種類までです");return}
-    set.add(c.id);
-   }
-   renderChosen();
-   renderSelector();
-  };
-  frag.append(button);
- }
- root.append(frag);
-}
-
-/* 交換掲示板：投稿・編集・削除 */
-
-function clearPostEditor(){
- editPostId=null;
- selectedOffers=new Set();
- selectedWants=new Set();
- $("postBody").value="";
- $("postEditorTitle").textContent="♡ 新しい交換募集を作る";
- $("savePostButton").textContent="♡ 募集を公開する";
- $("cancelEditPost").classList.add("hidden");
- $("postEditorError").textContent="";
- renderChosen();
-}
-$("cancelEditPost").onclick=clearPostEditor;
-
-$("savePostButton").onclick=async()=>{
- if(!canPost()||posting)return;
-
- const offerIds=[...selectedOffers];
- const wantIds=[...selectedWants];
- const body=$("postBody").value.trim();
-
- if(!offerIds.length||!wantIds.length){
-  $("postEditorError").textContent=
-   "譲れるカードと欲しいカードをそれぞれ1種類以上選んでね";
-  return;
- }
- if(offerIds.length>50||wantIds.length>50||body.length>500){
-  $("postEditorError").textContent="選択数または文章が制限を超えています";
-  return;
- }
-
- posting=true;
- $("savePostButton").disabled=true;
- $("postEditorError").textContent="";
-
- try{
-  if(editPostId){
-   await updateDoc(doc(db,"posts",editPostId),{
-    offerIds,wantIds,body,
+  if(trade){
+   const fromMe=trade.fromUid===uid;
+   await updateDoc(doc(db,"tradeRequests",trade.id),{
+    offerIds:fromMe?[give]:[receive],
+    wantIds:fromMe?[receive]:[give],
+    method,note,status:"pending",
+    revision:trade.revision+1,
+    proposedBy:uid,lastActor:uid,
     updatedAt:serverTimestamp()
    });
   }else{
+   await addDoc(collection(db,"tradeRequests"),{
+    fromUid:uid,toUid:target.uid,
+    participants:[uid,target.uid],
+    offerIds:[give],wantIds:[receive],
+    method,note,status:"pending",
+    revision:1,proposedBy:uid,lastActor:uid,
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+   });
+  }
+  $("requestModal").classList.add("hidden");
+  showPage("trades");
+  alert(trade?"再提案しました":"交換申請を送りました");
+ }catch(e){
+  $("requestError").textContent="申請失敗: "+e.message;
+ }finally{
+  requestBusy=false;$("requestSend").disabled=false;
+ }
+};
+
+function myTradeName(id){
+ return id===uid?"あなた":peers.find(p=>p.uid===id)?.nickname||"ユーザー";
+}
+function tradeStatus(t){
+ return({
+  pending:"承諾待ち",
+  negotiating:"交渉中",
+  accepted:"マッチング成立",
+  declined:"お断り"
+ })[t.status]||t.status;
+}
+async function changeTrade(t,status){
+ const msg=status==="accepted"?
+  "この条件でマッチングを成立させますか？":
+  status==="declined"?
+  "この申請をお断りしますか？":"交渉を開始しますか？";
+ if(!confirm(msg))return;
+ try{
+  await updateDoc(doc(db,"tradeRequests",t.id),{
+   status,lastActor:uid,updatedAt:serverTimestamp()
+  });
+  if(status==="negotiating")tradeThreadId=t.id;
+ }catch(e){alert("操作失敗: "+e.message)}
+}
+function renderTradeList(){
+ const root=$("tradeList");root.replaceChildren();
+ const list=trades.filter(t=>tradeFilter==="all"||
+  ["pending","negotiating"].includes(t.status));
+ $("tradesStatus").textContent="表示："+list.length+"件";
+ if(!list.length){
+  root.append(make("p","muted","該当する申請はありません"));
+  return;
+ }
+ for(const t of list){
+  const e=make("div","trade");
+  const incoming=t.toUid===uid;
+  const other=incoming?t.fromUid:t.toUid;
+  const head=make("div","row");
+  head.append(
+   make("strong","",incoming?
+    myTradeName(other)+"さんからの申請":
+    myTradeName(other)+"さんへの申請"),
+   make("span","tag",tradeStatus(t))
+  );
+  e.append(head);
+  const sides=make("div","two");
+  for(const [label,ids] of [
+   ["申請者が譲る",t.offerIds||[]],
+   ["申請者が受け取る",t.wantIds||[]]
+  ]){
+   const s=make("div","side");
+   s.append(make("strong","",label),miniature(ids));
+   sides.append(s);
+  }
+  e.append(sides,make("p","muted",
+   "交換方法："+t.method+" ／ 第"+t.revision+"案"));
+  if(t.note)e.append(make("p","note",t.note));
+  const actions=make("div","actions");
+  const canRespond=t.status==="pending"&&t.proposedBy!==uid;
+  if(canRespond){
+   for(const [label,status,cls] of [
+    ["承諾する","accepted","btn"],
+    ["交渉する","negotiating","btn light"],
+    ["お断りする","declined","btn outline"]
+   ]){
+    const b=make("button",cls,label);
+    b.onclick=()=>changeTrade(t,status);
+    actions.append(b);
+   }
+  }
+  if(t.status==="negotiating"){
+   const b=make("button","btn light",
+    tradeThreadId===t.id?"交渉コメントを閉じる":"交渉コメントを開く");
+   b.onclick=()=>{
+    tradeThreadId=tradeThreadId===t.id?null:t.id;
+    renderTradeList();
+   };
+   actions.append(b);
+   const p=make("button","btn","条件を変更・再提案");
+   p.onclick=()=>{
+    const peer=peers.find(x=>x.uid===other)||
+     {uid:other,methods:[t.method]};
+    openRequest(peer,t);
+   };
+   actions.append(p);
+   const deny=make("button","btn outline","交渉を終了してお断り");
+   deny.onclick=()=>changeTrade(t,"declined");
+   actions.append(deny);
+  }
+  e.append(actions);
+  if(tradeThreadId===t.id&&t.status==="negotiating"){
+   const thread=make("div","box");
+   thread.append(make("h3","","非公開の交渉コメント"));
+   const msgs=messagesByTrade.get(t.id)||[];
+   for(const m of msgs){
+    const item=make("div","comment");
+    item.append(
+     make("strong","",myTradeName(m.authorUid)),
+     make("p","",m.body),
+     make("span","muted",dateText(m.createdAt))
+    );
+    thread.append(item);
+   }
+   const form=document.createElement("form");
+   const input=document.createElement("textarea");
+   const send=make("button","btn","送信");
+   const error=make("p","error");
+   input.maxLength=300;input.required=true;
+   input.placeholder="希望する条件を相談できます";
+   form.append(input,send,error);
+   form.onsubmit=async ev=>{
+    ev.preventDefault();
+    const body=input.value.trim();
+    if(!body)return;
+    send.disabled=true;
+    try{
+     await addDoc(collection(db,"tradeRequests",t.id,"messages"),{
+      authorUid:uid,body,createdAt:serverTimestamp()
+     });
+     input.value="";
+    }catch(err){error.textContent=err.message}
+    finally{send.disabled=false}
+   };
+   thread.append(form);e.append(thread);
+  }
+  root.append(e);
+ }
+}
+document.querySelectorAll("[data-trade-filter]").forEach(b=>b.onclick=()=>{
+ tradeFilter=b.dataset.tradeFilter;
+ document.querySelectorAll("[data-trade-filter]").forEach(x=>
+  x.classList.toggle("on",x===b)
+ );
+ renderTradeList();
+});
+
+/* アプリ内通知 */
+function seenKey(k){return readKeys.has(k)}
+function saveRead(){
+ if(uid)localStorage.setItem("aikatsu-read-"+uid,
+  JSON.stringify([...readKeys]));
+}
+function collectNotifications(){
+ const out=[];
+ for(const t of trades){
+  if(t.lastActor!==uid){
+   const label=t.status==="pending"?"交換申請・再提案が届きました":
+    t.status==="accepted"?"交換申請が承諾されました":
+    t.status==="declined"?"交換申請が断られました":
+    "交渉が開始されました";
+   out.push({
+    key:"trade:"+t.id+":"+t.revision+":"+t.status+":"+
+     Math.floor((t.updatedAt?.toMillis?.()||0)/1000),
+    at:t.updatedAt?.toMillis?.()||0,
+    text:label,
+    detail:"交換相手："+myTradeName(
+     t.fromUid===uid?t.toUid:t.fromUid
+    ),
+    go:()=>{
+     tradeThreadId=t.id;showPage("trades");renderTradeList();
+    }
+   });
+  }
+  for(const m of messagesByTrade.get(t.id)||[]){
+   if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+   out.push({
+    key:"message:"+t.id+":"+m.id,
+    at:m.createdAt.toMillis(),
+    text:"交渉コメントが届きました",
+    detail:myTradeName(m.authorUid),
+    go:()=>{
+     tradeThreadId=t.id;showPage("trades");renderTradeList();
+    }
+   });
+  }
+ }
+ for(const p of posts.filter(x=>x.authorUid===uid)){
+  for(const m of postMessagesById.get(p.id)||[]){
+   if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+   out.push({
+    key:"postcomment:"+p.id+":"+m.id,
+    at:m.createdAt.toMillis(),
+    text:"交換掲示板にコメントが届きました",
+    detail:myTradeName(m.authorUid),
+    go:()=>{
+     postThreadId=p.id;showPage("board");renderPosts();
+    }
+   });
+  }
+ }
+ for(const m of oldMessages){
+  if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;
+  out.push({
+   key:"profilecomment:"+m.id,
+   at:m.createdAt.toMillis(),
+   text:"プロフィールに交換相談が届きました",
+   detail:myTradeName(m.authorUid),
+   go:()=>{
+    showPage("matching");
+    $("oldThread").classList.remove("hidden");
+    renderOldComments();
+   }
+  });
+ }
+ out.sort((a,b)=>b.at-a.at);
+ notifications=out.slice(0,150);
+ renderNotifications();
+}
+function renderNotifications(){
+ const root=$("notificationList");root.replaceChildren();
+ const unread=notifications.filter(n=>!seenKey(n.key)).length;
+ for(const x of [$("unreadPill"),$("navCount")]){
+  x.classList.toggle("hidden",!unread);
+  x.textContent=String(unread);
+ }
+ if(!notifications.length){
+  root.append(make("p","muted","まだ通知はありません"));
+  return;
+ }
+ for(const n of notifications.slice(0,40)){
+  const b=make("button",
+   "notification"+(seenKey(n.key)?"":" unread"));
+  b.append(
+   make("strong","",n.text),
+   make("div","muted",n.detail)
+  );
+  b.onclick=()=>{
+   readKeys.add(n.key);saveRead();
+   renderNotifications();n.go();
+  };
+  root.append(b);
+ }
+}
+$("markRead").onclick=()=>{
+ notifications.forEach(n=>readKeys.add(n.key));
+ saveRead();renderNotifications();
+};
+function watchTrades(){
+ const q=query(collection(db,"tradeRequests"),
+  where("participants","array-contains",uid),limit(100));
+ stops.push(onSnapshot(q,s=>{
+  trades=s.docs.map(d=>({id:d.id,...d.data()}))
+   .sort((a,b)=>
+    (b.updatedAt?.toMillis?.()||0)-
+    (a.updatedAt?.toMillis?.()||0)
+   );
+  const current=new Set(trades.map(t=>t.id));
+  for(const [id,stop] of tradeMessageStops){
+   if(!current.has(id)){
+    stop();tradeMessageStops.delete(id);
+    messagesByTrade.delete(id);
+   }
+  }
+  for(const t of trades){
+   if(tradeMessageStops.has(t.id))continue;
+   const stop=onSnapshot(
+    query(collection(db,"tradeRequests",t.id,"messages"),limit(100)),
+    s=>{
+     messagesByTrade.set(t.id,s.docs.map(d=>({
+      id:d.id,...d.data()
+     })).sort((a,b)=>
+      (a.createdAt?.toMillis?.()||0)-
+      (b.createdAt?.toMillis?.()||0)
+     ));
+     collectNotifications();
+     if(tradeThreadId===t.id)renderTradeList();
+    },
+    ()=>{}
+   );
+   tradeMessageStops.set(t.id,stop);
+  }
+  renderTradeList();collectNotifications();
+ },e=>{
+  $("tradesStatus").textContent="申請読み込み失敗："+e.message;
+ }));
+}
+
+/* 掲示板：カード選択 */
+function chosenSet(){
+ return pickerKind==="offers"?offerChoice:wantChoice;
+}
+function renderSelected(){
+ for(const [set,id] of [
+  [offerChoice,"selectedOffers"],[wantChoice,"selectedWants"]
+ ]){
+  const root=$(id);root.replaceChildren();
+  for(const cid of set){
+   const b=make("button","card"),c=cardMap.get(cid);
+   b.append(art(c),make("span","name",
+    (c?.name||c?.number||cid)+" ×"));
+   b.onclick=()=>{
+    set.delete(cid);renderSelected();renderPicker();
+   };
+   root.append(b);
+  }
+ }
+}
+function openPicker(kind){
+ pickerKind=kind;pickerFilter="all";
+ $("pickerSearch").value="";
+ $("pickerTitle").textContent=kind==="offers"?
+  "譲れるカードを選ぶ":"欲しいカードを選ぶ";
+ $("pickerModal").classList.remove("hidden");
+ renderPicker();
+}
+$("pickOffers").onclick=()=>openPicker("offers");
+$("pickWants").onclick=()=>openPicker("wants");
+$("pickerClose").onclick=()=>
+ $("pickerModal").classList.add("hidden");
+document.querySelectorAll("[data-pickfilter]").forEach(b=>b.onclick=()=>{
+ pickerFilter=b.dataset.pickfilter;renderPicker();
+});
+$("pickerSearch").oninput=renderPicker;
+function renderPicker(){
+ const root=$("pickerGrid"),set=chosenSet();
+ const q=$("pickerSearch").value.toLowerCase();
+ root.replaceChildren();
+ document.querySelectorAll("[data-pickfilter]").forEach(b=>
+  b.classList.toggle("on",b.dataset.pickfilter===pickerFilter)
+ );
+ $("pickerCount").textContent=set.size+" / 50種類選択中";
+ for(const c of cards){
+  const n=qty(c.id);
+  if(pickerFilter==="owned"&&!n||
+     pickerFilter==="extra"&&n<2||
+     pickerFilter==="missing"&&n)continue;
+  if(!(c.name+" "+c.number).toLowerCase().includes(q))continue;
+  const b=make("button",set.has(c.id)?"chosen":"");
+  b.append(art(c),make("div","muted",c.name||c.number));
+  b.onclick=()=>{
+   if(set.has(c.id))set.delete(c.id);
+   else{
+    if(set.size>=50)return alert("50種類まで選択できます");
+    set.add(c.id);
+   }
+   renderPicker();renderSelected();
+  };
+  root.append(b);
+ }
+}
+function resetPostEditor(){
+ postEditId=null;offerChoice=new Set();wantChoice=new Set();
+ $("postBody").value="";$("postError").textContent="";
+ $("postEditorTitle").textContent="新しい交換募集";
+ $("savePost").textContent="♡ 募集を公開";
+ $("cancelPostEdit").classList.add("hidden");
+ renderSelected();
+}
+$("cancelPostEdit").onclick=resetPostEditor;
+$("savePost").onclick=async()=>{
+ if(postBusy)return;
+ if(!isPublic())return alert("投稿には公開プロフィールが必要です");
+ const offerIds=[...offerChoice],wantIds=[...wantChoice];
+ const body=$("postBody").value.trim();
+ if(!offerIds.length||!wantIds.length){
+  $("postError").textContent=
+   "譲れる・欲しいカードをそれぞれ選択してください";
+  return;
+ }
+ postBusy=true;$("savePost").disabled=true;
+ try{
+  if(postEditId){
+   await updateDoc(doc(db,"posts",postEditId),{
+    offerIds,wantIds,body,updatedAt:serverTimestamp()
+   });
+  }else{
    await addDoc(collection(db,"posts"),{
-    authorUid:uid,
-    visibility:"public",
+    authorUid:uid,visibility:"public",
     offerIds,wantIds,body,
     createdAt:serverTimestamp(),
     updatedAt:serverTimestamp()
    });
   }
-  clearPostEditor();
-  alert("募集を保存しました");
+  resetPostEditor();alert("募集を保存しました");
  }catch(e){
-  $("postEditorError").textContent="保存失敗："+e.message;
+  $("postError").textContent="保存失敗: "+e.message;
  }finally{
-  posting=false;
-  $("savePostButton").disabled=false;
+  postBusy=false;$("savePost").disabled=false;
  }
 };
 
-function editBoardPost(p){
- if(!canEdit()||p.authorUid!==uid)return;
- editPostId=p.id;
- selectedOffers=new Set(p.offerIds||[]);
- selectedWants=new Set(p.wantIds||[]);
- $("postBody").value=p.body||"";
- $("postEditorTitle").textContent="♡ 交換募集を編集";
- $("savePostButton").textContent="変更を保存する";
- $("cancelEditPost").classList.remove("hidden");
- renderChosen();
- showPage("board");
- $("postEditorTitle").scrollIntoView({behavior:"smooth"});
-}
-async function deleteBoardPost(p){
- if(!canEdit()||p.authorUid!==uid)return;
- if(!confirm("この募集を削除しますか？\n募集へのコメントも閲覧できなくなります。"))return;
- try{
-  await deleteDoc(doc(db,"posts",p.id));
-  if(editPostId===p.id)clearPostEditor();
- }catch(e){alert("削除失敗："+e.message)}
-}
-
-/* 交換掲示板：公開一覧 */
-
-function postCardGrid(ids){
- const grid=document.createElement("div");
- grid.className="post-cards";
- for(const id of ids){
-  const c=cardById.get(id);
-  const item=document.createElement("div");
-  item.className="post-card";
-  item.append(imageArt(c));
-  const text=document.createElement("span");
-  text.textContent=c?(c.name||c.number):id;
-  item.append(text);grid.append(item);
- }
- return grid;
-}
-function postCardSection(title,ids){
- const side=document.createElement("div");
- side.className="post-side";
- const heading=document.createElement("h4");
- heading.textContent=title+"（"+ids.length+"種類）";
- side.append(heading,postCardGrid(ids));
- return side;
-}
-function postAuthor(p){
- return p.authorUid===uid?profile.nickname:
-  peers.find(x=>x.uid===p.authorUid)?.nickname||"ユーザー";
-}
-function postMatchesSearch(p,text){
- if(!text)return true;
- const ids=[...(p.offerIds||[]),...(p.wantIds||[])];
- const cardText=ids.map(id=>{
-  const c=cardById.get(id);
-  return c?c.name+" "+c.number:id;
- }).join(" ");
- return ((p.body||"")+" "+cardText+" "+postAuthor(p))
-  .toLowerCase().includes(text);
+/* 掲示板：公開募集・コメント */
+function peerName(id){
+ return id===uid?profile.nickname:
+  peers.find(p=>p.uid===id)?.nickname||"ユーザー";
 }
 function renderPosts(){
  const root=$("postList");root.replaceChildren();
- const searchText=$("postSearch").value.trim().toLowerCase();
- const selectedFilter=$("postFilter").value;
-
- const list=publicPosts.filter(p=>{
-  if(selectedFilter==="mine"&&p.authorUid!==uid)return false;
-
+ const text=$("postSearch").value.toLowerCase();
+ const f=$("postFilter").value;
+ const list=posts.filter(p=>{
+  if(f==="mine"&&p.authorUid!==uid)return false;
   const ids=[...(p.offerIds||[]),...(p.wantIds||[])];
-
-  if(selectedFilter==="premium"&&
-   !ids.some(id=>rarityGroup(cardById.get(id))==="premium"))return false;
-
-  if(selectedFilter==="regular"&&
-   !ids.some(id=>rarityGroup(cardById.get(id))==="regular"))return false;
-
-  return postMatchesSearch(p,searchText);
+  if(["premium","regular"].includes(f)&&
+   !ids.some(id=>rarity(cardMap.get(id))===f))return false;
+  return(
+   (p.body||"")+" "+peerName(p.authorUid)+" "+
+   ids.map(id=>{
+    const c=cardMap.get(id);
+    return(c?.name||"")+" "+(c?.number||id);
+   }).join(" ")
+  ).toLowerCase().includes(text);
  });
-
  $("postsStatus").textContent=
-  "公開募集："+publicPosts.length+"件 ／ 表示："+list.length+"件";
-
- if(!list.length){
-  root.textContent="条件に合う募集はありません。";
-  return;
- }
-
+  "公開募集 "+posts.length+"件／表示 "+list.length+"件";
+ if(!list.length)root.append(make("p","muted","募集はありません"));
  for(const p of list){
-  const article=document.createElement("article");
-  article.className="post";
-  const header=document.createElement("div");
-  header.className="row";
-  const author=document.createElement("strong");
-  author.textContent="♡ "+postAuthor(p);
-  const date=document.createElement("small");
-  date.className="note";
-  date.textContent=p.createdAt?.toDate?
-   p.createdAt.toDate().toLocaleDateString("ja-JP"):"投稿中";
-  header.append(author,date);article.append(header);
-
-  const images=document.createElement("div");
-  images.className="post-images";
-  images.append(
-   postCardSection("譲れるカード",p.offerIds||[]),
-   postCardSection("欲しいカード",p.wantIds||[])
+  const e=make("div","post");
+  e.append(
+   make("strong","",peerName(p.authorUid)),
+   make("p","muted",dateText(p.createdAt))
   );
-  article.append(images);
-
-  if(p.body){
-   const paragraph=document.createElement("p");
-   paragraph.textContent=p.body;article.append(paragraph);
+  const sides=make("div","two");
+  for(const [label,ids] of [
+   ["譲れる",p.offerIds||[]],
+   ["欲しい",p.wantIds||[]]
+  ]){
+   const s=make("div","side");
+   s.append(make("h3","",label),miniature(ids));
+   sides.append(s);
   }
-
-  const actions=document.createElement("div");
-  actions.className="wrap";
-  const commentsButton=document.createElement("button");
-  commentsButton.className="btn alt";
-  commentsButton.textContent=
-   boardThreadId===p.id?"コメントを閉じる":"♡ コメントを見る・返信";
-  commentsButton.onclick=()=>{
-   if(boardThreadId===p.id)closeBoardThread();
-   else openBoardThread(p.id);
+  e.append(sides);
+  if(p.body)e.append(make("p","",p.body));
+  const actions=make("div","actions");
+  const comment=make("button","btn light",
+   postThreadId===p.id?"コメントを閉じる":"コメント・返信");
+  comment.onclick=()=>{
+   postThreadId=postThreadId===p.id?null:p.id;
+   watchViewingPost(postThreadId);
+   renderPosts();
   };
-  actions.append(commentsButton);
-
+  actions.append(comment);
   if(p.authorUid===uid){
-   const edit=document.createElement("button");
-   edit.className="btn line";edit.textContent="編集";
-   edit.onclick=()=>editBoardPost(p);
-
-   const del=document.createElement("button");
-   del.className="btn line";del.textContent="削除";
-   del.onclick=()=>deleteBoardPost(p);
+   const edit=make("button","btn outline","編集");
+   const del=make("button","btn outline","削除");
+   edit.onclick=()=>{
+    postEditId=p.id;
+    offerChoice=new Set(p.offerIds||[]);
+    wantChoice=new Set(p.wantIds||[]);
+    $("postBody").value=p.body||"";
+    $("postEditorTitle").textContent="募集を編集";
+    $("savePost").textContent="変更を保存";
+    $("cancelPostEdit").classList.remove("hidden");
+    renderSelected();window.scrollTo(0,0);
+   };
+   del.onclick=async()=>{
+    if(!confirm("募集を削除しますか？"))return;
+    try{await deleteDoc(doc(db,"posts",p.id))}
+    catch(e){alert(e.message)}
+   };
    actions.append(edit,del);
   }
-  article.append(actions);
-
-  if(boardThreadId===p.id){
-   article.append(buildBoardThread(p));
+  e.append(actions);
+  if(postThreadId===p.id){
+   const box=make("div","box");
+   box.append(make("p","note",
+    "公開コメントです。住所や電話番号などは書かないでください。"));
+   for(const m of postMessagesById.get(p.id)||[]){
+    const item=make("div","comment");
+    item.append(
+     make("strong","",peerName(m.authorUid)),
+     make("p","",m.body),
+     make("span","muted",dateText(m.createdAt))
+    );
+    if(m.authorUid===uid||p.authorUid===uid){
+     const del=make("button","btn light small","削除");
+     del.onclick=async()=>{
+      if(confirm("コメントを削除しますか？")){
+       try{
+        await deleteDoc(doc(db,"posts",p.id,"comments",m.id));
+       }catch(err){alert(err.message)}
+      }
+     };
+     item.append(del);
+    }
+    box.append(item);
+   }
+   if(isPublic()){
+    const form=document.createElement("form");
+    const input=document.createElement("textarea");
+    const send=make("button","btn","コメントを送信");
+    const err=make("div","error");
+    input.maxLength=300;input.required=true;
+    form.append(input,send,err);
+    form.onsubmit=async ev=>{
+     ev.preventDefault();
+     const body=input.value.trim();
+     if(!body)return;
+     send.disabled=true;
+     try{
+      await addDoc(collection(db,"posts",p.id,"comments"),{
+       authorUid:uid,body,createdAt:serverTimestamp()
+      });
+      input.value="";
+     }catch(x){err.textContent=x.message}
+     finally{send.disabled=false}
+    };
+    box.append(form);
+   }
+   e.append(box);
   }
-  root.append(article);
+  root.append(e);
  }
 }
 $("postSearch").oninput=renderPosts;
 $("postFilter").onchange=renderPosts;
-$("refreshPostsButton").onclick=renderPosts;
 
 function watchPosts(){
- if(stopPosts){stopPosts();stopPosts=null}
- if(!uid)return;
- const q=query(
-  collection(db,"posts"),
-  where("visibility","==","public"),
-  limit(100)
+ stops.push(onSnapshot(
+  query(collection(db,"posts"),where("visibility","==","public"),limit(100)),
+  s=>{
+   posts=s.docs.map(d=>({id:d.id,...d.data()}))
+    .sort((a,b)=>
+     (b.createdAt?.toMillis?.()||0)-
+     (a.createdAt?.toMillis?.()||0)
+    );
+   const own=new Set(posts.filter(p=>p.authorUid===uid).map(p=>p.id));
+   for(const [id,stop] of postCommentStops){
+    if(!own.has(id)){
+     stop();postCommentStops.delete(id);
+     postMessagesById.delete(id);
+    }
+   }
+   for(const p of posts.filter(p=>p.authorUid===uid)){
+    if(postCommentStops.has(p.id))continue;
+    const stop=onSnapshot(
+     query(collection(db,"posts",p.id,"comments"),limit(100)),
+     s=>{
+      postMessagesById.set(p.id,s.docs.map(d=>({
+       id:d.id,...d.data()
+      })));
+      collectNotifications();
+      if(postThreadId===p.id)renderPosts();
+     },()=>{}
+    );
+    postCommentStops.set(p.id,stop);
+   }
+   renderPosts();collectNotifications();
+  },
+  e=>$("postsStatus").textContent="掲示板エラー: "+e.message
+ ));
+}
+function watchViewingPost(id){
+ if(viewingPostStop){viewingPostStop();viewingPostStop=null}
+ viewingPostId=id;
+ if(!id||postCommentStops.has(id))return;
+ viewingPostStop=onSnapshot(
+  query(collection(db,"posts",id,"comments"),limit(100)),
+  s=>{
+   postMessagesById.set(id,s.docs.map(d=>({
+    id:d.id,...d.data()
+   })));
+   if(postThreadId===id)renderPosts();
+  },()=>{}
  );
- stopPosts=onSnapshot(q,snapshot=>{
-  publicPosts=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-  publicPosts.sort((a,b)=>
-   (b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)
+}
+
+/* 以前のプロフィールコメント */
+function renderOldComments(){
+ $("oldCommentList").replaceChildren(...oldMessages.map(m=>{
+  const e=make("div","comment");
+  e.append(
+   make("strong","",peerName(m.authorUid)),
+   make("p","",m.body)
   );
-  renderPosts();
- },e=>{
-  $("postsStatus").textContent="掲示板の読み込み失敗："+e.message;
- });
+  return e;
+ }));
 }
-
-/* 交換掲示板：コメント */
-
-function closeBoardThread(){
- if(stopBoardComments){stopBoardComments();stopBoardComments=null}
- boardThreadId=null;boardComments=[];
- renderPosts();
-}
-function openBoardThread(postId){
- if(!canEdit())return;
- if(stopBoardComments){stopBoardComments();stopBoardComments=null}
- boardThreadId=postId;boardComments=[];
- const ref=collection(db,"posts",postId,"comments");
- stopBoardComments=onSnapshot(query(ref,limit(100)),snapshot=>{
-  if(boardThreadId!==postId)return;
-  boardComments=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-  boardComments.sort((a,b)=>
-   (a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0)
-  );
-  renderPosts();
- },e=>{
-  if(boardThreadId===postId)alert("コメント取得失敗："+e.message);
- });
- renderPosts();
-}
-
-function buildBoardThread(p){
- const box=document.createElement("div");
- box.className="board-thread";
-
- const title=document.createElement("h4");
- title.textContent="交換相談コメント（"+boardComments.length+"件）";
- box.append(title);
-
- const warning=document.createElement("p");
- warning.className="warning";
- warning.textContent="ここは公開コメント欄です。住所や電話番号などの個人情報は投稿しないでください。";
- box.append(warning);
-
- if(!boardComments.length){
-  const empty=document.createElement("p");
-  empty.className="note";empty.textContent="まだコメントはありません。";
-  box.append(empty);
- }
-
- for(const c of boardComments){
-  const canDelete=c.authorUid===uid||p.authorUid===uid;
-  box.append(commentElement(c,canDelete?async()=>{
-   if(!confirm("コメントを削除しますか？"))return;
-   try{
-    await deleteDoc(doc(db,"posts",p.id,"comments",c.id));
-   }catch(e){alert("削除失敗："+e.message)}
-  }:null));
- }
-
- if(profile.privacy==="private"){
-  const note=document.createElement("p");
-  note.className="note";
-  note.textContent="鍵アカウントでは掲示板にコメントできません。";
-  box.append(note);
-  return box;
- }
-
- const form=document.createElement("form");
- form.className="board-comment-form";
-
- const textarea=document.createElement("textarea");
- textarea.placeholder="交換希望です！ など";
- textarea.maxLength=300;
- textarea.required=true;
-
- const send=document.createElement("button");
- send.type="submit";send.className="btn";
- send.textContent="コメントを投稿";
-
- const error=document.createElement("p");
- error.className="error";
-
- form.append(textarea,send,error);
- form.onsubmit=async e=>{
-  e.preventDefault();
-  if(!canPost())return;
-  const body=textarea.value.trim();
-  if(body.length<1||body.length>300){
-   error.textContent="1〜300文字で入力してね";
-   return;
-  }
-  send.disabled=true;error.textContent="";
-  try{
-   await addDoc(collection(db,"posts",p.id,"comments"),{
-    authorUid:uid,body,createdAt:serverTimestamp()
-   });
-   textarea.value="";
-  }catch(err){
-   error.textContent="投稿失敗："+err.message;
-  }finally{send.disabled=false}
- };
- box.append(form);
- return box;
-}
-
-/* 公開プロフィールの監視 */
-
-function watchPeers(){
- if(stopPeers){stopPeers();stopPeers=null}
- if(!uid)return;
- const q=query(collection(db,"matchingProfiles"),
-  where("visibility","==","public"),limit(100));
- stopPeers=onSnapshot(q,s=>{
-  peers=s.docs.map(d=>({uid:d.id,...d.data()}));
-  matchError="";
-  renderMatching();
-  renderComments();
-  renderPosts();
- },e=>{
-  matchError="マッチング取得失敗："+e.message;
-  renderMatching();
- });
-}
-function renderAll(){
- renderHome();renderAlbum();renderMatching();renderPosts();
-}
-
-/* ログイン */
-
-function reset(){
- uid=null;userRef=null;ready=false;
- profile=defaults();owned={};peers=[];publicPosts=[];
- nameRequired=false;editing=false;
- lastPublished="";matchError="";
- savingCards.clear();clearTimeout(publishTimer);
- if(stopUser){stopUser();stopUser=null}
- if(stopPeers){stopPeers();stopPeers=null}
- if(stopPosts){stopPosts();stopPosts=null}
- if(stopBoardComments){stopBoardComments();stopBoardComments=null}
- boardThreadId=null;boardComments=[];
- closeThread();
- clearPostEditor();
- $("selectorModal").classList.add("hidden");
- $("nicknameModal").classList.add("hidden");
- $("appMain").classList.add("hidden");
- $("bottomTabs").classList.add("hidden");
- $("editPanel").classList.add("hidden");
- $("postsStatus").textContent="読み込み中…";
-}
-
-$("loginButton").onclick=async()=>{
- $("authError").textContent="";
- try{await signInWithPopup(auth,provider)}
- catch(e){$("authError").textContent="ログイン失敗："+e.message}
+$("oldComments").onclick=()=>{
+ $("oldThread").classList.toggle("hidden");
 };
-$("logoutButton").onclick=
-$("firstNameLogout").onclick=
- ()=>signOut(auth).catch(e=>alert(e.message));
+$("oldCommentForm").onsubmit=async e=>{
+ e.preventDefault();
+ if(!isPublic())return alert("公開プロフィールで利用してください");
+ const body=$("oldCommentBody").value.trim();
+ if(!body)return;
+ try{
+  await addDoc(collection(db,"matchingProfiles",uid,"comments"),{
+   authorUid:uid,body,createdAt:serverTimestamp()
+  });
+  $("oldCommentBody").value="";
+ }catch(err){$("oldCommentError").textContent=err.message}
+};
+function watchOldComments(){
+ if(oldCommentsStop)oldCommentsStop();
+ oldCommentsStop=onSnapshot(
+  query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),
+  s=>{
+   oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));
+   renderOldComments();collectNotifications();
+  },()=>{}
+ );
+}
+
+/* Firestore監視とログイン */
+function renderAll(){
+ renderHome();renderAlbum();renderMatching();
+ renderPosts();renderTradeList();renderNotifications();
+}
+function watchPeers(){
+ stops.push(onSnapshot(
+  query(collection(db,"matchingProfiles"),
+   where("visibility","==","public"),limit(100)),
+  s=>{
+   peers=s.docs.map(d=>({uid:d.id,...d.data()}));
+   renderMatching();renderPosts();
+   renderTradeList();collectNotifications();
+  },e=>{
+   $("matchingStatus").textContent="検索エラー: "+e.message;
+  }
+ ));
+}
+function cleanup(){
+ stops.forEach(f=>f());stops=[];
+ for(const stop of postCommentStops.values())stop();
+ for(const stop of tradeMessageStops.values())stop();
+ postCommentStops.clear();tradeMessageStops.clear();
+ messagesByTrade.clear();postMessagesById.clear();
+ if(viewingPostStop)viewingPostStop();
+ viewingPostStop=null;viewingPostId=null;
+ if(oldCommentsStop)oldCommentsStop();
+ oldCommentsStop=null;
+ uid=null;userRef=null;ready=false;needsName=false;
+ profile=defaults();owned={};peers=[];posts=[];trades=[];
+ oldMessages=[];readKeys=new Set();
+ publishFingerprint="";clearTimeout(publishTimer);
+ $("main").classList.add("hidden");
+ $("nav").classList.add("hidden");
+ $("nameModal").classList.add("hidden");
+ $("requestModal").classList.add("hidden");
+ $("pickerModal").classList.add("hidden");
+ postThreadId=null;tradeThreadId=null;editOpen=false;
+ $("profileEditor").classList.add("hidden");
+ resetPostEditor();
+}
+$("login").onclick=async()=>{
+ try{await signInWithPopup(auth,provider)}
+ catch(e){$("authError").textContent="ログイン失敗: "+e.message}
+};
+$("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 
 $("firstNameForm").onsubmit=async e=>{
  e.preventDefault();
- const nickname=$("firstNickname").value.trim();
- if(!validName(nickname)){
-  $("firstNameError").textContent="2〜30文字で入力してね";return;
+ const n=$("firstName").value.trim();
+ if(!validName(n)){
+  $("firstError").textContent="2〜30文字で入力してね";
+  return;
  }
- $("firstNameSubmit").disabled=true;
  try{
-  const next={...profile,nickname,nicknameConfirmed:true};
-  await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});
-  profile=next;fillProfile();gate(false);renderAll();schedulePublish(true);
- }catch(e){
-  $("firstNameError").textContent="保存失敗："+e.message;
- }finally{$("firstNameSubmit").disabled=false}
+  const next={...profile,nickname:n,nicknameConfirmed:true};
+  await setDoc(userRef,{
+   profile:next,updatedAt:serverTimestamp()
+  },{merge:true});
+  profile=next;setGate(false);
+  renderAll();schedulePublish(true);
+ }catch(e){$("firstError").textContent=e.message}
 };
 
 onAuthStateChanged(auth,async user=>{
- const generation=++authGeneration;
- reset();
+ const version=++authVersion;
+ cleanup();
  $("authError").textContent="";
-
- if(!user){
-  $("signedIn").classList.add("hidden");
-  $("signedOut").classList.remove("hidden");
-  return;
- }
-
- $("signedOut").classList.add("hidden");
- $("signedIn").classList.remove("hidden");
- $("cloudStatus").textContent="データ読み込み中…";
-
+ $("loggedOut").classList.toggle("hidden",!!user);
+ $("loggedIn").classList.toggle("hidden",!user);
+ if(!user)return;
+ $("cloud").textContent="データを読み込み中…";
  try{
   const ref=doc(db,"users",user.uid);
-  const snap=await getDoc(ref);
-  if(generation!==authGeneration||auth.currentUser?.uid!==user.uid)return;
-
-  if(!snap.exists()){
+  const snapshot=await getDoc(ref);
+  if(authVersion!==version)return;
+  if(!snapshot.exists()){
    await setDoc(ref,{
     profile:defaults(),owned:{},
-    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
    });
   }
-  if(generation!==authGeneration||auth.currentUser?.uid!==user.uid)return;
-
+  if(authVersion!==version)return;
   uid=user.uid;userRef=ref;
+  try{
+   readKeys=new Set(JSON.parse(
+    localStorage.getItem("aikatsu-read-"+uid)||"[]"
+   ));
+  }catch{readKeys=new Set()}
 
-  stopUser=onSnapshot(ref,s=>{
-   if(!s.exists()||auth.currentUser?.uid!==user.uid)return;
-   const data=s.data();
-   profile={...defaults(),...(data.profile||{})};
-   const incoming={...(data.owned||{})};
-   for(const id of savingCards){
-    if(Object.prototype.hasOwnProperty.call(owned,id))incoming[id]=owned[id];
-   }
+  stops.push(onSnapshot(ref,s=>{
+   if(!s.exists()||auth.currentUser?.uid!==uid)return;
+   profile={...defaults(),...(s.data().profile||{})};
+   const incoming={...(s.data().owned||{})};
+   for(const id of cardBusy)incoming[id]=owned[id];
    owned=incoming;ready=true;
-
-   const needName=
-    !validName(profile.nickname)||
+   const needs=!validName(profile.nickname)||
     (profile.nicknameConfirmed!==true&&
-     !!user.displayName&&profile.nickname===user.displayName);
-
-   gate(needName);
-   if(!editing)fillProfile();
+     profile.nickname===user.displayName);
+   setGate(needs);
+   if(!editOpen)fillProfile();
    renderAll();schedulePublish();
-
-   $("cloudStatus").textContent=s.metadata.fromCache?
+   $("cloud").textContent=s.metadata.fromCache?
     "保存データを表示中":"♡ クラウド同期中";
-
-  },e=>{
-   $("authError").textContent="データ取得失敗："+e.message;
-  });
+  },e=>$("authError").textContent=e.message));
 
   watchPeers();
   watchPosts();
-
+  watchTrades();
+  watchOldComments();
  }catch(e){
-  $("authError").textContent="接続失敗："+e.message;
+  $("authError").textContent="読み込み失敗: "+e.message;
  }
 });
 
