@@ -5,7 +5,8 @@
     "name": "オーロラキスキャミソール",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-01_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-01_PR_p1.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-02_PR_p1",
@@ -13,7 +14,8 @@
     "name": "オーロラキスドレープスカート",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-02_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-02_PR_p1.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-03_PR_p1",
@@ -21,7 +23,8 @@
     "name": "オーロラキスバレエシューズ",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-03_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-03_PR_p1.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-04_PR_p1",
@@ -29,7 +32,8 @@
     "name": "オーロラキスリボン",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-04_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-04_PR_p1.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-30_ER_p1",
@@ -61,7 +65,8 @@
     "name": "天の川コズミックワンショルダー",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-33_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-33_PR_p1.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-34_PR_p1",
@@ -69,7 +74,8 @@
     "name": "天の川コズミックスカート",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-34_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-34_PR_p1.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-35_PR_p1",
@@ -77,7 +83,8 @@
     "name": "天の川コズミックブーツ",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-35_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-35_PR_p1.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-36_PR_p1",
@@ -85,7 +92,8 @@
     "name": "天の川コズミックカチューシャ",
     "rarity": "PR",
     "group": "parallel",
-    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-36_PR_p1.webp"
+    "image": "https://card-search.com/card-img/aikatsu-encore/m/E1-36_PR_p1.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-50_ER_p1",
@@ -364,56 +372,64 @@
     "number": "E1-01_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-01_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-01_PR_b.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-02",
     "number": "E1-02_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-02_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-02_PR_b.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-03",
     "number": "E1-03_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-03_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-03_PR_b.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-04",
     "number": "E1-04_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-04_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-04_PR_b.webp",
+    "outfit": "オーロラキス"
   },
   {
     "id": "E1-05",
     "number": "E1-05_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-05_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-05_R_b.webp",
+    "outfit": "アイスブルーフリル"
   },
   {
     "id": "E1-06",
     "number": "E1-06_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-06_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-06_R_b.webp",
+    "outfit": "アイスブルーフリル"
   },
   {
     "id": "E1-07",
     "number": "E1-07_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-07_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-07_R_b.webp",
+    "outfit": "アイスブルーフリル"
   },
   {
     "id": "E1-08",
     "number": "E1-08_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-08_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-08_R_b.webp",
+    "outfit": "アイスブルーフリル"
   },
   {
     "id": "E1-09",
@@ -427,98 +443,112 @@
     "number": "E1-10_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-10_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-10_R_b.webp",
+    "outfit": "ドリーミースター"
   },
   {
     "id": "E1-11",
     "number": "E1-11_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-11_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-11_R_b.webp",
+    "outfit": "ドリーミースター"
   },
   {
     "id": "E1-12",
     "number": "E1-12_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-12_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-12_R_b.webp",
+    "outfit": "ドリーミースター"
   },
   {
     "id": "E1-13",
     "number": "E1-13_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-13_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-13_R_b.webp",
+    "outfit": "チャーミーリボン"
   },
   {
     "id": "E1-14",
     "number": "E1-14_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-14_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-14_R_b.webp",
+    "outfit": "チャーミーリボン"
   },
   {
     "id": "E1-15",
     "number": "E1-15_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-15_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-15_R_b.webp",
+    "outfit": "チャーミーリボン"
   },
   {
     "id": "E1-16",
     "number": "E1-16_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-16_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-16_R_b.webp",
+    "outfit": "チャーミーリボン"
   },
   {
     "id": "E1-17",
     "number": "E1-17_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-17_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-17_R_b.webp",
+    "outfit": "クリアネスイエロー"
   },
   {
     "id": "E1-18",
     "number": "E1-18_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-18_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-18_R_b.webp",
+    "outfit": "クリアネスイエロー"
   },
   {
     "id": "E1-19",
     "number": "E1-19_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-19_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-19_R_b.webp",
+    "outfit": "クリアネスイエロー"
   },
   {
     "id": "E1-20",
     "number": "E1-20_R",
     "rarity": "R",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-20_R_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-20_R_b.webp",
+    "outfit": "クリアネスイエロー"
   },
   {
     "id": "E1-21",
     "number": "E1-21_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-21_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-21_N_b.webp",
+    "outfit": "ピンクステージ"
   },
   {
     "id": "E1-22",
     "number": "E1-22_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-22_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-22_N_b.webp",
+    "outfit": "ピンクステージ"
   },
   {
     "id": "E1-23",
     "number": "E1-23_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-23_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-23_N_b.webp",
+    "outfit": "ピンクステージ"
   },
   {
     "id": "E1-24",
@@ -546,21 +576,24 @@
     "number": "E1-27_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-27_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-27_N_b.webp",
+    "outfit": "ピンクブロッサム"
   },
   {
     "id": "E1-28",
     "number": "E1-28_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-28_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-28_N_b.webp",
+    "outfit": "ピンクブロッサム"
   },
   {
     "id": "E1-29",
     "number": "E1-29_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-29_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-29_N_b.webp",
+    "outfit": "ピンクブロッサム"
   },
   {
     "id": "E1-30",
@@ -588,28 +621,32 @@
     "number": "E1-33_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-33_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-33_PR_b.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-34",
     "number": "E1-34_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-34_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-34_PR_b.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-35",
     "number": "E1-35_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-35_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-35_PR_b.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-36",
     "number": "E1-36_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-36_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-36_PR_b.webp",
+    "outfit": "天の川コズミック"
   },
   {
     "id": "E1-37",
@@ -644,21 +681,24 @@
     "number": "E1-41_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-41_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-41_N_b.webp",
+    "outfit": "ブルーステージ"
   },
   {
     "id": "E1-42",
     "number": "E1-42_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-42_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-42_N_b.webp",
+    "outfit": "ブルーステージ"
   },
   {
     "id": "E1-43",
     "number": "E1-43_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-43_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-43_N_b.webp",
+    "outfit": "ブルーステージ"
   },
   {
     "id": "E1-44",
@@ -686,21 +726,24 @@
     "number": "E1-47_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-47_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-47_N_b.webp",
+    "outfit": "ネイビーブロッサム"
   },
   {
     "id": "E1-48",
     "number": "E1-48_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-48_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-48_N_b.webp",
+    "outfit": "ネイビーブロッサム"
   },
   {
     "id": "E1-49",
     "number": "E1-49_N",
     "rarity": "N",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-49_N_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-49_N_b.webp",
+    "outfit": "ネイビーブロッサム"
   },
   {
     "id": "E1-50",
@@ -714,14 +757,16 @@
     "number": "E1-51_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-51_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-51_PR_b.webp",
+    "outfit": "レジェンダリールージュ"
   },
   {
     "id": "E1-52",
     "number": "E1-52_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-52_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-52_PR_b.webp",
+    "outfit": "レジェンダリールージュ"
   },
   {
     "id": "E1-53",
@@ -854,28 +899,32 @@
     "number": "E1-71_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-71_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-71_PR_b.webp",
+    "outfit": "サンシャインスターウェイ"
   },
   {
     "id": "E1-72",
     "number": "E1-72_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-72_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-72_PR_b.webp",
+    "outfit": "サンシャインスターウェイ"
   },
   {
     "id": "E1-73",
     "number": "E1-73_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-73_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-73_PR_b.webp",
+    "outfit": "サンシャインスターウェイ"
   },
   {
     "id": "E1-74",
     "number": "E1-74_PR",
     "rarity": "PR",
     "group": "normal",
-    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-74_PR_b.webp"
+    "image": "https://dcd.aikatsu.com/images/cardlist/card/E1-74_PR_b.webp",
+    "outfit": "サンシャインスターウェイ"
   },
   {
     "id": "E1-75",
