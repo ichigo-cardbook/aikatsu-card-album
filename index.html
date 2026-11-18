@@ -2,20 +2,52 @@
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>アイカツ！アンコール カード帳</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#fff8fc;color:#594254;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}header{background:linear-gradient(120deg,#efaccd,#df6ca9);color:white;text-align:center;padding:21px 8px}header h1{font-size:20px;margin:0}main{max-width:930px;margin:auto;padding:14px 12px 110px}.page{display:none}.page.active{display:block}.box{background:white;border:1px solid #ecd3e0;border-radius:16px;padding:15px;margin:12px 0}h2{color:#965278;font-size:20px}h3{font-size:16px;color:#965278}.row{display:flex;align-items:center;justify-content:space-between;gap:9px}.wrap{display:flex;gap:8px;flex-wrap:wrap}button{font:inherit;cursor:pointer;border:0}button:disabled{opacity:.5;cursor:default}.btn{background:#d875aa;color:white;border-radius:10px;padding:9px 12px;font-weight:600}.light{background:#fff0f7;color:#a45683}.outline{background:white;color:#a45683;border:1px solid #dcafc8}.small{padding:6px 9px;font-size:12px}.muted{font-size:12px;color:#94798b;line-height:1.6}.error{color:#ba265b;font-size:12px}.hidden{display:none!important}label{font-size:13px;display:block;margin:10px 0 5px;font-weight:600}input,textarea,select{font:inherit;width:100%;padding:9px;border:1px solid #e9bfd5;border-radius:9px;background:white;color:#594254}input[type=checkbox]{width:auto}textarea{min-height:68px}.auth{text-align:center;padding:10px;background:#fff0f8;font-size:12px}.nav{position:fixed;bottom:0;width:100%;display:grid;grid-template-columns:repeat(5,1fr);background:white;box-shadow:0 -2px 10px #d9acc344;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:20}.nav button{background:none;color:#957d8c;font-size:10px}.nav button.active{color:#cb508d;font-weight:800}.nav span{display:block;font-size:21px}.pill{display:inline-block;background:#e45186;color:white;border-radius:20px;font-size:10px;padding:2px 6px;vertical-align:middle}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#fff0f7;border-radius:11px;text-align:center;padding:12px}.stat b{display:block;font-size:22px;color:#b95183}.progress{background:#f4e2eb;height:9px;border-radius:10px;overflow:hidden}.progress div{background:#df78ac;height:100%}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.cards.small{grid-template-columns:repeat(4,minmax(0,1fr))}.cards.tiny{grid-template-columns:repeat(5,minmax(0,1fr))}.card{min-width:0;text-align:center;font-size:10px;overflow-wrap:anywhere}.art{aspect-ratio:2/3;width:100%;position:relative;border-radius:8px;border:1px solid #e4c0d1;background:#ede7ea;overflow:hidden;display:grid;place-items:center}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.art img.landscape{width:150%;height:66.667%;left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg)}.card.unowned .art img{filter:grayscale(1);opacity:.5}.card .name{display:block;margin-top:4px;line-height:1.5}.count{display:flex;margin-top:5px;gap:3px}.count button{flex:1;background:#ffedf6;color:#9e477b;border:1px solid #e6bdd0;border-radius:6px;padding:5px 0;font-size:11px}.count button:nth-child(2){background:white}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.filters button{padding:7px 10px;border-radius:15px;background:#fff0f7;color:#9f517f}.filters button.on{background:#d875aa;color:white}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.side{background:#fff5fa;padding:9px;border-radius:11px;min-width:0}.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.mini .card{font-size:9px}.trade,.post{border:1px solid #e9cade;border-radius:14px;background:white;padding:13px;margin:11px 0}.score{font-size:19px;font-weight:bold;color:#bf508a}.comment{background:#fff4f9;padding:10px;border-radius:11px;margin:8px 0}.comment p{white-space:pre-wrap;font-size:13px;overflow-wrap:anywhere}.modal{position:fixed;inset:0;background:#3a18328c;display:grid;place-items:center;z-index:30;padding:14px}.modal-inner{background:white;padding:17px;border-radius:17px;max-width:700px;width:100%;max-height:91vh;overflow:auto}.picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.picker button{background:#fff6fa;border:2px solid transparent;border-radius:9px;padding:4px;min-width:0}.picker button.chosen{border-color:#d64e8e;background:#ffdeed}.chosen-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.chosen-list button{min-width:0;background:#fff4fa;border-radius:9px;padding:4px;font-size:10px}.note{background:#fff0f7;color:#9c567f;padding:10px;border-radius:10px;font-size:12px;line-height:1.6}.notification{border-bottom:1px solid #eee0e8;padding:11px 4px}.notification.unread{background:#fff0f7}.tag{font-size:11px;background:#fff0f7;color:#a44c80;border-radius:20px;padding:4px 8px}.authbox{max-width:420px;margin:auto}.request-choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;max-height:240px;overflow:auto;border:1px solid #f1dae5;border-radius:10px;padding:8px}.request-choice button{min-width:0;background:#fff6fa;border:2px solid transparent;border-radius:9px;padding:5px;font-size:10px;overflow-wrap:anywhere}.request-choice button.chosen{border-color:#d64e8e;background:#ffdeed}.request-choice button .art{width:100%}.request-count{font-size:12px;color:#9c567f;margin:5px 0 9px}.request-modal-inner{max-width:590px}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.safety-panel{border:1px solid #e8cbdf;background:#fff9fc;border-radius:12px;padding:12px;margin-top:10px}.rating-number{color:#b94b88;font-weight:800;font-size:18px}.subtle-action{font-size:12px;text-decoration:underline;background:transparent;color:#9b527d;padding:6px}@media(min-width:680px){.cards{grid-template-columns:repeat(5,minmax(0,1fr))}.cards.small{grid-template-columns:repeat(7,minmax(0,1fr))}.cards.tiny{grid-template-columns:repeat(9,minmax(0,1fr))}.picker{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
+.settings-entry{border:1px solid #efc9dc;background:white;border-radius:12px;padding:13px;width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;color:#754b67;margin:8px 0;gap:10px}
+.settings-entry strong{font-size:14px}.settings-entry small{display:block;margin-top:5px;color:#98798d;font-size:11px}
+.help-section{line-height:1.85;font-size:14px;white-space:pre-wrap}.help-section h3{margin:18px 0 6px}.help-section p{margin:7px 0 14px}
+.settings-head{display:flex;align-items:center;justify-content:space-between;gap:9px}
+#supportStatus{min-height:20px}
 </style></head><body>
 <header><h1>♡ アイカツ！アンコール カード帳 ♡</h1><div style="font-size:12px;margin-top:5px">カード管理・交換マッチング・掲示板</div></header>
 <div class="auth"><div id="loggedOut"><button class="btn light" id="login">Googleでログイン</button></div><div id="loggedIn" class="hidden"><span id="cloud">接続中…</span> <button class="btn light small" id="logout">ログアウト</button></div><div id="authError" class="error"></div></div>
 <div class="modal hidden" id="nameModal"><div class="modal-inner authbox"><h2>ニックネームを決めてね ♡</h2><p class="muted">Googleの本名は自動公開しません。</p><form id="firstNameForm"><input id="firstName" minlength="2" maxlength="30" required placeholder="2〜30文字"><p><button class="btn">保存して開始</button></p></form><div class="error" id="firstError"></div><button class="btn light" id="nameLogout">ログアウト</button></div></div>
 <main class="hidden" id="main">
-<section class="page active" id="home"><h2>ホーム ♡</h2><div class="box"><div class="row"><div><strong id="homeName"></strong><p class="muted" id="homePrivacy"></p></div><button class="btn light" id="editProfile">編集</button></div><div class="stats"><div class="stat"><b id="ownedStat">0</b><span class="muted">所持種類</span></div><div class="stat"><b id="rateStat">0%</b><span class="muted">コンプリート率</span></div></div><div class="progress"><div id="progress"></div></div><p class="rating-number" id="homeRating">♡ よかった：読み込み中</p></div>
-<div class="box hidden" id="profileEditor"><h3>プロフィール編集</h3><label>ニックネーム</label><input id="nickname" maxlength="30"><label>性別</label><select id="gender"><option>非公開</option><option>女性</option><option>男性</option><option>その他</option></select><label>都道府県</label><select id="prefecture"></select><label>都道府県を公開</label><select id="prefVisible"><option value="no">非公開</option><option value="yes">公開</option></select><label>Xアカウント（@以降）</label><input id="xAccount"><label>公開設定</label><select id="privacy"><option value="public">公開（交換に参加）</option><option value="private">鍵（交換に参加しない）</option></select><label>交換方法</label><div class="filters" id="methods"></div><label>自己紹介</label><textarea id="bio" maxlength="300"></textarea><p><button class="btn" id="saveProfile">プロフィールを保存</button></p></div><div class="box"><h3>公開プロフィール</h3><div class="muted" id="profileView"></div><p class="muted" id="syncStatus"></p><div class="safety-panel"><h3>ブロックしたユーザー</h3><div id="blockedList" class="muted">なし</div></div><p class="note">公開ユーザーにはニックネーム・公開地域・交換方法・譲れる／欲しいカード番号を共有します。Googleの本名・メールアドレス・正確な所持枚数は公開しません。</p></div></section>
+<section class="page active" id="home"><div class="settings-head"><h2>ホーム ♡</h2><button id="openSettings" class="btn light">⚙ 設定・ヘルプ</button></div><div class="box"><div class="row"><div><strong id="homeName"></strong><p class="muted" id="homePrivacy"></p></div><button class="btn light" id="editProfile">編集</button></div><div class="stats"><div class="stat"><b id="ownedStat">0</b><span class="muted">所持種類</span></div><div class="stat"><b id="rateStat">0%</b><span class="muted">コンプリート率</span></div></div><div class="progress"><div id="progress"></div></div><p class="rating-number" id="homeRating">♡ よかった：読み込み中</p></div>
+<div class="box hidden" id="profileEditor"><h3>プロフィール編集</h3><label>ニックネーム</label><input id="nickname" maxlength="30"><label>性別</label><select id="gender"><option>非公開</option><option>女性</option><option>男性</option><option>その他</option></select><label>都道府県</label><select id="prefecture"></select><label>都道府県を公開</label><select id="prefVisible"><option value="no">非公開</option><option value="yes">公開</option></select><label>Xアカウント（@以降）</label><input id="xAccount"><label>公開設定</label><select id="privacy"><option value="public">公開（交換に参加）</option><option value="private">鍵（交換に参加しない）</option></select><label>交換方法</label><div class="filters" id="methods"></div><label>自己紹介</label><textarea id="bio" maxlength="300"></textarea><p><button class="btn" id="saveProfile">プロフィールを保存</button></p></div><div class="box"><h3>公開プロフィール</h3><div class="muted" id="profileView"></div><p class="muted" id="syncStatus"></p><p class="note">公開ユーザーにはニックネーム・公開地域・交換方法・譲れる／欲しいカード番号を共有します。Googleの本名・メールアドレス・正確な所持枚数は公開しません。</p></div></section>
 <section class="page" id="album"><h2>マイアルバム ♡</h2><div class="box"><div class="row"><strong id="albumStat">0 / 0種類</strong><select id="cardSize" style="width:auto"><option value="normal">標準</option><option value="small">小さめ</option><option value="tiny">もっと小さく</option></select></div><div class="filters" id="albumGroups"><button data-g="series1" class="on">1弾</button><button data-g="promo">プロモ</button></div><div class="filters" id="albumKinds"><button data-k="all" class="on">全部</button><button data-k="normal">通常</button><button data-k="parallel">パラレル</button></div><div class="row"><input id="albumSearch" placeholder="名前・番号で検索"><select id="albumFilter" style="width:auto"><option value="all">すべて</option><option value="owned">所持</option><option value="missing">未所持</option><option value="extra">2枚以上</option></select></div><p id="albumDetails" class="muted"></p><div id="cardGrid" class="cards"></div><p class="muted">画像タップで0⇔1枚。＋／−で枚数変更、数字タップで直接入力できます。</p></div></section>
 <section class="page" id="board"><h2>交換掲示板 ♡</h2><div class="box"><h3 id="postEditorTitle">新しい交換募集</h3><p class="muted">カード画像を選んで公開できます。写真のアップロード・課金は不要。</p><label>譲れるカード</label><div id="selectedOffers" class="chosen-list"></div><button class="btn light" id="pickOffers">＋画像から選ぶ</button><label>欲しいカード</label><div id="selectedWants" class="chosen-list"></div><button class="btn light" id="pickWants">＋画像から選ぶ</button><label>交換条件・ひとこと</label><textarea id="postBody" maxlength="500"></textarea><div id="postError" class="error"></div><div class="actions"><button class="btn" id="savePost">♡ 募集を公開</button><button class="btn light hidden" id="cancelPostEdit">編集をやめる</button></div></div><div class="box"><h3>みんなの募集</h3><div class="row"><input id="postSearch" placeholder="カード名・投稿内容で検索"><select id="postFilter" style="width:auto"><option value="all">すべて</option><option value="mine">自分の募集</option><option value="premium">PR・ER</option><option value="regular">R・N</option></select></div><p id="postsStatus" class="muted"></p><div id="postList"></div></div></section>
 <section class="page" id="matching"><h2>交換マッチング ♡</h2><div class="box"><p class="note">PR・ER同士、R・N同士の交換候補数と交換方法を評価。最初はコメントではなく、カードを指定して交換申請します。</p><p id="matchingStatus" class="muted"></p><div id="matchList"></div></div><div class="box"><h3>過去の公開コメント</h3><p class="muted">以前のプロフィール相談を確認できます。新しい交渉は交換申請から行ってね。</p><button class="btn light" id="oldComments">自分宛てコメントを表示</button><div id="oldThread" class="hidden"><div id="oldCommentList"></div><form id="oldCommentForm"><textarea id="oldCommentBody" maxlength="300" required></textarea><button class="btn">返信する</button></form><div id="oldCommentError" class="error"></div></div></div></section>
 <section class="page" id="trades"><h2>🔔 通知・交換申請 <span class="pill hidden" id="unreadPill"></span></h2><div class="box"><div class="row"><h3>未読通知</h3><button class="btn light small" id="markRead">すべて既読にする</button></div><div id="notificationList"></div></div><div class="box"><h3>交換申請一覧</h3><div class="filters"><button class="on" data-trade-filter="active">進行中</button><button data-trade-filter="all">すべて</button></div><p id="tradesStatus" class="muted"></p><div id="tradeList"></div></div></section>
+
+<section class="page" id="settings">
+ <div class="settings-head"><h2>⚙ 設定・ヘルプ</h2><button class="btn light" id="settingsBack">← ホーム</button></div>
+ <div id="settingsMenu" class="box">
+  <button class="settings-entry" data-settings="guide"><span><strong>📖 使い方ガイド</strong><small>カード登録・マッチング・交換の流れ</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="safety"><span><strong>⚠ 交換時の注意事項</strong><small>詐欺防止・発送・個人情報</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="terms"><span><strong>📜 利用規約・免責事項</strong><small>禁止行為・利用上の責任・運営方針</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="privacy"><span><strong>🔒 プライバシーポリシー</strong><small>ログイン・保存情報・公開範囲</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="support"><span><strong>✉ お問い合わせ</strong><small>不具合・相談・運営への連絡</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="blocks"><span><strong>🚫 ブロックしたユーザー</strong><small>確認・ブロック解除</small></span><span>›</span></button>
+  <button class="settings-entry" data-settings="account"><span><strong>👤 アカウント管理</strong><small>公開設定・データ削除申請</small></span><span>›</span></button>
+ </div>
+ <div id="settingsDetail" class="box hidden">
+  <button id="settingsMenuBack" class="btn light">← 設定一覧</button>
+  <h3 id="settingsDetailTitle"></h3>
+  <div id="settingsDetailBody" class="help-section"></div><div id="blockedList" class="muted hidden"></div>
+ </div>
+</section>
 </main>
 <div class="modal hidden" id="pickerModal"><div class="modal-inner"><div class="row"><h3 id="pickerTitle">カードを選ぶ</h3><button id="pickerClose" class="btn light">完了</button></div><input id="pickerSearch" placeholder="番号・名前で検索"><div class="filters"><button data-pickfilter="all" class="on">すべて</button><button data-pickfilter="owned">所持</button><button data-pickfilter="extra">2枚以上</button><button data-pickfilter="missing">未所持</button></div><div id="pickerCount" class="muted"></div><div id="pickerGrid" class="picker"></div></div></div>
 <div class="modal hidden" id="reportModal"><div class="modal-inner authbox"><h3>問題を通報する</h3><p id="reportWho" class="muted"></p><label>通報理由</label><select id="reportReason"><option value="spam">スパム・宣伝</option><option value="harassment">嫌がらせ・迷惑行為</option><option value="fraud">詐欺・不審な取引</option><option value="privacy">個人情報の掲載</option><option value="other">その他</option></select><label>詳細（任意）</label><textarea id="reportDetails" maxlength="500" placeholder="問題の内容を説明してください。個人情報は記入しないでください。"></textarea><div id="reportError" class="error"></div><div class="actions"><button id="sendReport" class="btn">通報する</button><button id="closeReport" class="btn light">閉じる</button></div></div></div><div class="modal hidden" id="requestModal"><div class="modal-inner request-modal-inner"><div class="row"><h3 id="requestTitle">交換を申請</h3><button class="btn light" id="requestClose">閉じる</button></div><p class="muted" id="requestExplain"></p><label>あなたが譲るカード（画像をタップ・最大10種類）</label><p id="requestGiveCount" class="request-count"></p><div id="requestOfferGrid" class="request-choice"></div><label>相手から受け取るカード（画像をタップ・最大10種類）</label><p id="requestReceiveCount" class="request-count"></p><div id="requestWantGrid" class="request-choice"></div><label>交換方法</label><select id="requestMethod"></select><label>メッセージ（任意）</label><textarea id="requestNote" maxlength="300"></textarea><div id="requestError" class="error"></div><p><button class="btn" id="requestSend">交換を申請する</button></p></div></div>
+
+<div class="modal hidden" id="consentModal"><div class="modal-inner authbox">
+<h2>ご利用前の確認</h2><p class="muted">初めて利用する方には、利用規約とプライバシーポリシーへの同意をお願いしています。</p>
+<p class="note">このアプリは非公式のファン制作サービスです。カード交換は利用者同士の判断・責任で行ってください。運営は配送や決済を仲介しません。</p>
+<button id="consentReadTerms" class="btn light">利用規約・プライバシーポリシーを読む</button>
+<label><input type="checkbox" id="consentCheck"> 利用規約・プライバシーポリシーを確認し、同意します</label>
+<div class="error" id="consentError"></div><button id="consentAccept" class="btn">同意して利用する</button>
+</div></div>
 <nav id="nav" class="nav hidden"><button data-page="home" class="active"><span>⌂</span>ホーム</button><button data-page="album"><span>▦</span>アルバム</button><button data-page="board"><span>▤</span>掲示板</button><button data-page="matching"><span>♡</span>マッチング</button><button data-page="trades"><span>🔔</span>通知<span id="navCount" class="pill hidden"></span></button></nav>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -29,6 +61,7 @@ let stops=[],postCommentStops=new Map(),tradeMessageStops=new Map(),oldCommentsS
 let albumGroup="series1",albumKind="all",albumView="all",albumSize="normal",albumText="",postEditId=null,offerChoice=new Set(),wantChoice=new Set(),pickerKind="offers",pickerFilter="all",requestTarget=null,requestTrade=null,postThreadId=null,tradeThreadId=null,tradeFilter="active",oldMessages=[];
 let messagesByTrade=new Map(),postMessagesById=new Map(),readKeys=new Set(),notifications=[],postBusy=false,requestBusy=false;
 let responsesByTrade=new Map(),responseStops=new Map(),ratingsReceived=[],ratingsSent=new Set(),ratingStops=[];
+let legalAccepted=false,settingsCurrent=null;
 let blockedUsers=new Set(),blockStop=null,reportTarget=null,ratingCounts=new Map(),ratingRequests=new Set();
 const cardMap=new Map(),cardBusy=new Set();
 const prefList="非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県".split(",");
@@ -116,8 +149,143 @@ document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dat
 function art(c){const d=make("div","art");if(!c?.image){d.append(make("span","muted",c?.number||"画像なし"));return d}const i=document.createElement("img");i.alt=c.name||c.number;i.loading="lazy";i.onload=()=>i.classList.toggle("landscape",i.naturalWidth>i.naturalHeight);i.onerror=()=>d.replaceChildren(make("span","muted",c.number));d.append(i);i.src=c.image;return d}
 function miniature(ids){const g=make("div","mini");for(const id of ids.slice(0,12)){const c=cardMap.get(id),b=make("div","card");b.append(art(c),make("span","name",c?.name||c?.number||id));g.append(b)}if(ids.length>12)g.append(make("span","muted","ほか"+(ids.length-12)+"種類"));return g}
 async function loadCards(){try{const r=await fetch("./cards.json?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const raw=await r.json();if(!Array.isArray(raw))throw Error("カード形式エラー");const known=new Set();cards=raw.filter(c=>c?.id&&!known.has(String(c.id))&&known.add(String(c.id))).map(c=>{const number=String(c.number||c.id),group=String(c.group||"normal").toLowerCase();let image=String(c.image||"");if(group==="normal"&&image.includes("dcd.aikatsu.com"))image="https://dcd.aikatsu.com/encore/images/cardlist/card/"+number+".webp";return{id:String(c.id),number,group,name:String(c.name||""),rarity:String(c.rarity||""),image:/^https:\/\//.test(image)?image:""}});cardMap.clear();cards.forEach(c=>cardMap.set(c.id,c));renderAll();schedulePublish()}catch(e){alert("カードの読み込みに失敗: "+e.message)}}
-function setGate(b){needsName=b;$("nameModal").classList.toggle("hidden",!b);$("main").classList.toggle("hidden",b||!ready);$("nav").classList.toggle("hidden",b||!ready)}
+function setGate(b){needsName=b;$("nameModal").classList.toggle("hidden",!b);$("main").classList.toggle("hidden",b||!ready);$("nav").classList.toggle("hidden",b||!ready||!legalAccepted);$("consentModal").classList.toggle("hidden",b||!ready||legalAccepted);$("main").classList.toggle("hidden",b||!ready||!legalAccepted)}
 function fillProfile(){for(const id of["nickname","gender","prefecture","prefVisible","privacy","xAccount","bio"])$(id).value=profile[id]||"";document.querySelectorAll(".methodInput").forEach(c=>c.checked=(profile.methods||[]).includes(c.value))}
+
+// ==============================================
+// 設定・ヘルプ（規約は公開前に運営者が最終確認する草案）
+// ==============================================
+const LEGAL_VERSION="2026-11-18-v1";
+const SETTINGS_PAGES={
+ guide:{title:"使い方ガイド",sections:[
+  ["1. カードを登録する","アルバムでカード画像をタップすると、未所持と1枚所持を切り替えられます。＋／−で枚数を変更できます。情報はログイン中のアカウントに保存されます。"],
+  ["2. マッチングする","公開プロフィールに設定している場合、2枚以上所持するカードが「譲れるカード」、0枚のカードが「欲しいカード」としてマッチングに使われます。交換条件が双方向に一致する相手のみ表示されます。"],
+  ["3. 交換を申請する","相手のマッチング欄から申請し、自分が譲るカードと受け取るカードをそれぞれ1〜10種類選んでください。1:2や2:3なども選べます。"],
+  ["4. 承諾・交渉","受信者は承諾・交渉・お断りを選べます。交渉中は非公開チャットで相談し、カードの再提案ができます。"],
+  ["5. 成立後の連絡","双方が交換条件に合意して成立したら、同じ非公開チャットで受け渡し方法や発送日を相談してください。"],
+  ["6. 完了・評価","双方が「交換完了」を確認したときだけ完了になります。完了後は任意で相手に1回「よかった」を送れます。終了した交換は「すべて」で確認できます（表示は最大100件）。"],
+  ["7. ブロック・通報","迷惑行為があればブロックや通報を利用できます。緊急の危険や犯罪被害が疑われる場合は、警察・配送会社・決済サービスなどにも直接相談してください。"]
+ ]},
+ safety:{title:"交換時の注意事項",sections:[
+  ["個人間の交換","このアプリは交換相手を探すための場であり、発送・商品の状態確認・代金決済・本人確認を代行しません。交換するかどうかは慎重に判断してください。"],
+  ["発送前に確認","カード番号・枚数・状態（傷、折れなど）・送料負担・発送方法・発送予定日・追跡の有無を非公開チャットで合意してください。必要ならカードの状態を別途確認してください。"],
+  ["個人情報の保護","住所・本名・電話番号・決済情報を公開掲示板に書かないでください。非公開チャットでも必要最低限にとどめ、相手に不要な個人情報を要求しないでください。"],
+  ["トラブルを避ける","先払い・外部サイトへの誘導・不自然な取引条件・追跡情報の不一致には注意してください。やり取りの記録を残し、疑わしい場合は発送や支払いを中断してください。"],
+  ["禁止事項","詐欺、なりすまし、誹謗中傷、個人情報の晒し、スパム、無断転載、違法な取引を禁止します。問題があれば通報してください。"]
+ ]},
+ terms:{title:"利用規約・免責事項（公開前草案）",sections:[
+  ["第1条 サービス","本サービスは非公式のファン制作カード管理・交換マッチングサービスです。作品の権利者・公式運営とは関係ありません。公式の承認・提携を意味するものではありません。"],
+  ["第2条 利用者の責任","利用者は正確な交換条件を提示し、法令および公序良俗を守って利用してください。他の利用者への迷惑行為、詐欺、なりすまし、不正アクセスは禁止します。"],
+  ["第3条 個人間取引","交換は利用者同士で行われます。運営は配送、代金授受、商品の品質・状態・到着を保証せず、当事者間の取引契約の当事者にはなりません。"],
+  ["第4条 通報と利用制限","安全性維持のため、運営は通報を確認し、問題のある投稿の制限や利用停止など必要な対応を行う場合があります。ただし、すべての通報を直ちに調査・解決することは保証しません。"],
+  ["第5条 サービスの変更・中断","障害、保守、権利関係の申し入れなどにより、機能の変更・停止・終了を行う場合があります。重要な変更は可能な範囲で告知します。"],
+  ["第6条 免責の範囲","運営は法令で許される範囲で責任を限定します。ただし、法令上免責できない責任まで排除するものではありません。"],
+  ["第7条 お問い合わせ","問題の報告、規約についての質問、データ削除の申請は、設定の「お問い合わせ」から送信できます。"],
+  ["公開前の確認事項","この文章はたたき台です。運営者の連絡先、規約施行日、著作権・画像利用許諾、国内法への適合を確認して正式版を公開してください。"]
+ ]},
+ privacy:{title:"プライバシーポリシー（公開前草案）",sections:[
+  ["取得する情報","Googleログインに必要な認証情報（ユーザーID等）、登録したニックネーム・所持カード・プロフィール設定・交換申請・チャット・評価・通報・お問い合わせ内容を取り扱います。認証プロバイダーはメールアドレス等を取り扱う場合があります。"],
+  ["利用目的","ログイン、カード管理、交換相手のマッチング、通知、通報対応、不正利用の防止、問い合わせ対応のために利用します。"],
+  ["公開範囲","公開プロフィールではニックネーム、公開設定の都道府県、交換方法、譲れる・欲しいカード一覧がほかのログイン利用者に表示されます。掲示板への投稿・公開コメントも閲覧されます。Googleアカウントの本名やメールアドレスを公開プロフィールに自動掲載しません。"],
+  ["交換チャット","非公開チャットと取引の意思確認は、該当する交換の当事者に限ってアプリ上で読めるように制御します。ただし、法令に基づく開示等の例外があり得ます。"],
+  ["保存先と外部サービス","ユーザー情報はGoogle Firebase（Authentication、Cloud Firestore）を使用して保存します。サービス提供に必要な範囲でGoogleのサービスを利用します。"],
+  ["保管期間・削除","退会・データ削除は「アカウント管理」から申請できます。現時点では申請だけで自動削除されません。取引記録等は相手方の履歴や安全性のため、削除範囲を確認して処理する必要があります。"],
+  ["お問い合わせ","保有情報の照会や削除の相談は、設定の「お問い合わせ」から連絡してください。"],
+  ["公開前の確認事項","正式公開前に運営者名・問い合わせ先、保管期間、外部サービスの詳細、利用者の権利への対応等を確定してください。"]
+ ]}
+};
+function renderSettingsMenu(){
+ settingsCurrent=null;
+ $("settingsMenu").classList.remove("hidden");
+ $("settingsDetail").classList.add("hidden");
+}
+function openSettingsDetail(key){
+ settingsCurrent=key;
+ $("settingsMenu").classList.add("hidden");
+ $("settingsDetail").classList.remove("hidden");
+ const labels={support:"お問い合わせ",blocks:"ブロックしたユーザー",account:"アカウント管理"};
+ $("settingsDetailTitle").textContent=SETTINGS_PAGES[key]?.title||labels[key]||"設定";
+ const root=$("settingsDetailBody");
+ const oldBlock=$("blockedList");if(oldBlock && oldBlock.parentElement===root){oldBlock.classList.add("hidden");$("settingsDetail").append(oldBlock);}
+ root.replaceChildren();
+ if(SETTINGS_PAGES[key]){
+  for(const [heading,paragraph] of SETTINGS_PAGES[key].sections){
+   root.append(make("h3","",heading),make("p","",paragraph));
+  }
+  if(key==="terms") {const pv=make("button","btn light","プライバシーポリシーも確認する");pv.onclick=()=>openSettingsDetail("privacy");root.append(pv);}
+  if(key==="privacy"&&!legalAccepted){const back=make("button","btn light","規約に戻る");back.onclick=()=>openSettingsDetail("terms");root.append(back);}
+ }else if(key==="blocks"){
+  let existing=$("blockedList");
+  if(!existing){existing=make("div","muted");existing.id="blockedList";}
+  existing.classList.remove("hidden");root.append(existing);
+  renderBlocked();
+ }else if(key==="account"){
+  root.append(make("p","note","公開設定・ニックネームはホームのプロフィール編集から変更できます。"));
+  const edit=make("button","btn light","プロフィールを編集する");
+  edit.onclick=()=>{
+   showPage("home");if(!editOpen)$("editProfile").click();
+  };
+  const deletion=make("button","btn outline","退会・データ削除を申請する");
+  deletion.onclick=()=>openSupportForm("deletion");
+  root.append(edit,make("h3","","退会・データ削除"),make("p","","削除を希望する場合は申請フォームからご連絡ください。申請だけでアカウントやデータが自動削除されるわけではありません。運営側が削除対象や取引履歴を確認した上で対応します。"),deletion);
+ }else if(key==="support"){
+  renderSupportForm(root,"general");
+ }
+ window.scrollTo(0,0);
+}
+function renderSupportForm(root,type){
+ const form=document.createElement("form");
+ const label=make("label","","お問い合わせ種別");
+ const category=document.createElement("select");
+ for(const [name,value] of [["一般的なお問い合わせ","general"],["不具合・動作の問題","bug"],["安全性・交換トラブルの相談","safety"],["退会・データ削除の申請","deletion"]]){
+  category.add(new Option(name,value));
+ }
+ category.value=type;
+ const msgLabel=make("label","","お問い合わせ内容（10〜1000文字）");
+ const msg=document.createElement("textarea");msg.required=true;msg.minLength=10;msg.maxLength=1000;
+ msg.placeholder="状況や確認したいことを入力してください。住所・電話番号・パスワードなどは書かないでください。";
+ const status=make("p","muted");const send=make("button","btn","問い合わせを送信する");send.type="submit";
+ form.append(label,category,msgLabel,msg,send,status);
+ const notice=make("p","note","お問い合わせはFirebaseに記録されます。現時点ではメールへの自動返信機能はありません。返信方法・運営の対応体制は一般公開までに整備します。");
+ root.append(notice,form);
+ form.onsubmit=async e=>{
+  e.preventDefault();if(!uid)return;
+  const body=msg.value.trim();if(body.length<10||body.length>1000)return;
+  send.disabled=true;status.textContent="送信中…";
+  try{
+   await addDoc(collection(db,"supportTickets"),{
+    requesterUid:uid,category:category.value,body,
+    status:"new",createdAt:serverTimestamp()
+   });
+   status.textContent="送信しました。お問い合わせ番号はFirebaseに記録されました。";msg.value="";
+  }catch(err){status.textContent="送信できませんでした："+err.message}
+  finally{send.disabled=false}
+ };
+}
+function openSupportForm(type){openSettingsDetail("support");
+ const sel=$("settingsDetailBody").querySelector("select");if(sel)sel.value=type;
+}
+$("openSettings").onclick=()=>{renderSettingsMenu();showPage("settings")};
+$("settingsBack").onclick=()=>{if(!legalAccepted){$("consentModal").classList.remove("hidden");$("main").classList.add("hidden")}else showPage("home")};
+$("settingsMenuBack").onclick=()=>{if(!legalAccepted){$("consentModal").classList.remove("hidden");$("main").classList.add("hidden")}else renderSettingsMenu()};
+document.querySelectorAll("[data-settings]").forEach(b=>b.onclick=()=>openSettingsDetail(b.dataset.settings));
+$("consentReadTerms").onclick=()=>{
+ $("consentModal").classList.add("hidden");$("main").classList.remove("hidden");showPage("settings");openSettingsDetail("terms");
+ // まだ未同意なら設定以外の機能は操作できないようにする
+ $("nav").classList.add("hidden");
+};
+$("consentAccept").onclick=async()=>{
+ if(!$("consentCheck").checked){$("consentError").textContent="同意のチェックを入れてください";return}
+ $("consentAccept").disabled=true;
+ try{
+  await setDoc(userRef,{legalConsent:{version:LEGAL_VERSION,acceptedAt:serverTimestamp()}},{merge:true});
+  legalAccepted=true;$("consentModal").classList.add("hidden");
+  $("main").classList.remove("hidden");$("nav").classList.remove("hidden");
+  showPage("home");
+ }catch(err){$("consentError").textContent=err.message}
+ finally{$("consentAccept").disabled=false}
+};
+
 function renderHome(){const n=ownedCount(cards),rate=cards.length?Math.round(n/cards.length*100):0;$("homeName").textContent=profile.nickname||"未設定";$("homePrivacy").textContent=profile.privacy==="public"?"🌐 公開プロフィール":"🔒 鍵プロフィール";$("ownedStat").textContent=n;$("rateStat").textContent=rate+"%";$("progress").style.width=rate+"%";$("homeRating").textContent=uid?ratingValue(uid):"♡ よかった：0件";$("profileView").textContent="地域："+(profile.prefVisible==="yes"?profile.prefecture:"非公開")+" ／ 交換方法："+(profile.methods||[]).join("・")+" ／ X："+(profile.xAccount?"@"+profile.xAccount:"未設定")+" ／ よかった："+ratingsReceived.length+"件 ／ "+(profile.bio||"自己紹介なし")}
 $("editProfile").onclick=()=>{editOpen=!editOpen;$("profileEditor").classList.toggle("hidden",!editOpen);if(editOpen)fillProfile()};
 $("saveProfile").onclick=async()=>{const nickname=$("nickname").value.trim();if(!validName(nickname))return alert("ニックネームを2〜30文字で入力してください");const next={nickname,nicknameConfirmed:true,gender:$("gender").value,prefecture:$("prefecture").value,prefVisible:$("prefVisible").value,privacy:$("privacy").value,xAccount:$("xAccount").value.trim().replace(/^@/,""),bio:$("bio").value.trim(),methods:[...document.querySelectorAll(".methodInput:checked")].map(e=>e.value)};try{await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;editOpen=false;$("profileEditor").classList.add("hidden");renderAll();schedulePublish(true);alert("保存しました")}catch(e){alert("保存エラー: "+e.message)}};
@@ -447,10 +615,10 @@ $("oldComments").onclick=()=>{$("oldThread").classList.toggle("hidden")};$("oldC
 function watchOldComments(){if(oldCommentsStop)oldCommentsStop();oldCommentsStop=onSnapshot(query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),s=>{oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderOldComments();collectNotifications()},()=>{})}
 function renderAll(){renderHome();renderAlbum();renderMatching();renderPosts();renderTradeList();renderNotifications()}
 function watchPeers(){stops.push(onSnapshot(query(collection(db,"matchingProfiles"),where("visibility","==","public"),limit(100)),s=>{peers=s.docs.map(d=>({uid:d.id,...d.data()}));renderMatching();renderPosts();renderTradeList();collectNotifications()},()=>{}))}
-function cleanup(){stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
+function cleanup(){stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
 $("login").onclick=async()=>{try{await signInWithPopup(auth,provider)}catch(e){$("authError").textContent="ログイン失敗: "+e.message}};
 $("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 $("firstNameForm").onsubmit=async e=>{e.preventDefault();const n=$("firstName").value.trim();if(!validName(n))return $("firstError").textContent="2〜30文字で入力してね";try{const next={...profile,nickname:n,nicknameConfirmed:true};await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;setGate(false);renderAll();schedulePublish(true)}catch(e){$("firstError").textContent=e.message}};
-onAuthStateChanged(auth,async user=>{const version=++authVersion;cleanup();$("authError").textContent="";$("loggedOut").classList.toggle("hidden",!!user);$("loggedIn").classList.toggle("hidden",!user);if(!user)return;$("cloud").textContent="データを読み込み中…";try{const ref=doc(db,"users",user.uid),snapshot=await getDoc(ref);if(authVersion!==version)return;if(!snapshot.exists())await setDoc(ref,{profile:defaults(),owned:{},createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(authVersion!==version)return;uid=user.uid;userRef=ref;try{readKeys=new Set(JSON.parse(localStorage.getItem("aikatsu-read-"+uid)||"[]"))}catch{readKeys=new Set()}stops.push(onSnapshot(ref,s=>{if(!s.exists()||auth.currentUser?.uid!==uid)return;profile={...defaults(),...(s.data().profile||{})};const incoming={...(s.data().owned||{})};for(const id of cardBusy)incoming[id]=owned[id];owned=incoming;ready=true;const needs=!validName(profile.nickname)||profile.nicknameConfirmed!==true&&profile.nickname===user.displayName;setGate(needs);if(!editOpen)fillProfile();renderAll();schedulePublish();$("cloud").textContent=s.metadata.fromCache?"保存データを表示中":"♡ クラウド同期中"},e=>{$("authError").textContent=e.message}));watchBlocks();watchPeers();watchPosts();watchTrades();watchRatings();refreshRatingCount(uid);watchOldComments()}catch(e){$("authError").textContent="読み込み失敗: "+e.message}});
+onAuthStateChanged(auth,async user=>{const version=++authVersion;cleanup();$("authError").textContent="";$("loggedOut").classList.toggle("hidden",!!user);$("loggedIn").classList.toggle("hidden",!user);if(!user)return;$("cloud").textContent="データを読み込み中…";try{const ref=doc(db,"users",user.uid),snapshot=await getDoc(ref);if(authVersion!==version)return;if(!snapshot.exists())await setDoc(ref,{profile:defaults(),owned:{},createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(authVersion!==version)return;uid=user.uid;userRef=ref;try{readKeys=new Set(JSON.parse(localStorage.getItem("aikatsu-read-"+uid)||"[]"))}catch{readKeys=new Set()}stops.push(onSnapshot(ref,s=>{if(!s.exists()||auth.currentUser?.uid!==uid)return;profile={...defaults(),...(s.data().profile||{})};legalAccepted=s.data().legalConsent?.version===LEGAL_VERSION;const incoming={...(s.data().owned||{})};for(const id of cardBusy)incoming[id]=owned[id];owned=incoming;ready=true;const needs=!validName(profile.nickname)||profile.nicknameConfirmed!==true&&profile.nickname===user.displayName;setGate(needs);if(!editOpen)fillProfile();renderAll();schedulePublish();$("cloud").textContent=s.metadata.fromCache?"保存データを表示中":"♡ クラウド同期中"},e=>{$("authError").textContent=e.message}));watchBlocks();watchPeers();watchPosts();watchTrades();watchRatings();refreshRatingCount(uid);watchOldComments()}catch(e){$("authError").textContent="読み込み失敗: "+e.message}});
 loadCards();
 </script></body></html>
