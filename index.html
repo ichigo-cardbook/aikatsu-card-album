@@ -8,6 +8,36 @@
 .help-section{line-height:1.85;font-size:14px;white-space:pre-wrap}.help-section h3{margin:18px 0 6px}.help-section p{margin:7px 0 14px}
 .settings-head{display:flex;align-items:center;justify-content:space-between;gap:9px}
 #supportStatus{min-height:20px}
+
+/* スマートフォン操作性 / 通知の分類 */
+.notice-filters{gap:5px}.notice-filters button{font-size:12px;padding:7px 10px}
+.notification{border:1px solid #f0deea!important;border-radius:12px;margin:7px 0;padding:12px!important;min-height:64px;display:flex;align-items:center;gap:10px;text-align:left}
+.notification.unread{border-color:#eaa6c9!important;background:#fff0f7!important}
+.notification .notice-icon{font-size:21px;width:29px;flex:none;text-align:center}
+.notification .notice-main{flex:1;min-width:0}.notification .notice-time{font-size:10px;color:#998595;white-space:nowrap}
+.notification .notice-title{font-size:13px;line-height:1.4}.notification .notice-details{font-size:11px;color:#98798d;margin-top:3px}
+.notification .unread-dot{background:#d6579a;width:7px;height:7px;border-radius:50%;flex:none}
+.picker-toolbar{display:flex;align-items:center;justify-content:space-between;margin:12px 0;gap:8px}
+.request-mini-actions{display:flex;justify-content:flex-end;margin:-5px 0 8px}
+.chat-thread{background:#fffafd;border-radius:13px;padding:11px!important}
+.chat-messages{display:flex;flex-direction:column;gap:9px;max-height:360px;overflow:auto;padding:10px 3px;margin:10px 0;scrollbar-width:thin}
+.chat-bubble{max-width:86%;border-radius:15px;padding:9px 12px;overflow-wrap:anywhere}
+.chat-bubble.mine{align-self:flex-end;background:#f6d9eb;border-bottom-right-radius:4px}
+.chat-bubble.theirs{align-self:flex-start;background:#f0ecf0;border-bottom-left-radius:4px}
+.chat-bubble p{white-space:pre-wrap;font-size:13px;margin:5px 0;line-height:1.5}
+.chat-bubble .muted{font-size:10px}.chat-compose{display:flex;gap:8px;align-items:flex-end}
+.chat-compose textarea{flex:1;min-height:42px;max-height:125px;resize:vertical;margin:0}
+.chat-compose .btn{min-height:42px;flex:none}.chat-error{font-size:12px;color:#c23573}
+.request-choice button,.picker button{position:relative}
+.request-choice button.chosen:after,.picker button.chosen:after{content:'✓';position:absolute;right:2px;top:2px;border-radius:50%;background:#cc4e8b;color:white;font-size:12px;width:20px;height:20px;display:grid;place-items:center}
+@media(max-width:520px){
+ main{padding:12px 9px 105px}.box{padding:12px;margin:9px 0}
+ .modal{padding:6px}.modal-inner{padding:13px;max-height:94dvh;border-radius:14px}
+ .request-choice{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;max-height:32dvh}
+ .request-choice button{padding:3px;font-size:9px}.picker{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+ .btn{min-height:39px}.notification{padding:10px!important}
+ .chat-messages{max-height:42dvh}.nav button{min-height:41px}
+}
 </style></head><body>
 <header><h1>♡ アイカツ！アンコール カード帳 ♡</h1><div style="font-size:12px;margin-top:5px">カード管理・交換マッチング・掲示板</div></header>
 <div class="auth"><div id="loggedOut"><button class="btn light" id="login">Googleでログイン</button></div><div id="loggedIn" class="hidden"><span id="cloud">接続中…</span> <button class="btn light small" id="logout">ログアウト</button></div><div id="authError" class="error"></div></div>
@@ -18,7 +48,7 @@
 <section class="page" id="album"><h2>マイアルバム ♡</h2><div class="box"><div class="row"><strong id="albumStat">0 / 0種類</strong><select id="cardSize" style="width:auto"><option value="normal">標準</option><option value="small">小さめ</option><option value="tiny">もっと小さく</option></select></div><div class="filters" id="albumGroups"><button data-g="series1" class="on">1弾</button><button data-g="promo">プロモ</button></div><div class="filters" id="albumKinds"><button data-k="all" class="on">全部</button><button data-k="normal">通常</button><button data-k="parallel">パラレル</button></div><div class="row"><input id="albumSearch" placeholder="名前・番号で検索"><select id="albumFilter" style="width:auto"><option value="all">すべて</option><option value="owned">所持</option><option value="missing">未所持</option><option value="extra">2枚以上</option></select></div><p id="albumDetails" class="muted"></p><div id="cardGrid" class="cards"></div><p class="muted">画像タップで0⇔1枚。＋／−で枚数変更、数字タップで直接入力できます。</p></div></section>
 <section class="page" id="board"><h2>交換掲示板 ♡</h2><div class="box"><h3 id="postEditorTitle">新しい交換募集</h3><p class="muted">カード画像を選んで公開できます。写真のアップロード・課金は不要。</p><label>譲れるカード</label><div id="selectedOffers" class="chosen-list"></div><button class="btn light" id="pickOffers">＋画像から選ぶ</button><label>欲しいカード</label><div id="selectedWants" class="chosen-list"></div><button class="btn light" id="pickWants">＋画像から選ぶ</button><label>交換条件・ひとこと</label><textarea id="postBody" maxlength="500"></textarea><div id="postError" class="error"></div><div class="actions"><button class="btn" id="savePost">♡ 募集を公開</button><button class="btn light hidden" id="cancelPostEdit">編集をやめる</button></div></div><div class="box"><h3>みんなの募集</h3><div class="row"><input id="postSearch" placeholder="カード名・投稿内容で検索"><select id="postFilter" style="width:auto"><option value="all">すべて</option><option value="mine">自分の募集</option><option value="premium">PR・ER</option><option value="regular">R・N</option></select></div><p id="postsStatus" class="muted"></p><div id="postList"></div></div></section>
 <section class="page" id="matching"><h2>交換マッチング ♡</h2><div class="box"><p class="note">PR・ER同士、R・N同士の交換候補数と交換方法を評価。最初はコメントではなく、カードを指定して交換申請します。</p><p id="matchingStatus" class="muted"></p><div id="matchList"></div></div><div class="box"><h3>過去の公開コメント</h3><p class="muted">以前のプロフィール相談を確認できます。新しい交渉は交換申請から行ってね。</p><button class="btn light" id="oldComments">自分宛てコメントを表示</button><div id="oldThread" class="hidden"><div id="oldCommentList"></div><form id="oldCommentForm"><textarea id="oldCommentBody" maxlength="300" required></textarea><button class="btn">返信する</button></form><div id="oldCommentError" class="error"></div></div></div></section>
-<section class="page" id="trades"><h2>🔔 通知・交換申請 <span class="pill hidden" id="unreadPill"></span></h2><div class="box"><div class="row"><h3>未読通知</h3><button class="btn light small" id="markRead">すべて既読にする</button></div><div id="notificationList"></div></div><div class="box"><h3>交換申請一覧</h3><div class="filters"><button class="on" data-trade-filter="active">進行中</button><button data-trade-filter="all">すべて</button></div><p id="tradesStatus" class="muted"></p><div id="tradeList"></div></div></section>
+<section class="page" id="trades"><h2>🔔 通知・交換申請 <span class="pill hidden" id="unreadPill"></span></h2><div class="box"><div class="row"><h3>未読通知</h3><button class="btn light small" id="markRead">すべて既読にする</button></div><div class="filters notice-filters" id="noticeFilters"><button data-notice="unread" class="on">未読</button><button data-notice="all">すべて</button><button data-notice="trade">交換申請</button><button data-notice="chat">チャット</button><button data-notice="board">掲示板など</button></div><div id="notificationList"></div></div><div class="box"><h3>交換申請一覧</h3><div class="filters"><button class="on" data-trade-filter="active">進行中</button><button data-trade-filter="all">すべて</button></div><p id="tradesStatus" class="muted"></p><div id="tradeList"></div></div></section>
 
 <section class="page" id="settings">
  <div class="settings-head"><h2>⚙ 設定・ヘルプ</h2><button class="btn light" id="settingsBack">← ホーム</button></div>
@@ -39,8 +69,8 @@
  </div>
 </section>
 </main>
-<div class="modal hidden" id="pickerModal"><div class="modal-inner"><div class="row"><h3 id="pickerTitle">カードを選ぶ</h3><button id="pickerClose" class="btn light">完了</button></div><input id="pickerSearch" placeholder="番号・名前で検索"><div class="filters"><button data-pickfilter="all" class="on">すべて</button><button data-pickfilter="owned">所持</button><button data-pickfilter="extra">2枚以上</button><button data-pickfilter="missing">未所持</button></div><div id="pickerCount" class="muted"></div><div id="pickerGrid" class="picker"></div></div></div>
-<div class="modal hidden" id="reportModal"><div class="modal-inner authbox"><h3>問題を通報する</h3><p id="reportWho" class="muted"></p><label>通報理由</label><select id="reportReason"><option value="spam">スパム・宣伝</option><option value="harassment">嫌がらせ・迷惑行為</option><option value="fraud">詐欺・不審な取引</option><option value="privacy">個人情報の掲載</option><option value="other">その他</option></select><label>詳細（任意）</label><textarea id="reportDetails" maxlength="500" placeholder="問題の内容を説明してください。個人情報は記入しないでください。"></textarea><div id="reportError" class="error"></div><div class="actions"><button id="sendReport" class="btn">通報する</button><button id="closeReport" class="btn light">閉じる</button></div></div></div><div class="modal hidden" id="requestModal"><div class="modal-inner request-modal-inner"><div class="row"><h3 id="requestTitle">交換を申請</h3><button class="btn light" id="requestClose">閉じる</button></div><p class="muted" id="requestExplain"></p><label>あなたが譲るカード（画像をタップ・最大10種類）</label><p id="requestGiveCount" class="request-count"></p><div id="requestOfferGrid" class="request-choice"></div><label>相手から受け取るカード（画像をタップ・最大10種類）</label><p id="requestReceiveCount" class="request-count"></p><div id="requestWantGrid" class="request-choice"></div><label>交換方法</label><select id="requestMethod"></select><label>メッセージ（任意）</label><textarea id="requestNote" maxlength="300"></textarea><div id="requestError" class="error"></div><p><button class="btn" id="requestSend">交換を申請する</button></p></div></div>
+<div class="modal hidden" id="pickerModal"><div class="modal-inner"><div class="row"><h3 id="pickerTitle">カードを選ぶ</h3><button id="pickerClose" class="btn light">完了</button></div><input id="pickerSearch" placeholder="番号・名前で検索"><div class="filters"><button data-pickfilter="all" class="on">すべて</button><button data-pickfilter="owned">所持</button><button data-pickfilter="extra">2枚以上</button><button data-pickfilter="missing">未所持</button></div><div class="picker-toolbar"><div id="pickerCount" class="muted"></div><button id="pickerClear" class="btn light small" type="button">選択を解除</button></div><div id="pickerGrid" class="picker"></div></div></div>
+<div class="modal hidden" id="reportModal"><div class="modal-inner authbox"><h3>問題を通報する</h3><p id="reportWho" class="muted"></p><label>通報理由</label><select id="reportReason"><option value="spam">スパム・宣伝</option><option value="harassment">嫌がらせ・迷惑行為</option><option value="fraud">詐欺・不審な取引</option><option value="privacy">個人情報の掲載</option><option value="other">その他</option></select><label>詳細（任意）</label><textarea id="reportDetails" maxlength="500" placeholder="問題の内容を説明してください。個人情報は記入しないでください。"></textarea><div id="reportError" class="error"></div><div class="actions"><button id="sendReport" class="btn">通報する</button><button id="closeReport" class="btn light">閉じる</button></div></div></div><div class="modal hidden" id="requestModal"><div class="modal-inner request-modal-inner"><div class="row"><h3 id="requestTitle">交換を申請</h3><button class="btn light" id="requestClose">閉じる</button></div><p class="muted" id="requestExplain"></p><label>あなたが譲るカード（画像をタップ・最大10種類）</label><p id="requestGiveCount" class="request-count"></p><div class="request-mini-actions"><button class="btn light small" type="button" id="requestGiveClear">選択解除</button></div><div id="requestOfferGrid" class="request-choice"></div><label>相手から受け取るカード（画像をタップ・最大10種類）</label><p id="requestReceiveCount" class="request-count"></p><div class="request-mini-actions"><button class="btn light small" type="button" id="requestReceiveClear">選択解除</button></div><div id="requestWantGrid" class="request-choice"></div><label>交換方法</label><select id="requestMethod"></select><label>メッセージ（任意）</label><textarea id="requestNote" maxlength="300"></textarea><div id="requestError" class="error"></div><p><button class="btn" id="requestSend">交換を申請する</button></p></div></div>
 
 <div class="modal hidden" id="consentModal"><div class="modal-inner authbox">
 <h2>ご利用前の確認</h2><p class="muted">初めて利用する方には、利用規約とプライバシーポリシーへの同意をお願いしています。</p>
@@ -61,6 +91,7 @@ let uid=null,userRef=null,ready=false,needsName=false,profile=defaults(),owned={
 let stops=[],postCommentStops=new Map(),tradeMessageStops=new Map(),oldCommentsStop=null,editOpen=false,publishTimer=null,publishRunning=false,publishPending=false,publishFingerprint="",authVersion=0;
 let albumGroup="series1",albumKind="all",albumView="all",albumSize="normal",albumText="",postEditId=null,offerChoice=new Set(),wantChoice=new Set(),pickerKind="offers",pickerFilter="all",requestTarget=null,requestTrade=null,postThreadId=null,tradeThreadId=null,tradeFilter="active",oldMessages=[];
 let messagesByTrade=new Map(),postMessagesById=new Map(),readKeys=new Set(),notifications=[],postBusy=false,requestBusy=false;
+let noticeFilter="unread",chatDrafts=new Map();
 let responsesByTrade=new Map(),responseStops=new Map(),ratingsReceived=[],ratingsSent=new Set(),ratingStops=[];
 let legalAccepted=false,settingsCurrent=null;
 let isAdminUser=false,adminWatchStops=[],adminTickets=[],adminReports=[],adminViewFilter="all";
@@ -436,6 +467,8 @@ function openRequest(p,trade=null){
  if(trade)$("requestMethod").value=trade.method;
  renderRequestChoices();
 }
+$("requestGiveClear").onclick=()=>{requestGiveIds.clear();renderRequestChoices()};
+$("requestReceiveClear").onclick=()=>{requestReceiveIds.clear();renderRequestChoices()};
 $("requestClose").onclick=()=>$("requestModal").classList.add("hidden");
 $("requestSend").onclick=async()=>{
  if(requestBusy||!isPublic())return;
@@ -564,22 +597,36 @@ function renderTradeList(){
   }
   e.append(actions,safetyActions(other,"user",other));
   if(tradeThreadId===t.id&&["negotiating","accepted","completed","cancelled"].includes(outcome)){
-   const thread=make("div","box");thread.append(make("h3","","非公開チャット"));
-   thread.append(make("p","muted","連絡先や住所の共有には十分注意してください。"));
-   for(const m of messagesByTrade.get(t.id)||[]){
-    const item=make("div","comment");item.append(make("strong","",myTradeName(m.authorUid)),make("p","",m.body),make("span","muted",dateText(m.createdAt)));thread.append(item);
+   const thread=make("div","box chat-thread");
+   thread.append(make("h3","","🔒 非公開チャット"));
+   thread.append(make("p","muted","この会話は交換当事者のみ閲覧できます。住所などの共有には注意してください。"));
+   const scroll=make("div","chat-messages");
+   const msgs=messagesByTrade.get(t.id)||[];
+   if(!msgs.length)scroll.append(make("p","muted","まだメッセージはありません"));
+   for(const m of msgs){
+    const item=make("div","chat-bubble "+(m.authorUid===uid?"mine":"theirs"));
+    item.append(make("strong","",myTradeName(m.authorUid)),make("p","",m.body),make("span","muted",dateText(m.createdAt)));
+    scroll.append(item);
    }
+   thread.append(scroll);
    if(["negotiating","accepted"].includes(outcome)&&!isBlocked(other)){
-    const form=document.createElement("form"),input=document.createElement("textarea"),send=make("button","btn","送信"),error=make("p","error");
-    input.maxLength=300;input.required=true;input.placeholder=outcome==="accepted"?"発送・受け渡しなどの連絡":"希望する交換条件を相談";
-    form.append(input,send,error);
+    const form=document.createElement("form"),input=document.createElement("textarea"),send=make("button","btn","送信"),error=make("p","chat-error");
+    form.className="chat-compose";input.maxLength=300;input.required=true;
+    input.placeholder=outcome==="accepted"?"発送日や受け渡しについて連絡":"交換条件を相談";
+    input.value=chatDrafts.get(t.id)||"";
+    input.oninput=()=>chatDrafts.set(t.id,input.value);
+    form.append(input,send);
     form.onsubmit=async ev=>{
      ev.preventDefault();const body=input.value.trim();if(!body)return;send.disabled=true;
-     try{await addDoc(collection(db,"tradeRequests",t.id,"messages"),{authorUid:uid,body,createdAt:serverTimestamp()});input.value=""}
-     catch(err){error.textContent=err.message}finally{send.disabled=false}
-    };thread.append(form);
+     try{
+      await addDoc(collection(db,"tradeRequests",t.id,"messages"),{authorUid:uid,body,createdAt:serverTimestamp()});
+      chatDrafts.delete(t.id);input.value="";
+     }catch(err){error.textContent=err.message}finally{send.disabled=false}
+    };
+    thread.append(form,error);
    }else thread.append(make("p","muted",isBlocked(other)?"ブロック中のため新しいメッセージは送れません。":"この交換は終了したため、新しいメッセージは送れません。"));
    e.append(thread);
+   queueMicrotask(()=>{if(scroll.isConnected)scroll.scrollTop=scroll.scrollHeight});
   }
   root.append(e);
  }
@@ -595,7 +642,35 @@ function collectNotifications(){const out=[];for(const t of trades){const recipi
  }
 }
 for(const p of posts.filter(x=>x.authorUid===uid)){for(const m of postMessagesById.get(p.id)||[]){if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;out.push({key:"postcomment:"+p.id+":"+m.id,at:m.createdAt.toMillis(),text:"交換掲示板にコメントが届きました",detail:myTradeName(m.authorUid),go:()=>{postThreadId=p.id;showPage("board");renderPosts()}})}}for(const m of oldMessages){if(m.authorUid===uid||!m.createdAt?.toMillis?.())continue;out.push({key:"profilecomment:"+m.id,at:m.createdAt.toMillis(),text:"プロフィールに交換相談が届きました",detail:myTradeName(m.authorUid),go:()=>{showPage("matching");$("oldThread").classList.remove("hidden");renderOldComments()}})}out.sort((a,b)=>b.at-a.at);notifications=out.slice(0,150);renderNotifications()}
-function renderNotifications(){const root=$("notificationList");root.replaceChildren();const unread=notifications.filter(n=>!seenKey(n.key)).length;for(const x of[$("unreadPill"),$("navCount")]){x.classList.toggle("hidden",!unread);x.textContent=String(unread)}if(!notifications.length){root.append(make("p","muted","まだ通知はありません"));return}for(const n of notifications.slice(0,40)){const b=make("button","notification"+(seenKey(n.key)?"":" unread"));b.style.cssText="width:100%;text-align:left;background:"+(seenKey(n.key)?"white":"#fff0f7");b.append(make("strong","",n.text),make("div","muted",n.detail));b.onclick=()=>{readKeys.add(n.key);saveRead();renderNotifications();n.go()};root.append(b)}}
+function noticeCategory(n){
+ if(n.key.startsWith("message:"))return "chat";
+ if(n.key.startsWith("postcomment:")||n.key.startsWith("profilecomment:"))return "board";
+ return "trade";
+}
+function noticeIcon(n){return noticeCategory(n)==="chat"?"💬":noticeCategory(n)==="board"?"📋":"💌"}
+function renderNotifications(){
+ const root=$("notificationList");root.replaceChildren();
+ const unread=notifications.filter(n=>!seenKey(n.key)).length;
+ for(const x of [$("unreadPill"),$("navCount")]){
+  x.classList.toggle("hidden",!unread);x.textContent=String(unread);
+ }
+ document.querySelectorAll("[data-notice]").forEach(b=>b.classList.toggle("on",b.dataset.notice===noticeFilter));
+ const filtered=notifications.filter(n=>noticeFilter==="all"||
+  noticeFilter==="unread"&&!seenKey(n.key)||noticeCategory(n)===noticeFilter).slice(0,60);
+ if(!filtered.length){root.append(make("p","muted",noticeFilter==="unread"?"未読通知はありません":"該当する通知はありません"));return}
+ for(const n of filtered){
+  const b=make("button","notification"+(seenKey(n.key)?"":" unread"));
+  b.type="button";
+  b.append(make("span","notice-icon",noticeIcon(n)));
+  const main=make("div","notice-main");
+  main.append(make("div","notice-title",n.text),make("div","notice-details",n.detail));
+  b.append(main);
+  if(n.at)b.append(make("span","notice-time",new Date(n.at).toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})));
+  if(!seenKey(n.key))b.append(make("span","unread-dot"));
+  b.onclick=()=>{readKeys.add(n.key);saveRead();n.go();renderNotifications()};root.append(b);
+ }
+}
+document.querySelectorAll("[data-notice]").forEach(b=>b.onclick=()=>{noticeFilter=b.dataset.notice;renderNotifications()});
 $("markRead").onclick=()=>{notifications.forEach(n=>readKeys.add(n.key));saveRead();renderNotifications()};
 function watchTradeResponses(t){
  if(responseStops.has(t.id))return;
@@ -674,6 +749,7 @@ function renderSelected(){for(const[set,id]of[[offerChoice,"selectedOffers"],[wa
 function openPicker(kind){pickerKind=kind;pickerFilter="all";$("pickerSearch").value="";$("pickerTitle").textContent=kind==="offers"?"譲れるカードを選ぶ":"欲しいカードを選ぶ";$("pickerModal").classList.remove("hidden");renderPicker()}
 $("pickOffers").onclick=()=>openPicker("offers");$("pickWants").onclick=()=>openPicker("wants");$("pickerClose").onclick=()=>$("pickerModal").classList.add("hidden");
 document.querySelectorAll("[data-pickfilter]").forEach(b=>b.onclick=()=>{pickerFilter=b.dataset.pickfilter;renderPicker()});$("pickerSearch").oninput=renderPicker;
+$("pickerClear").onclick=()=>{chosenSet().clear();renderPicker();renderSelected()};
 function renderPicker(){const root=$("pickerGrid"),set=chosenSet(),q=$("pickerSearch").value.toLowerCase();root.replaceChildren();document.querySelectorAll("[data-pickfilter]").forEach(b=>b.classList.toggle("on",b.dataset.pickfilter===pickerFilter));$("pickerCount").textContent=set.size+" / 50種類選択中";for(const c of cards){const n=qty(c.id);if(pickerFilter==="owned"&&!n||pickerFilter==="extra"&&n<2||pickerFilter==="missing"&&n)continue;if(!(c.name+" "+c.number).toLowerCase().includes(q))continue;const b=make("button",set.has(c.id)?"chosen":"");b.append(art(c),make("div","muted",c.name||c.number));b.onclick=()=>{if(set.has(c.id))set.delete(c.id);else{if(set.size>=50)return alert("50種類まで選択できます");set.add(c.id)}renderPicker();renderSelected()};root.append(b)}}
 function resetPostEditor(){postEditId=null;offerChoice=new Set();wantChoice=new Set();$("postBody").value="";$("postError").textContent="";$("postEditorTitle").textContent="新しい交換募集";$("savePost").textContent="♡ 募集を公開";$("cancelPostEdit").classList.add("hidden");renderSelected()}
 $("cancelPostEdit").onclick=resetPostEditor;
@@ -693,7 +769,7 @@ $("oldComments").onclick=()=>{$("oldThread").classList.toggle("hidden")};$("oldC
 function watchOldComments(){if(oldCommentsStop)oldCommentsStop();oldCommentsStop=onSnapshot(query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),s=>{oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderOldComments();collectNotifications()},()=>{})}
 function renderAll(){renderHome();renderAlbum();renderMatching();renderPosts();renderTradeList();renderNotifications()}
 function watchPeers(){stops.push(onSnapshot(query(collection(db,"matchingProfiles"),where("visibility","==","public"),limit(100)),s=>{peers=s.docs.map(d=>({uid:d.id,...d.data()}));renderMatching();renderPosts();renderTradeList();collectNotifications()},()=>{}))}
-function cleanup(){for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
+function cleanup(){for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;chatDrafts.clear();noticeFilter="unread";editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
 $("login").onclick=async()=>{try{await signInWithPopup(auth,provider)}catch(e){$("authError").textContent="ログイン失敗: "+e.message}};
 $("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 $("firstNameForm").onsubmit=async e=>{e.preventDefault();const n=$("firstName").value.trim();if(!validName(n))return $("firstError").textContent="2〜30文字で入力してね";try{const next={...profile,nickname:n,nicknameConfirmed:true};await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;setGate(false);renderAll();schedulePublish(true)}catch(e){$("firstError").textContent=e.message}};
