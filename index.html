@@ -304,23 +304,53 @@ function watchRatings(){
  }
 }
 function watchTrades(){
- const q=query(collection(db,"tradeRequests"),where("participants","array-contains",uid),limit(100));
- stops.push(onSnapshot(q,s=>{
-  trades=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0));
+ // 「送信した申請」と「受信した申請」を個別に読み込み、IDで統合する。
+ // Firestore のセキュリティルールとクエリの条件を確実に一致させる。
+ const buckets={sent:[],received:[]};
+ const loaded={sent:false,received:false};
+ const failures={sent:null,received:null};
+ const refresh=()=>{
+  const unique=new Map();
+  for(const t of [...buckets.sent,...buckets.received])unique.set(t.id,t);
+  trades=[...unique.values()].sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0)).slice(0,100);
   const current=new Set(trades.map(t=>t.id));
-  for(const [id,stop] of tradeMessageStops)if(!current.has(id)){stop();tradeMessageStops.delete(id);messagesByTrade.delete(id)}
-  for(const [id,stop] of responseStops)if(!current.has(id)){stop();responseStops.delete(id);responsesByTrade.delete(id)}
+  for(const [id,stop] of tradeMessageStops){
+   if(!current.has(id)){stop();tradeMessageStops.delete(id);messagesByTrade.delete(id)}
+  }
+  for(const [id,stop] of responseStops){
+   if(!current.has(id)){stop();responseStops.delete(id);responsesByTrade.delete(id)}
+  }
   for(const t of trades){
-   if(t.status==="accepted")watchTradeResponses(t);
+   if(t.status==='accepted')watchTradeResponses(t);
    if(tradeMessageStops.has(t.id))continue;
-   const stop=onSnapshot(query(collection(db,"tradeRequests",t.id,"messages"),limit(100)),snapshot=>{
-    messagesByTrade.set(t.id,snapshot.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0)));
-    collectNotifications();if(tradeThreadId===t.id)renderTradeList();
-   },()=>{});
+   const stop=onSnapshot(query(collection(db,'tradeRequests',t.id,'messages'),limit(100)),snap=>{
+    messagesByTrade.set(t.id,snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0)));
+    collectNotifications();
+    if(tradeThreadId===t.id)renderTradeList();
+   },e=>{
+    $('tradesStatus').textContent='チャット読み込みエラー: '+e.message;
+   });
    tradeMessageStops.set(t.id,stop);
   }
   renderTradeList();collectNotifications();
- },e=>{$("tradesStatus").textContent="申請読み込み失敗: "+e.message}));
+  const problems=Object.entries(failures).filter(([,v])=>v);
+  if(problems.length){
+   $('tradesStatus').textContent='交換申請の取得に失敗: '+problems.map(([k,e])=>(k==='received'?'受信':'送信')+' '+e.code+' '+e.message).join(' / ');
+  }else if(!loaded.sent||!loaded.received){
+   $('tradesStatus').textContent='交換申請を読み込み中…';
+  }
+ };
+ for(const [kind,field] of [['sent','fromUid'],['received','toUid']]){
+  const q=query(collection(db,'tradeRequests'),where(field,'==',uid),limit(100));
+  stops.push(onSnapshot(q,s=>{
+   failures[kind]=null;loaded[kind]=true;
+   buckets[kind]=s.docs.map(d=>({id:d.id,...d.data()}));
+   refresh();
+  },e=>{
+   failures[kind]=e;loaded[kind]=true;
+   refresh();
+  }));
+ }
 }
 // 掲示板カード画像の選択
 function chosenSet(){return pickerKind==="offers"?offerChoice:wantChoice}
