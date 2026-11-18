@@ -30,6 +30,7 @@
   <button class="settings-entry" data-settings="support"><span><strong>✉ お問い合わせ</strong><small>不具合・相談・運営への連絡</small></span><span>›</span></button>
   <button class="settings-entry" data-settings="blocks"><span><strong>🚫 ブロックしたユーザー</strong><small>確認・ブロック解除</small></span><span>›</span></button>
   <button class="settings-entry" data-settings="account"><span><strong>👤 アカウント管理</strong><small>公開設定・データ削除申請</small></span><span>›</span></button>
+  <button class="settings-entry hidden" id="adminSettingsEntry" data-settings="admin"><span><strong>🛡 管理者メニュー</strong><small>お問い合わせ・通報対応</small></span><span>›</span></button>
  </div>
  <div id="settingsDetail" class="box hidden">
   <button id="settingsMenuBack" class="btn light">← 設定一覧</button>
@@ -62,6 +63,7 @@ let albumGroup="series1",albumKind="all",albumView="all",albumSize="normal",albu
 let messagesByTrade=new Map(),postMessagesById=new Map(),readKeys=new Set(),notifications=[],postBusy=false,requestBusy=false;
 let responsesByTrade=new Map(),responseStops=new Map(),ratingsReceived=[],ratingsSent=new Set(),ratingStops=[];
 let legalAccepted=false,settingsCurrent=null;
+let isAdminUser=false,adminWatchStops=[],adminTickets=[],adminReports=[],adminViewFilter="all";
 let blockedUsers=new Set(),blockStop=null,reportTarget=null,ratingCounts=new Map(),ratingRequests=new Set();
 const cardMap=new Map(),cardBusy=new Set();
 const prefList="非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県".split(",");
@@ -204,6 +206,65 @@ const SETTINGS_PAGES={
   ["公開前の未確定事項","運営者の氏名・名称と連絡先、安全管理措置の説明、データの保存・削除期間、Google等の外部サービスでの処理・国外移転の該当性、問い合わせ・開示請求の受付方法を正式公開前に確認してください。"]
  ]}
 };
+// 管理権限はFirestore /admins/{uid} でのみ判定する。HTML側の表示制御だけに依存しない。
+async function initializeAdmin(account){
+ try{
+  const result=await getDoc(doc(db,"admins",account));
+  if(uid!==account)return;
+  isAdminUser=result.exists()&&result.data().enabled===true;
+  $("adminSettingsEntry").classList.toggle("hidden",!isAdminUser);
+  if(isAdminUser)watchAdminQueues();
+ }catch(e){console.warn("管理者確認に失敗",e)}
+}
+function watchAdminQueues(){
+ for(const unsub of adminWatchStops)unsub();adminWatchStops=[];
+ for(const [coll,setter] of [
+  ["supportTickets",v=>adminTickets=v],
+  ["reports",v=>adminReports=v]
+ ]){
+  const stop=onSnapshot(query(collection(db,coll),limit(100)),snapshot=>{
+   setter(snapshot.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)));
+   if(settingsCurrent==="admin")renderAdminPanel($("settingsDetailBody"));
+  },e=>{if(settingsCurrent==="admin")$("settingsDetailBody").append(make("p","error",coll+" 読み込みエラー: "+e.message))});
+  adminWatchStops.push(stop);
+ }
+}
+function renderAdminPanel(root){
+ root.replaceChildren();
+ if(!isAdminUser){root.append(make("p","error","管理権限がありません"));return}
+ root.append(make("p","note","この管理画面は管理者のみ閲覧できます。問い合わせへの自動メール送信・自動退会削除は行いません。退会削除は管理者が本人確認・取引状態を確認した上で安全に実行してください。"));
+ const filter=make("select");
+ for(const [text,val] of [["すべて","all"],["未対応","new"],["対応中","in_progress"],["対応済み","resolved"]])filter.add(new Option(text,val));
+ filter.value=adminViewFilter;filter.onchange=()=>{adminViewFilter=filter.value;renderAdminPanel(root)};
+ root.append(make("h3","","対応状況"),filter);
+ for(const [label,coll,items] of [["お問い合わせ","supportTickets",adminTickets],["通報","reports",adminReports]]){
+  const filtered=items.filter(t=>adminViewFilter==="all"||(t.status||"new")===adminViewFilter);
+  root.append(make("h3","",label+"（"+filtered.length+"件・取得上限100件）"));
+  if(!filtered.length){root.append(make("p","muted","該当データはありません"));continue}
+  for(const item of filtered){
+   const c=make("div","box");
+   c.append(make("div","muted","ID: "+item.id),make("strong","",(item.category||item.reason||"通報")+" ／ "+(item.status||"new")));
+   c.append(make("p","muted",dateText(item.createdAt)));
+   c.append(make("p","","申請者: "+(item.requesterUid||item.reporterUid||"不明")));
+   if(coll==="reports")c.append(make("p","","対象: "+(item.targetType||"")+" / "+(item.targetUid||"")+" / "+(item.targetId||"")));
+   c.append(make("p","",item.body||item.details||"詳細なし"));
+   const status=make("select");
+   for(const [text,val] of [["未対応","new"],["対応中","in_progress"],["対応済み","resolved"]])status.add(new Option(text,val));
+   status.value=item.status||"new";
+   const memo=make("textarea");memo.maxLength=1000;memo.value=item.adminNote||"";memo.placeholder="対応メモ（問い合わせ本人にも見える場合があります。個人情報や内部機密を書かないでください。）";
+   const save=make("button","btn small","対応状況を保存");
+   const error=make("p","muted");
+   save.onclick=async()=>{
+    save.disabled=true;error.textContent="保存中…";
+    try{await updateDoc(doc(db,coll,item.id),{status:status.value,adminNote:memo.value.trim(),updatedAt:serverTimestamp()});error.textContent="保存しました"}
+    catch(e){error.textContent="保存失敗: "+e.message}
+    finally{save.disabled=false}
+   };
+   c.append(make("label","","対応状況"),status,make("label","","対応メモ"),memo,save,error);
+   root.append(c);
+  }
+ }
+}
 function renderSettingsMenu(){
  settingsCurrent=null;
  $("settingsMenu").classList.remove("hidden");
@@ -213,7 +274,7 @@ function openSettingsDetail(key){
  settingsCurrent=key;
  $("settingsMenu").classList.add("hidden");
  $("settingsDetail").classList.remove("hidden");
- const labels={support:"お問い合わせ",blocks:"ブロックしたユーザー",account:"アカウント管理"};
+ const labels={support:"お問い合わせ",blocks:"ブロックしたユーザー",account:"アカウント管理",admin:"管理者メニュー"};
  $("settingsDetailTitle").textContent=SETTINGS_PAGES[key]?.title||labels[key]||"設定";
  const root=$("settingsDetailBody");
  const oldBlock=$("blockedList");if(oldBlock && oldBlock.parentElement===root){oldBlock.classList.add("hidden");$("settingsDetail").append(oldBlock);}
@@ -236,10 +297,17 @@ function openSettingsDetail(key){
    showPage("home");if(!editOpen)$("editProfile").click();
   };
   const deletion=make("button","btn outline","退会・データ削除を申請する");
-  deletion.onclick=()=>openSupportForm("deletion");
+  deletion.onclick=()=>{
+   if(!confirm("退会・データ削除を申請しますか？ この操作は申請のみで、まだ削除は行われません。"))return;
+   const unresolved=trades.filter(t=>["pending","negotiating","accepted"].includes(t.status)&&!["completed","cancelled"].includes(tradeOutcome(t)));
+   if(unresolved.length)alert("進行中の交換が"+unresolved.length+"件あります。退会手続きの前に終了または運営への相談が必要です。");
+   openSupportForm("deletion");
+  };
   root.append(edit,make("h3","","退会・データ削除"),make("p","","削除を希望する場合は申請フォームからご連絡ください。申請だけでアカウントやデータが自動削除されるわけではありません。運営側が削除対象や取引履歴を確認した上で対応します。"),deletion);
  }else if(key==="support"){
   renderSupportForm(root,"general");
+ }else if(key==="admin"&&isAdminUser){
+  renderAdminPanel(root);
  }
  window.scrollTo(0,0);
 }
@@ -267,7 +335,7 @@ function renderSupportForm(root,type){
     requesterUid:uid,category:category.value,body,
     status:"new",createdAt:serverTimestamp()
    });
-   status.textContent="送信しました。お問い合わせ番号はFirebaseに記録されました。";msg.value="";
+   status.textContent=category.value==="deletion"?"退会申請を受け付けました。アカウント・データはまだ削除されていません。管理者の対応をお待ちください。":"送信しました。お問い合わせはFirebaseに保存されました。";msg.value="";
   }catch(err){status.textContent="送信できませんでした："+err.message}
   finally{send.disabled=false}
  };
@@ -625,10 +693,10 @@ $("oldComments").onclick=()=>{$("oldThread").classList.toggle("hidden")};$("oldC
 function watchOldComments(){if(oldCommentsStop)oldCommentsStop();oldCommentsStop=onSnapshot(query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),s=>{oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderOldComments();collectNotifications()},()=>{})}
 function renderAll(){renderHome();renderAlbum();renderMatching();renderPosts();renderTradeList();renderNotifications()}
 function watchPeers(){stops.push(onSnapshot(query(collection(db,"matchingProfiles"),where("visibility","==","public"),limit(100)),s=>{peers=s.docs.map(d=>({uid:d.id,...d.data()}));renderMatching();renderPosts();renderTradeList();collectNotifications()},()=>{}))}
-function cleanup(){stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
+function cleanup(){for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(viewingPostStop)viewingPostStop();viewingPostStop=null;viewingPostId=null;if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
 $("login").onclick=async()=>{try{await signInWithPopup(auth,provider)}catch(e){$("authError").textContent="ログイン失敗: "+e.message}};
 $("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 $("firstNameForm").onsubmit=async e=>{e.preventDefault();const n=$("firstName").value.trim();if(!validName(n))return $("firstError").textContent="2〜30文字で入力してね";try{const next={...profile,nickname:n,nicknameConfirmed:true};await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;setGate(false);renderAll();schedulePublish(true)}catch(e){$("firstError").textContent=e.message}};
-onAuthStateChanged(auth,async user=>{const version=++authVersion;cleanup();$("authError").textContent="";$("loggedOut").classList.toggle("hidden",!!user);$("loggedIn").classList.toggle("hidden",!user);if(!user)return;$("cloud").textContent="データを読み込み中…";try{const ref=doc(db,"users",user.uid),snapshot=await getDoc(ref);if(authVersion!==version)return;if(!snapshot.exists())await setDoc(ref,{profile:defaults(),owned:{},createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(authVersion!==version)return;uid=user.uid;userRef=ref;try{readKeys=new Set(JSON.parse(localStorage.getItem("aikatsu-read-"+uid)||"[]"))}catch{readKeys=new Set()}stops.push(onSnapshot(ref,s=>{if(!s.exists()||auth.currentUser?.uid!==uid)return;profile={...defaults(),...(s.data().profile||{})};legalAccepted=s.data().legalConsent?.version===LEGAL_VERSION;const incoming={...(s.data().owned||{})};for(const id of cardBusy)incoming[id]=owned[id];owned=incoming;ready=true;const needs=!validName(profile.nickname)||profile.nicknameConfirmed!==true&&profile.nickname===user.displayName;setGate(needs);if(!editOpen)fillProfile();renderAll();schedulePublish();$("cloud").textContent=s.metadata.fromCache?"保存データを表示中":"♡ クラウド同期中"},e=>{$("authError").textContent=e.message}));watchBlocks();watchPeers();watchPosts();watchTrades();watchRatings();refreshRatingCount(uid);watchOldComments()}catch(e){$("authError").textContent="読み込み失敗: "+e.message}});
+onAuthStateChanged(auth,async user=>{const version=++authVersion;cleanup();$("authError").textContent="";$("loggedOut").classList.toggle("hidden",!!user);$("loggedIn").classList.toggle("hidden",!user);if(!user)return;$("cloud").textContent="データを読み込み中…";try{const ref=doc(db,"users",user.uid),snapshot=await getDoc(ref);if(authVersion!==version)return;if(!snapshot.exists())await setDoc(ref,{profile:defaults(),owned:{},createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(authVersion!==version)return;uid=user.uid;userRef=ref;try{readKeys=new Set(JSON.parse(localStorage.getItem("aikatsu-read-"+uid)||"[]"))}catch{readKeys=new Set()}stops.push(onSnapshot(ref,s=>{if(!s.exists()||auth.currentUser?.uid!==uid)return;profile={...defaults(),...(s.data().profile||{})};legalAccepted=s.data().legalConsent?.version===LEGAL_VERSION;const incoming={...(s.data().owned||{})};for(const id of cardBusy)incoming[id]=owned[id];owned=incoming;ready=true;const needs=!validName(profile.nickname)||profile.nicknameConfirmed!==true&&profile.nickname===user.displayName;setGate(needs);if(!editOpen)fillProfile();renderAll();schedulePublish();$("cloud").textContent=s.metadata.fromCache?"保存データを表示中":"♡ クラウド同期中"},e=>{$("authError").textContent=e.message}));watchBlocks();watchPeers();watchPosts();watchTrades();watchRatings();refreshRatingCount(uid);watchOldComments();initializeAdmin(uid)}catch(e){$("authError").textContent="読み込み失敗: "+e.message}});
 loadCards();
 </script></body></html>
