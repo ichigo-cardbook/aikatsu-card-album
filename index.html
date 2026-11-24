@@ -76,7 +76,7 @@
   <button class="settings-entry" data-settings="support"><span><strong>✉ お問い合わせ</strong><small>不具合・相談・運営への連絡</small></span><span>›</span></button>
   <button class="settings-entry" data-settings="blocks"><span><strong>🚫 ブロックしたユーザー</strong><small>確認・ブロック解除</small></span><span>›</span></button>
   <button class="settings-entry" data-settings="account"><span><strong>👤 アカウント管理</strong><small>公開設定・データ削除申請</small></span><span>›</span></button>
-  <button class="settings-entry hidden" id="adminSettingsEntry" data-settings="admin"><span><strong>🛡 管理者メニュー</strong><small>お問い合わせ・通報対応</small></span><span>›</span></button>
+  <button class="settings-entry hidden" id="adminSettingsEntry" data-settings="admin"><span><strong>🛡 管理者メニュー</strong><small>利用者数・お問い合わせ・通報対応</small></span><span>›</span></button>
  </div>
  <div id="settingsDetail" class="box hidden">
   <button id="settingsMenuBack" class="btn light">← 設定一覧</button>
@@ -118,6 +118,7 @@ let responsesByTrade=new Map(),responseStops=new Map(),ratingsReceived=[],rating
 let legalAccepted=false,settingsCurrent=null;
 let adminBadgeCache=new Map(),adminBadgePending=new Set();
 let isAdminUser=false,adminWatchStops=[],adminTickets=[],adminReports=[],adminViewFilter="all";
+let adminUserCount=null,adminCountError="",adminCountLoading=false;
 let blockedUsers=new Set(),blockStop=null,reportTarget=null,ratingCounts=new Map(),ratingRequests=new Set();
 const cardMap=new Map(),cardBusy=new Set();
 const prefList="非公開,北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県".split(",");
@@ -321,7 +322,7 @@ async function initializeAdmin(account){
   isAdminUser=result.exists()&&result.data().enabled===true;
   $("adminSettingsEntry").classList.toggle("hidden",!isAdminUser);
   renderHome();renderMatching();renderPosts();renderTradeList();
-  if(isAdminUser)watchAdminQueues();
+  if(isAdminUser){watchAdminQueues();refreshAdminUserCount();}
  }catch(e){console.warn("管理者確認に失敗",e)}
 }
 function watchAdminQueues(){
@@ -337,10 +338,34 @@ function watchAdminQueues(){
   adminWatchStops.push(stop);
  }
 }
+async function refreshAdminUserCount(){
+ if(!isAdminUser||!uid||adminCountLoading)return;
+ const account=uid;
+ adminCountLoading=true;adminCountError="";
+ if(settingsCurrent==="admin")renderAdminPanel($("settingsDetailBody"));
+ try{
+  const result=await getCountFromServer(collection(db,"users"));
+  if(uid!==account||!isAdminUser)return;
+  adminUserCount=result.data().count;
+ }catch(e){
+  if(uid!==account)return;
+  adminCountError="集計できませんでした："+e.message;
+ }finally{
+  if(uid===account){adminCountLoading=false;if(settingsCurrent==="admin")renderAdminPanel($("settingsDetailBody"));}
+ }
+}
 function renderAdminPanel(root){
  root.replaceChildren();
  if(!isAdminUser){root.append(make("p","error","管理権限がありません"));return}
  root.append(make("p","note","この管理画面は管理者のみ閲覧できます。問い合わせへの自動メール送信・自動退会削除は行いません。退会削除は管理者が本人確認・取引状態を確認した上で安全に実行してください。"));
+ const usersBox=make("div","box");
+ usersBox.append(make("h3","","👥 総利用者数（管理者のみ）"));
+ usersBox.append(make("p","",adminCountLoading?"集計中…":adminCountError|| (adminUserCount===null?"未取得":adminUserCount.toLocaleString("ja-JP")+" アカウント")));
+ usersBox.append(make("p","muted","公開・非公開を問わず、Firestoreの users に登録されたアカウント数です。Firebase Authenticationにのみ存在するアカウントは含みません。"));
+ const countRefresh=make("button","btn light small","人数を更新");
+ countRefresh.disabled=adminCountLoading;
+ countRefresh.onclick=refreshAdminUserCount;
+ usersBox.append(countRefresh);root.append(usersBox);
  const filter=make("select");
  for(const [text,val] of [["すべて","all"],["未対応","new"],["対応中","in_progress"],["対応済み","resolved"]])filter.add(new Option(text,val));
  filter.value=adminViewFilter;filter.onchange=()=>{adminViewFilter=filter.value;renderAdminPanel(root)};
@@ -1083,7 +1108,7 @@ function watchPeers(){
   $("matchingStatus").textContent="マッチング情報の読み込みに失敗しました: "+e.message;
  }));
 }
-function cleanup(){if(boardThreadStop){boardThreadStop();boardThreadStop=null}boardThreads=[];boardOpenThread=null;boardThreadMessages=[];boardThreadFilter=null;boardPostsLoaded=false;boardThreadsLoaded=false;boardRestoreDone=false;boardRoomElement.classList.add("hidden");boardRoomElement.replaceChildren();avatarImageCache.clear();avatarImagePending.clear();for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;adminBadgeCache.clear();adminBadgePending.clear();$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");$("postCardsModal").classList.add("hidden");$("publicProfileModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;chatDrafts.clear();noticeFilter="unread";editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
+function cleanup(){if(boardThreadStop){boardThreadStop();boardThreadStop=null}boardThreads=[];boardOpenThread=null;boardThreadMessages=[];boardThreadFilter=null;boardPostsLoaded=false;boardThreadsLoaded=false;boardRestoreDone=false;boardRoomElement.classList.add("hidden");boardRoomElement.replaceChildren();avatarImageCache.clear();avatarImagePending.clear();for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];adminUserCount=null;adminCountError="";adminCountLoading=false;isAdminUser=false;adminBadgeCache.clear();adminBadgePending.clear();$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");$("postCardsModal").classList.add("hidden");$("publicProfileModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;chatDrafts.clear();noticeFilter="unread";editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
 $("login").onclick=async()=>{try{await signInWithPopup(auth,provider)}catch(e){$("authError").textContent="ログイン失敗: "+e.message}};
 $("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 $("firstNameForm").onsubmit=async e=>{e.preventDefault();const n=$("firstName").value.trim();if(!validName(n))return $("firstError").textContent="2〜30文字で入力してね";try{const next={...profile,nickname:n,nicknameConfirmed:true};await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;setGate(false);renderAll();schedulePublish(true)}catch(e){$("firstError").textContent=e.message}};
