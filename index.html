@@ -915,7 +915,7 @@ function renderPosts(){const root=$("postList");root.replaceChildren();const tex
  }
 }
 $("postSearch").oninput=renderPosts;$("postFilter").onchange=renderPosts;
-function watchPosts(){stops.push(onSnapshot(query(collection(db,"posts"),where("visibility","==","public"),limit(100)),s=>{posts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));for(const p of posts)checkAdminBadge(p.authorUid);boardPostsLoaded=true;renderPosts();renderMyCommentedPosts();renderBoardThreadList();collectNotifications();restoreBoardOpenThread();if(boardThreadReadError)fallbackMyCommentedThreads()},e=>{$("postsStatus").textContent="掲示板エラー: "+e.message}))}
+function watchPosts(){stops.push(onSnapshot(query(collection(db,"posts"),where("visibility","==","public"),limit(100)),s=>{posts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));for(const p of posts)checkAdminBadge(p.authorUid);boardPostsLoaded=true;renderPosts();renderMyCommentedPosts();renderBoardThreadList();collectNotifications();restoreBoardOpenThread();},e=>{$("postsStatus").textContent="掲示板エラー: "+e.message}))}
 // 最後に開いていた非公開相談を本人のブラウザで記憶し、再読み込み後に復元する。
 function boardOpenStorageKey(){return "aikatsu-board-open-v1-"+uid}
 function restoreBoardOpenThread(){
@@ -1044,53 +1044,41 @@ function openBoardPrivate(threadId,postHint=null,restoring=false){
  if(!restoring)room.scrollIntoView({behavior:"smooth",block:"nearest"})
 }
 $("boardThreadShowAll").onclick=()=>{boardThreadFilter=null;renderBoardThreadList()};
-// Firestore の一覧クエリが権限エラーになっても、読み込み中表示で止めない。
-let boardThreadReadError=null,boardThreadFallbackRunning=false;
-async function fallbackMyCommentedThreads(){
- if(boardThreadFallbackRunning||!uid||!boardPostsLoaded)return;
- boardThreadFallbackRunning=true;
- const targetUid=uid;
- const list=posts.filter(p=>p.authorUid!==targetUid&&!isBlocked(p.authorUid));
- let found=0,errors=0;
- // 自分が書き込んだチャットは投稿ID + 自分のUIDで一意に定まる。
- // 一覧クエリの認可が失敗する環境でも個別 get で確認できる。
- for(let i=0;i<list.length&&uid===targetUid;i+=8){
-  const group=list.slice(i,i+8);
-  const results=await Promise.allSettled(group.map(p=>getDoc(doc(db,"boardThreads",p.id+"_"+targetUid))));
-  for(let j=0;j<results.length;j++){
-   const result=results[j];
-   if(result.status==="rejected"){errors++;continue}
-   if(!result.value.exists())continue;
-   const t={id:result.value.id,...result.value.data()};
-   if(t.otherUid!==targetUid||!Array.isArray(t.participants)||!t.participants.includes(targetUid))continue;
-   found++;
-   const at=boardThreads.findIndex(x=>x.id===t.id);
-   if(at>=0)boardThreads[at]=t;else boardThreads.push(t);
+// 非公開チャット一覧：Firestore のルールで確認できる各 UID に限定して検索する。
+// 公開投稿を総当たりする個別 get は、存在しないドキュメントで permission-denied になるため行わない。
+let boardThreadReadError=null;
+function watchBoardThreads(){
+ const currentUid=uid;
+ const state={owner:null,commenter:null};
+ const errors={owner:null,commenter:null};
+ function update(){
+  if(uid!==currentUid)return;
+  boardThreadsLoaded=state.owner!==null&&state.commenter!==null;
+  const merged=new Map();
+  for(const records of [state.owner,state.commenter]){
+   if(!records)continue;
+   for(const t of records)merged.set(t.id,t);
+  }
+  boardThreads=[...merged.values()].sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0));
+  boardThreadReadError=Object.entries(errors).filter(([,error])=>error).map(([kind,error])=>(kind==='owner'?'募集主としての履歴':'コメントした履歴')+'：'+error).join(' / ')||null;
+  renderBoardThreadList();renderMyCommentedPosts();renderPosts();collectNotifications();restoreBoardOpenThread();
+  if(boardThreadReadError){
+   const message='チャット履歴の一部を取得できませんでした（'+boardThreadReadError+'）。Firebaseルールも更新されているか確認してください。';
+   const root=$('myCommentedPostsList');
+   if(root)root.prepend(make('p','error',message));
+   const list=$('boardThreadList');
+   if(list)list.prepend(make('p','error',message));
   }
  }
- if(uid===targetUid){
-  boardThreadsLoaded=true;
-  boardThreadFallbackRunning=false;
-  renderBoardThreadList();renderMyCommentedPosts();renderPosts();collectNotifications();restoreBoardOpenThread();
-  const root=$("myCommentedPostsList");
-  if(boardThreadReadError){
-   const p=make("p","muted",errors?"チャット一覧の取得に失敗しました。個別照会で"+found+"件確認できました（照会失敗 "+errors+"件）。エラー: "+boardThreadReadError:"一覧取得ができないため、公開募集から個別照会しています（"+found+"件確認）。");
-   root.prepend(p);
-  }
- }else boardThreadFallbackRunning=false;
-}
-function watchBoardThreads(){
- stops.push(onSnapshot(query(collection(db,"boardThreads"),where("participants","array-contains",uid),limit(100)),snap=>{
-  boardThreadReadError=null;
-  boardThreads=snap.docs.map(d=>({id:d.id,...d.data()}));boardThreadsLoaded=true;
-  renderBoardThreadList();renderMyCommentedPosts();renderPosts();collectNotifications();restoreBoardOpenThread();
- },err=>{
-  boardThreadReadError=err.code||err.message;
-  boardThreadsLoaded=true;
-  $("boardThreadList").textContent="非公開チャット一覧の読み込みに失敗しました: "+err.message;
-  renderMyCommentedPosts();
-  fallbackMyCommentedThreads();
- }));
+ // ルールの本人照合に一致するクエリ。いずれも本人以外のチャットは対象外。
+ for(const [kind,field] of [['owner','postOwnerUid'],['commenter','otherUid']]){
+  stops.push(onSnapshot(query(collection(db,'boardThreads'),where(field,'==',currentUid),limit(100)),snap=>{
+   state[kind]=snap.docs.map(d=>({id:d.id,...d.data()}));
+   errors[kind]=null;update();
+  },err=>{
+   state[kind]=[];errors[kind]=err.code||err.message;update();
+  }));
+ }
 }
 function renderOldComments(){$("oldCommentList").replaceChildren(...oldMessages.map(m=>{const e=make("div","comment");e.append(make("strong","",peerName(m.authorUid)),make("p","",m.body));return e}))}
 $("oldComments").onclick=()=>{$("oldThread").classList.toggle("hidden")};$("oldCommentForm").onsubmit=async e=>{e.preventDefault();if(!isPublic())return alert("公開プロフィールで利用してください");const body=$("oldCommentBody").value.trim();if(!body)return;try{await addDoc(collection(db,"matchingProfiles",uid,"comments"),{authorUid:uid,body,createdAt:serverTimestamp()});$("oldCommentBody").value=""}catch(err){$("oldCommentError").textContent=err.message}};
