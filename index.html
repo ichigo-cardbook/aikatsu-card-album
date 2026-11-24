@@ -932,7 +932,7 @@ function openBoardPrivate(threadId,postHint=null){
    else {if(!p||p.authorUid===uid)throw Error("新しい相談を開始できません");batch.set(ref,{postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid],createdAt:serverTimestamp(),...data})}
    batch.set(msg,{authorUid:uid,body,createdAt:serverTimestamp()});await batch.commit();input.value="";
    if(!boardThreadStop&&boardOpenThread?.id===threadId){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{error.textContent=err.message})}
-  }catch(err){error.textContent=err.code==="permission-denied"?"送信できませんでした：Firebaseの権限チェックで拒否されました。ログイン状態、ブロック設定、募集の存在、およびFirestoreのルール公開状況を確認してください。（詳細: "+err.message+"）":"送信できませんでした: "+err.message}finally{send.disabled=false}}
+  }catch(err){error.textContent=err.code==="permission-denied"?"送信が拒否されました。Firestoreルールの最新版が公開済みか確認してください。送信先：boardThreads/"+threadId+"（初回はチャット作成とメッセージ作成を同時実行）。詳細: "+err.message:"送信できませんでした: "+err.message}finally{send.disabled=false}}
  room.scrollIntoView({behavior:"smooth",block:"nearest"})
 }
 $("boardThreadShowAll").onclick=()=>{boardThreadFilter=null;renderBoardThreadList()};
