@@ -110,6 +110,9 @@ let stops=[],postCommentStops=new Map(),tradeMessageStops=new Map(),oldCommentsS
 let albumGroup="series1",albumKind="all",albumView="all",albumSize="normal",albumText="",postEditId=null,offerChoice=new Set(),wantChoice=new Set(),pickerKind="offers",pickerFilter="all",requestTarget=null,requestTrade=null,postThreadId=null,tradeThreadId=null,tradeFilter="active",oldMessages=[];
 let messagesByTrade=new Map(),postMessagesById=new Map(),readKeys=new Set(),notifications=[],postBusy=false,requestBusy=false;
 let boardThreads=[],boardOpenThread=null,boardThreadMessages=[],boardThreadStop=null,boardThreadFilter=null;
+let boardPostsLoaded=false,boardThreadsLoaded=false,boardRestoreDone=false;
+// 投稿の再描画でDOMから一時的に外れても、開いていた相談欄を失わない。
+const boardRoomElement=$("boardPrivateRoom");
 let noticeFilter="unread",chatDrafts=new Map();
 let responsesByTrade=new Map(),responseStops=new Map(),ratingsReceived=[],ratingsSent=new Set(),ratingStops=[];
 let legalAccepted=false,settingsCurrent=null;
@@ -861,7 +864,7 @@ function openPostCards(p){
 }
 $("postCardsClose").onclick=()=>$("postCardsModal").classList.add("hidden");
 $("postCardsModal").addEventListener("click",e=>{if(e.target===$("postCardsModal"))$("postCardsModal").classList.add("hidden")});
-function renderPosts(){const root=$("postList");root.replaceChildren();const text=$("postSearch").value.toLowerCase(),f=$("postFilter").value;const list=posts.filter(p=>{if(isBlocked(p.authorUid))return false;if(f==="mine"&&p.authorUid!==uid)return false;const ids=[...(p.offerIds||[]),...(p.wantIds||[])];if(["premium","regular"].includes(f)&&!ids.some(id=>rarity(cardMap.get(id))===f))return false;return(p.body+" "+peerName(p.authorUid)+" "+ids.map(id=>{const c=cardMap.get(id);return(c?.name||"")+" "+(c?.number||id)}).join(" ")).toLowerCase().includes(text)});$("postsStatus").textContent="公開募集 "+posts.length+"件／表示 "+list.length+"件";if(!list.length)root.append(make("p","muted","募集はありません"));for(const p of list){const e=make("div","post");e.dataset.postId=p.id;e.append(userTrigger(p.authorUid,p.authorUid===uid?profile.nickname:peers.find(x=>x.uid===p.authorUid)?.nickname,p.authorUid===uid?profile.avatar:peers.find(x=>x.uid===p.authorUid)?.avatar),make("p","muted",dateText(p.createdAt)));const sides=make("div","two");for(const[label,ids]of[["譲れる",p.offerIds||[]],["欲しい",p.wantIds||[]]]){const s=make("div","side");s.append(make("h3","",label),miniature(ids));sides.append(s)}e.append(sides);sides.style.cursor="pointer";sides.title="タップしてカードをすべて見る";sides.setAttribute("role","button");sides.setAttribute("tabindex","0");sides.setAttribute("aria-label","譲れるカードと欲しいカードをすべて見る");sides.onclick=()=>openPostCards(p);sides.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();openPostCards(p)}};if(p.body)e.append(make("p","",p.body));const actions=make("div","actions"),allCards=make("button","btn light","📖 カードをすべて見る（譲れる"+(p.offerIds||[]).length+"・欲しい"+(p.wantIds||[]).length+"種類）");allCards.onclick=()=>openPostCards(p);actions.append(allCards);if(p.authorUid===uid){const count=boardThreads.filter(t=>t.postId===p.id).length;const b=make("button","btn light","🔒 非公開の相談を見る（"+count+"件）");b.onclick=()=>{boardThreadFilter=p.id;renderBoardThreadList();$("boardThreadsBox").scrollIntoView({behavior:"smooth",block:"start"})};actions.append(b)}else{const threadId=p.id+"_"+uid;const b=make("button","btn light",boardThreads.some(t=>t.id===threadId)?"🔒 非公開チャットを開く":"🔒 募集主に非公開で連絡");b.onclick=()=>openBoardPrivate(threadId,p);actions.append(b)}if(p.authorUid===uid){const edit=make("button","btn outline","編集"),del=make("button","btn outline","削除");edit.onclick=()=>{postEditId=p.id;offerChoice=new Set(p.offerIds||[]);wantChoice=new Set(p.wantIds||[]);$("postBody").value=p.body||"";$("postEditorTitle").textContent="募集を編集";$("savePost").textContent="変更を保存";$("cancelPostEdit").classList.remove("hidden");renderSelected();window.scrollTo(0,0)};del.onclick=async()=>{if(!confirm("募集を削除しますか？"))return;try{await deleteDoc(doc(db,"posts",p.id))}catch(e){alert(e.message)}};actions.append(edit,del)}else if(isAdminUser){const del=make("button","btn outline","🛡 管理者として削除");del.onclick=async()=>{if(!confirm("管理者として、このユーザーの募集投稿を削除しますか？\nこの操作は取り消せません。"))return;del.disabled=true;try{await deleteDoc(doc(db,"posts",p.id));if(postThreadId===p.id){postThreadId=null;renderPosts()}}catch(e){alert("削除できませんでした: "+e.message);del.disabled=false}};actions.append(del)}e.append(actions,safetyActions(p.authorUid,"post",p.id));
+function renderPosts(){const root=$("postList");root.replaceChildren();const text=$("postSearch").value.toLowerCase(),f=$("postFilter").value;const list=posts.filter(p=>{if(isBlocked(p.authorUid))return false;if(f==="mine"&&p.authorUid!==uid)return false;const ids=[...(p.offerIds||[]),...(p.wantIds||[])];if(["premium","regular"].includes(f)&&!ids.some(id=>rarity(cardMap.get(id))===f))return false;return(p.body+" "+peerName(p.authorUid)+" "+ids.map(id=>{const c=cardMap.get(id);return(c?.name||"")+" "+(c?.number||id)}).join(" ")).toLowerCase().includes(text)});$("postsStatus").textContent="公開募集 "+posts.length+"件／表示 "+list.length+"件";if(!list.length)root.append(make("p","muted","募集はありません"));for(const p of list){const e=make("div","post");e.dataset.postId=p.id;e.append(userTrigger(p.authorUid,p.authorUid===uid?profile.nickname:peers.find(x=>x.uid===p.authorUid)?.nickname,p.authorUid===uid?profile.avatar:peers.find(x=>x.uid===p.authorUid)?.avatar),make("p","muted",dateText(p.createdAt)));const sides=make("div","two");for(const[label,ids]of[["譲れる",p.offerIds||[]],["欲しい",p.wantIds||[]]]){const s=make("div","side");s.append(make("h3","",label),miniature(ids));sides.append(s)}e.append(sides);sides.style.cursor="pointer";sides.title="タップしてカードをすべて見る";sides.setAttribute("role","button");sides.setAttribute("tabindex","0");sides.setAttribute("aria-label","譲れるカードと欲しいカードをすべて見る");sides.onclick=()=>openPostCards(p);sides.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();openPostCards(p)}};if(p.body)e.append(make("p","",p.body));const actions=make("div","actions"),allCards=make("button","btn light","📖 カードをすべて見る（譲れる"+(p.offerIds||[]).length+"・欲しい"+(p.wantIds||[]).length+"種類）");allCards.onclick=()=>openPostCards(p);actions.append(allCards);if(p.authorUid===uid){const count=boardThreads.filter(t=>t.postId===p.id).length;const b=make("button","btn light","🔒 非公開の相談を見る（"+count+"件）");b.onclick=()=>{const inline=e.querySelector(".board-inline-threads");if(inline)inline.scrollIntoView({behavior:"smooth",block:"center"})};actions.append(b)}else{const threadId=p.id+"_"+uid;const b=make("button","btn light",boardThreads.some(t=>t.id===threadId)?"🔒 非公開チャットを開く":"🔒 募集主に非公開で連絡");b.onclick=()=>openBoardPrivate(threadId,p);actions.append(b)}if(p.authorUid===uid){const edit=make("button","btn outline","編集"),del=make("button","btn outline","削除");edit.onclick=()=>{postEditId=p.id;offerChoice=new Set(p.offerIds||[]);wantChoice=new Set(p.wantIds||[]);$("postBody").value=p.body||"";$("postEditorTitle").textContent="募集を編集";$("savePost").textContent="変更を保存";$("cancelPostEdit").classList.remove("hidden");renderSelected();window.scrollTo(0,0)};del.onclick=async()=>{if(!confirm("募集を削除しますか？"))return;try{await deleteDoc(doc(db,"posts",p.id))}catch(e){alert(e.message)}};actions.append(edit,del)}else if(isAdminUser){const del=make("button","btn outline","🛡 管理者として削除");del.onclick=async()=>{if(!confirm("管理者として、このユーザーの募集投稿を削除しますか？\nこの操作は取り消せません。"))return;del.disabled=true;try{await deleteDoc(doc(db,"posts",p.id));if(postThreadId===p.id){postThreadId=null;renderPosts()}}catch(e){alert("削除できませんでした: "+e.message);del.disabled=false}};actions.append(del)}e.append(actions,safetyActions(p.authorUid,"post",p.id));
  // この募集の相談だけを、元の投稿の直下に表示する
  const inline=make("div","board-inline-threads");
  if(p.authorUid===uid){
@@ -882,11 +885,33 @@ function renderPosts(){const root=$("postList");root.replaceChildren();const tex
  if(boardOpenThread){const t=boardThreads.find(x=>x.id===boardOpenThread.id);
   const postId=t?.postId||boardOpenThread.postId;
   const postEl=Array.from(root.children).find(x=>x.dataset?.postId===postId);
-  if(postEl){const room=$("boardPrivateRoom");postEl.append(room);room.classList.add("board-inline-room");room.classList.toggle("hidden",!boardOpenThread)}
+  if(postEl){const room=boardRoomElement;postEl.append(room);room.classList.add("board-inline-room");room.classList.toggle("hidden",!boardOpenThread)}
+  else{const room=boardRoomElement;$("boardThreadsBox").append(room);room.classList.remove("board-inline-room")}
  }
 }
 $("postSearch").oninput=renderPosts;$("postFilter").onchange=renderPosts;
-function watchPosts(){stops.push(onSnapshot(query(collection(db,"posts"),where("visibility","==","public"),limit(100)),s=>{posts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));for(const p of posts)checkAdminBadge(p.authorUid);renderPosts();renderBoardThreadList();collectNotifications()},e=>{$("postsStatus").textContent="掲示板エラー: "+e.message}))}
+function watchPosts(){stops.push(onSnapshot(query(collection(db,"posts"),where("visibility","==","public"),limit(100)),s=>{posts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));for(const p of posts)checkAdminBadge(p.authorUid);boardPostsLoaded=true;renderPosts();renderBoardThreadList();collectNotifications();restoreBoardOpenThread()},e=>{$("postsStatus").textContent="掲示板エラー: "+e.message}))}
+// 最後に開いていた非公開相談を本人のブラウザで記憶し、再読み込み後に復元する。
+function boardOpenStorageKey(){return "aikatsu-board-open-v1-"+uid}
+function restoreBoardOpenThread(){
+ if(!uid||boardRestoreDone||!boardPostsLoaded||!boardThreadsLoaded)return;
+ boardRestoreDone=true;
+ let threadId="";
+ try{threadId=sessionStorage.getItem(boardOpenStorageKey())||""}catch{}
+ if(!threadId||boardOpenThread)return;
+ const t=boardThreads.find(x=>x.id===threadId);
+ const p=t&&posts.find(x=>x.id===t.postId);
+ // 現在の利用者が参加する現存する投稿の相談だけを復元する。
+ if(t&&p&&Array.isArray(t.participants)&&t.participants.includes(uid))openBoardPrivate(threadId,p,true);
+}
+function watchBoardPrivateMessages(threadId,error){
+ if(boardThreadStop){boardThreadStop();boardThreadStop=null}
+ boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{
+  if(boardOpenThread?.id!==threadId)return;
+  boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));
+  renderBoardPrivateMessages();
+ },err=>{if(boardOpenThread?.id===threadId)error.textContent="メッセージの読み込みに失敗しました: "+err.message});
+}
 // 非公開掲示板チャット：各募集主と連絡した利用者の二人だけが閲覧できます。
 function boardThreadPeer(t){return t.postOwnerUid===uid?t.otherUid:t.postOwnerUid}
 function renderBoardThreadList(){
@@ -904,17 +929,18 @@ function renderBoardPrivateMessages(){const list=$("boardPrivateMessages");if(!l
  for(const m of boardThreadMessages){const bubble=make("div","board-chat-bubble"+(m.authorUid===uid?" mine":""));bubble.append(make("strong","",m.authorUid===uid?"自分":peerName(m.authorUid)),make("p","",m.body),make("span","muted",dateText(m.createdAt)));list.append(bubble)}
  list.scrollTop=list.scrollHeight
 }
-function openBoardPrivate(threadId,postHint=null){
+function openBoardPrivate(threadId,postHint=null,restoring=false){
  if(boardThreadStop){boardThreadStop();boardThreadStop=null}
  boardOpenThread={id:threadId,postId:postHint?.id||boardThreads.find(x=>x.id===threadId)?.postId};boardThreadMessages=[];
+ if(!restoring){try{sessionStorage.setItem(boardOpenStorageKey(),threadId)}catch{}}
  const t=boardThreads.find(x=>x.id===threadId),p=postHint||posts.find(x=>x.id===t?.postId),other=t?boardThreadPeer(t):p?.authorUid;
- const room=$("boardPrivateRoom");
+ const room=boardRoomElement;
  const target=Array.from($("postList").children).find(x=>x.dataset?.postId===p?.id);
  if(target){target.append(room);room.classList.add("board-inline-room");$("boardThreadsBox").classList.add("hidden")}
  else {$("boardThreadsBox").append(room);room.classList.remove("board-inline-room");$("boardThreadsBox").classList.remove("hidden")}
  room.classList.remove("hidden");room.replaceChildren();
  const row=make("div","row");row.append(make("h3","","🔒 "+(other?peerName(other):"非公開チャット")));
- const close=make("button","btn light small","閉じる");close.onclick=()=>{room.classList.add("hidden");$("boardThreadsBox").classList.add("hidden");boardOpenThread=null;if(boardThreadStop){boardThreadStop();boardThreadStop=null}};row.append(close);room.append(row);
+ const close=make("button","btn light small","閉じる");close.onclick=()=>{room.classList.add("hidden");$("boardThreadsBox").classList.add("hidden");boardOpenThread=null;try{sessionStorage.removeItem(boardOpenStorageKey())}catch{}if(boardThreadStop){boardThreadStop();boardThreadStop=null}};row.append(close);room.append(row);
  room.append(make("p","note","この会話は募集主と連絡した本人だけが読めます。ただし相手には内容が伝わるので、住所などの送信は慎重にお願いします。"));
  const list=make("div","board-chat-messages");list.id="boardPrivateMessages";room.append(list);
  const error=make("div","error");const form=document.createElement("form"),input=document.createElement("textarea"),send=make("button","btn","送信する");input.maxLength=300;input.required=true;input.placeholder="非公開でメッセージを送る（300文字以内）";
@@ -922,7 +948,15 @@ function openBoardPrivate(threadId,postHint=null){
  form.append(input,send,error);room.append(form);
  const meta=t||(!p?null:{id:threadId,postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid]});
  if(!meta){error.textContent="この募集が見つかりません";send.disabled=true;return}
- if(t){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{if(boardOpenThread?.id!==threadId)return;boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{if(boardOpenThread?.id===threadId)error.textContent="読み込みに失敗しました: "+err.message})}
+ if(t){watchBoardPrivateMessages(threadId,error)}
+ else {
+  // 一覧の読み込みが遅れても、Firestore上に既存チャットがあれば履歴を取得する。
+  getDoc(doc(db,"boardThreads",threadId)).then(snap=>{
+   if(boardOpenThread?.id!==threadId||boardThreadStop||!snap.exists())return;
+   const data=snap.data();
+   if(Array.isArray(data.participants)&&data.participants.includes(uid))watchBoardPrivateMessages(threadId,error);
+  }).catch(err=>{if(boardOpenThread?.id===threadId)error.textContent="チャット履歴の確認に失敗しました: "+err.message});
+ }
  renderBoardPrivateMessages();
  form.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body||!uid)return;send.disabled=true;error.textContent="";
   let stage="チャットの確認";
@@ -953,18 +987,18 @@ function openBoardPrivate(threadId,postHint=null){
    await batch.commit();
    input.value="";
    // 一覧未読込でも既存チャットのメッセージ購読を開始する。
-   if(!boardThreadStop&&boardOpenThread?.id===threadId){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{if(boardOpenThread?.id!==threadId)return;boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{error.textContent="メッセージ読み込みに失敗しました: "+err.message})}
+   if(!boardThreadStop&&boardOpenThread?.id===threadId)watchBoardPrivateMessages(threadId,error)
   }catch(err){error.textContent="送信失敗の段階: "+stage+"。"+(err.code==="permission-denied"?"Firebase権限エラー。Firestoreルールと投稿のデータが一致しているか確認が必要です。":"")+" 詳細: "+err.message+" / 送信先: boardThreads/"+threadId}finally{send.disabled=false}}
- room.scrollIntoView({behavior:"smooth",block:"nearest"})
+ if(!restoring)room.scrollIntoView({behavior:"smooth",block:"nearest"})
 }
 $("boardThreadShowAll").onclick=()=>{boardThreadFilter=null;renderBoardThreadList()};
-function watchBoardThreads(){stops.push(onSnapshot(query(collection(db,"boardThreads"),where("participants","array-contains",uid),limit(100)),snap=>{boardThreads=snap.docs.map(d=>({id:d.id,...d.data()}));renderBoardThreadList();renderPosts();collectNotifications()},err=>{$("boardThreadList").textContent="非公開チャットの読み込みに失敗しました: "+err.message}))}
+function watchBoardThreads(){stops.push(onSnapshot(query(collection(db,"boardThreads"),where("participants","array-contains",uid),limit(100)),snap=>{boardThreads=snap.docs.map(d=>({id:d.id,...d.data()}));boardThreadsLoaded=true;renderBoardThreadList();renderPosts();collectNotifications();restoreBoardOpenThread()},err=>{$("boardThreadList").textContent="非公開チャットの読み込みに失敗しました: "+err.message}))}
 function renderOldComments(){$("oldCommentList").replaceChildren(...oldMessages.map(m=>{const e=make("div","comment");e.append(make("strong","",peerName(m.authorUid)),make("p","",m.body));return e}))}
 $("oldComments").onclick=()=>{$("oldThread").classList.toggle("hidden")};$("oldCommentForm").onsubmit=async e=>{e.preventDefault();if(!isPublic())return alert("公開プロフィールで利用してください");const body=$("oldCommentBody").value.trim();if(!body)return;try{await addDoc(collection(db,"matchingProfiles",uid,"comments"),{authorUid:uid,body,createdAt:serverTimestamp()});$("oldCommentBody").value=""}catch(err){$("oldCommentError").textContent=err.message}};
 function watchOldComments(){if(oldCommentsStop)oldCommentsStop();oldCommentsStop=onSnapshot(query(collection(db,"matchingProfiles",uid,"comments"),limit(100)),s=>{oldMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderOldComments();collectNotifications()},()=>{})}
 function renderAll(){renderHome();renderAlbum();renderMatching();renderPosts();renderTradeList();renderNotifications()}
 function watchPeers(){stops.push(onSnapshot(query(collection(db,"matchingProfiles"),where("visibility","==","public"),limit(100)),s=>{peers=s.docs.map(d=>({uid:d.id,...d.data()}));for(const peer of peers)checkAdminBadge(peer.uid);renderMatching();renderPosts();renderTradeList();collectNotifications()},()=>{}))}
-function cleanup(){if(boardThreadStop){boardThreadStop();boardThreadStop=null}boardThreads=[];boardOpenThread=null;boardThreadMessages=[];boardThreadFilter=null;$("boardPrivateRoom").classList.add("hidden");$("boardPrivateRoom").replaceChildren();avatarImageCache.clear();avatarImagePending.clear();for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;adminBadgeCache.clear();adminBadgePending.clear();$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");$("postCardsModal").classList.add("hidden");$("publicProfileModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;chatDrafts.clear();noticeFilter="unread";editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
+function cleanup(){if(boardThreadStop){boardThreadStop();boardThreadStop=null}boardThreads=[];boardOpenThread=null;boardThreadMessages=[];boardThreadFilter=null;boardPostsLoaded=false;boardThreadsLoaded=false;boardRestoreDone=false;boardRoomElement.classList.add("hidden");boardRoomElement.replaceChildren();avatarImageCache.clear();avatarImagePending.clear();for(const stop of adminWatchStops)stop();adminWatchStops=[];adminTickets=[];adminReports=[];isAdminUser=false;adminBadgeCache.clear();adminBadgePending.clear();$("adminSettingsEntry").classList.add("hidden");stops.forEach(f=>f());stops=[];for(const stop of postCommentStops.values())stop();for(const stop of tradeMessageStops.values())stop();postCommentStops.clear();tradeMessageStops.clear();for(const stop of responseStops.values())stop();responseStops.clear();responsesByTrade.clear();for(const stop of ratingStops)stop();ratingStops=[];ratingsReceived=[];ratingsSent=new Set();messagesByTrade.clear();postMessagesById.clear();if(oldCommentsStop)oldCommentsStop();oldCommentsStop=null;if(blockStop)blockStop();blockStop=null;blockedUsers=new Set();ratingCounts=new Map();ratingRequests=new Set();uid=null;userRef=null;ready=false;needsName=false;legalAccepted=false;profile=defaults();owned={};peers=[];posts=[];trades=[];oldMessages=[];readKeys=new Set();publishFingerprint="";clearTimeout(publishTimer);$("main").classList.add("hidden");$("nav").classList.add("hidden");$("nameModal").classList.add("hidden");$("requestModal").classList.add("hidden");$("pickerModal").classList.add("hidden");$("postCardsModal").classList.add("hidden");$("publicProfileModal").classList.add("hidden");postThreadId=null;tradeThreadId=null;chatDrafts.clear();noticeFilter="unread";editOpen=false;$("profileEditor").classList.add("hidden");resetPostEditor()}
 $("login").onclick=async()=>{try{await signInWithPopup(auth,provider)}catch(e){$("authError").textContent="ログイン失敗: "+e.message}};
 $("logout").onclick=$("nameLogout").onclick=()=>signOut(auth);
 $("firstNameForm").onsubmit=async e=>{e.preventDefault();const n=$("firstName").value.trim();if(!validName(n))return $("firstError").textContent="2〜30文字で入力してね";try{const next={...profile,nickname:n,nicknameConfirmed:true};await setDoc(userRef,{profile:next,updatedAt:serverTimestamp()},{merge:true});profile=next;setGate(false);renderAll();schedulePublish(true)}catch(e){$("firstError").textContent=e.message}};
