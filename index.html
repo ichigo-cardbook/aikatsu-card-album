@@ -928,9 +928,17 @@ function openBoardPrivate(threadId,postHint=null){
   let stage="チャットの確認";
   try{
    const ref=doc(db,"boardThreads",threadId);
-   // 初回のみチャット本体を作り、書き込み拒否の段階を明確にする。
-   const knownThread=boardThreads.some(x=>x.id===threadId);
-   if(!knownThread){
+   // リアルタイム一覧は未読み込みのことがあるため、送信直前に実データを確認する。
+   stage="既存チャットの存在確認";
+   const existingSnap=await getDoc(ref);
+   let knownThread=existingSnap.exists();
+   if(knownThread){
+    const data=existingSnap.data();
+    if(!Array.isArray(data.participants)||!data.participants.includes(uid)||data.postOwnerUid===uid&&data.otherUid===uid){
+     throw Error("このチャットの参加者情報が一致しません");
+    }
+    if(p && (data.postId!==p.id||data.postOwnerUid!==p.authorUid))throw Error("このチャットの投稿情報が一致しません");
+   }else{
     if(!p||p.authorUid===uid)throw Error("新しい相談を開始できません");
     stage="チャット本体の作成";
     await setDoc(ref,{postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid],createdAt:serverTimestamp(),lastMessage:body,lastSenderUid:uid,updatedAt:serverTimestamp()});
