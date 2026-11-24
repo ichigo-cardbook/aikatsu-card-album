@@ -101,7 +101,7 @@
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,deleteDoc,addDoc,updateDoc,onSnapshot,collection,query,where,limit,serverTimestamp,getCountFromServer,writeBatch}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,deleteDoc,addDoc,updateDoc,onSnapshot,collection,query,where,limit,serverTimestamp,getCountFromServer,writeBatch,runTransaction}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyCSxm_4w-r8kFPD6yIQ4rgVpzVGl0piJlM",authDomain:"aikatsu-card-album.firebaseapp.com",projectId:"aikatsu-card-album",storageBucket:"aikatsu-card-album.firebasestorage.app",messagingSenderId:"1000205466468",appId:"1:1000205466468:web:dc49371b91f5514ee3d871"});
 const auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider(),$=id=>document.getElementById(id);
 const defaults=()=>({nickname:"",nicknameConfirmed:false,gender:"非公開",prefecture:"非公開",prefVisible:"no",privacy:"public",xAccount:"",bio:"",methods:["郵送"],avatar:"🍓"});
@@ -978,7 +978,40 @@ function renderBoardThreadList(){
 }
 function renderBoardPrivateMessages(){const list=$("boardPrivateMessages");if(!list)return;list.replaceChildren();
  if(!boardThreadMessages.length){list.append(make("p","muted","まだメッセージはありません"));return}
- for(const m of boardThreadMessages){const bubble=make("div","board-chat-bubble"+(m.authorUid===uid?" mine":""));bubble.append(make("strong","",m.authorUid===uid?"自分":peerName(m.authorUid)),make("p","",m.body),make("span","muted",dateText(m.createdAt)));list.append(bubble)}
+ for(const m of boardThreadMessages){
+  const mine=m.authorUid===uid;
+  const bubble=make("div","board-chat-bubble"+(mine?" mine":""));
+  bubble.append(make("strong","",mine?"自分":peerName(m.authorUid)),make("p","",m.body),make("span","muted",dateText(m.createdAt)));
+  if(mine){
+   const del=make("button","btn light small","削除");del.type="button";del.style.marginLeft="8px";
+   del.onclick=async()=>{
+    if(!confirm("このコメントを削除しますか？ 削除すると元に戻せません。"))return;
+    if(!boardOpenThread?.id)return;
+    del.disabled=true;
+    try{
+     const threadId=boardOpenThread.id;
+     const messageRef=doc(db,"boardThreads",threadId,"messages",m.id);
+     const threadRef=doc(db,"boardThreads",threadId);
+     const isLastInLoaded=boardThreadMessages.at(-1)?.id===m.id;
+     await runTransaction(db,async transaction=>{
+      const messageSnap=await transaction.get(messageRef);
+      if(!messageSnap.exists())return;
+      if(messageSnap.data().authorUid!==uid)throw new Error("自分のコメント以外は削除できません");
+      const threadSnap=await transaction.get(threadRef);
+      if(!threadSnap.exists()||!Array.isArray(threadSnap.data().participants)||!threadSnap.data().participants.includes(uid))throw new Error("チャットが見つかりません");
+      const meta=threadSnap.data();
+      transaction.delete(messageRef);
+      // 最後のコメントの本文がプレビューに残らないよう匿名の削除表示へ置換。
+      if(isLastInLoaded&&meta.lastSenderUid===uid&&meta.lastMessage===messageSnap.data().body){
+       transaction.update(threadRef,{lastMessage:"（メッセージは削除されました）",lastSenderUid:uid,updatedAt:serverTimestamp()});
+      }
+     });
+    }catch(err){alert("削除できませんでした: "+(err.message||err.code||err));del.disabled=false}
+   };
+   bubble.append(del);
+  }
+  list.append(bubble);
+ }
  list.scrollTop=list.scrollHeight
 }
 function openBoardPrivate(threadId,postHint=null,restoring=false){
