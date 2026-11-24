@@ -918,20 +918,21 @@ function openBoardPrivate(threadId,postHint=null){
  room.append(make("p","note","この会話は募集主と連絡した本人だけが読めます。ただし相手には内容が伝わるので、住所などの送信は慎重にお願いします。"));
  const list=make("div","board-chat-messages");list.id="boardPrivateMessages";room.append(list);
  const error=make("div","error");const form=document.createElement("form"),input=document.createElement("textarea"),send=make("button","btn","送信する");input.maxLength=300;input.required=true;input.placeholder="非公開でメッセージを送る（300文字以内）";
- const isGone=!p;const blocked=other&&isBlocked(other);if(isGone||blocked||!isPublic()){send.disabled=true;input.disabled=true;room.append(make("p","muted",isGone?"募集が削除されたため送信できません。過去の履歴は閲覧できます。":blocked?"ブロック中は送信できません。":"公開プロフィールで利用できます。"))}
+ const isGone=!p;const blocked=other&&isBlocked(other);if(isGone||blocked){send.disabled=true;input.disabled=true;room.append(make("p","muted",isGone?"募集が削除されたため送信できません。過去の履歴は閲覧できます。":"ブロック中は送信できません。"))}
  form.append(input,send,error);room.append(form);
  const meta=t||(!p?null:{id:threadId,postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid]});
  if(!meta){error.textContent="この募集が見つかりません";send.disabled=true;return}
  if(t){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{if(boardOpenThread?.id!==threadId)return;boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{if(boardOpenThread?.id===threadId)error.textContent="読み込みに失敗しました: "+err.message})}
  renderBoardPrivateMessages();
  form.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body||!uid)return;send.disabled=true;error.textContent="";
-  try{const ref=doc(db,"boardThreads",threadId),msg=doc(collection(db,"boardThreads",threadId,"messages")),batch=writeBatch(db);
+  try{
+   const ref=doc(db,"boardThreads",threadId),msg=doc(collection(db,"boardThreads",threadId,"messages")),batch=writeBatch(db);
    const data={lastMessage:body,lastSenderUid:uid,updatedAt:serverTimestamp()};
    if(boardThreads.some(x=>x.id===threadId))batch.update(ref,data);
    else {if(!p||p.authorUid===uid)throw Error("新しい相談を開始できません");batch.set(ref,{postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid],createdAt:serverTimestamp(),...data})}
    batch.set(msg,{authorUid:uid,body,createdAt:serverTimestamp()});await batch.commit();input.value="";
    if(!boardThreadStop&&boardOpenThread?.id===threadId){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{error.textContent=err.message})}
-  }catch(err){error.textContent="送信できませんでした: "+err.message}finally{send.disabled=false}}
+  }catch(err){error.textContent=err.code==="permission-denied"?"送信できませんでした：Firebaseの権限チェックで拒否されました。ログイン状態、ブロック設定、募集の存在、およびFirestoreのルール公開状況を確認してください。（詳細: "+err.message+"）":"送信できませんでした: "+err.message}finally{send.disabled=false}}
  room.scrollIntoView({behavior:"smooth",block:"nearest"})
 }
 $("boardThreadShowAll").onclick=()=>{boardThreadFilter=null;renderBoardThreadList()};
