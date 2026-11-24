@@ -925,14 +925,27 @@ function openBoardPrivate(threadId,postHint=null){
  if(t){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{if(boardOpenThread?.id!==threadId)return;boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{if(boardOpenThread?.id===threadId)error.textContent="読み込みに失敗しました: "+err.message})}
  renderBoardPrivateMessages();
  form.onsubmit=async e=>{e.preventDefault();const body=input.value.trim();if(!body||!uid)return;send.disabled=true;error.textContent="";
+  let stage="チャットの確認";
   try{
-   const ref=doc(db,"boardThreads",threadId),msg=doc(collection(db,"boardThreads",threadId,"messages")),batch=writeBatch(db);
-   const data={lastMessage:body,lastSenderUid:uid,updatedAt:serverTimestamp()};
-   if(boardThreads.some(x=>x.id===threadId))batch.update(ref,data);
-   else {if(!p||p.authorUid===uid)throw Error("新しい相談を開始できません");batch.set(ref,{postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid],createdAt:serverTimestamp(),...data})}
-   batch.set(msg,{authorUid:uid,body,createdAt:serverTimestamp()});await batch.commit();input.value="";
+   const ref=doc(db,"boardThreads",threadId);
+   // 初回のみチャット本体を作り、書き込み拒否の段階を明確にする。
+   const knownThread=boardThreads.some(x=>x.id===threadId);
+   if(!knownThread){
+    if(!p||p.authorUid===uid)throw Error("新しい相談を開始できません");
+    stage="チャット本体の作成";
+    await setDoc(ref,{postId:p.id,postOwnerUid:p.authorUid,otherUid:uid,participants:[p.authorUid,uid],createdAt:serverTimestamp(),lastMessage:body,lastSenderUid:uid,updatedAt:serverTimestamp()});
+   }
+   stage="メッセージの作成";
+   await addDoc(collection(db,"boardThreads",threadId,"messages"),{authorUid:uid,body,createdAt:serverTimestamp()});
+   // メッセージ保存後に通知用の最終送信情報を更新。失敗してもコメント自体は送信済み。
+   if(knownThread){
+    stage="通知情報の更新";
+    try{await updateDoc(ref,{lastMessage:body,lastSenderUid:uid,updatedAt:serverTimestamp()})}
+    catch(noticeErr){error.textContent="コメントは送信済みですが、通知情報の更新に失敗しました: "+noticeErr.message}
+   }
+   input.value="";
    if(!boardThreadStop&&boardOpenThread?.id===threadId){boardThreadStop=onSnapshot(query(collection(db,"boardThreads",threadId,"messages"),limit(100)),snap=>{boardThreadMessages=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));renderBoardPrivateMessages()},err=>{error.textContent=err.message})}
-  }catch(err){error.textContent=err.code==="permission-denied"?"送信が拒否されました。Firestoreルールの最新版が公開済みか確認してください。送信先：boardThreads/"+threadId+"（初回はチャット作成とメッセージ作成を同時実行）。詳細: "+err.message:"送信できませんでした: "+err.message}finally{send.disabled=false}}
+  }catch(err){error.textContent="送信失敗の段階: "+stage+"。"+(err.code==="permission-denied"?"Firebase権限エラー。Firestoreルールと投稿のデータが一致しているか確認が必要です。":"")+" 詳細: "+err.message+" / 送信先: boardThreads/"+threadId}finally{send.disabled=false}}
  room.scrollIntoView({behavior:"smooth",block:"nearest"})
 }
 $("boardThreadShowAll").onclick=()=>{boardThreadFilter=null;renderBoardThreadList()};
